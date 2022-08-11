@@ -3,13 +3,15 @@ from concurrent import futures
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
 from typing import Optional
+from typing import TextIO
 
 import numpy as np
 
 SRC_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development"
 
-DAMAGE_PATTERN = re.compile(r"")
+DAMAGE_PATTERN = re.compile(r"\s*damage\s*=\s*(\d+)", flags=re.IGNORECASE)
 FALLOFF_PATTERN = re.compile(r"")
 
 
@@ -20,13 +22,23 @@ class BulletData:
     damage_falloff: np.ndarray
 
 
+def is_comment(line: str) -> bool:
+    line = line.lstrip()
+    # Don't bother with multi-line comments for now.
+    return line.startswith("//")
+
+
+def non_comment_lines(file: TextIO) -> Iterable[str]:
+    yield from (line for line in file if not is_comment(line))
+
+
 def process_file(path: Path) -> Optional[BulletData]:
     path = path.resolve()
     print(f"processing: '{path}'")
     file_class = str(path.stem)
     print(f"class is: '{file_class}'")
-    with path.open() as file:
-        data = file.read()
+    with path.open("r", encoding="utf-8") as file:
+        data = non_comment_lines(file)
         for line in data:
             pass
 
