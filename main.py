@@ -2,7 +2,7 @@ import datetime
 import math
 import re
 from concurrent import futures
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from dataclasses import field
 from pathlib import Path
@@ -12,8 +12,10 @@ from typing import Optional
 from typing import TextIO
 from typing import Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 from requests.structures import CaseInsensitiveDict
+from scipy.interpolate import interp1d
 
 SRC_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development"
 
@@ -187,10 +189,10 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                 if match:
                     result.damage = int(match.group(1))
                     continue
-            if math.isnan(result.speed):
+            if result.speed == math.inf:
                 match = SPEED_PATTERN.match(line)
                 if match:
-                    result.speed = float(match.group(1))
+                    result.speed = float(match.group(1)) / 50
                     continue
             if not result.damage_falloff.all():
                 match = FALLOFF_PATTERN.match(line)
@@ -199,7 +201,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                         match.group(1))
                     continue
             if (result.class_name
-                    and not math.isnan(result.speed)
+                    and result.speed != math.inf
                     and result.damage > 0
                     and result.damage_falloff.all()):
                 break
@@ -217,7 +219,6 @@ def parse_interp_curve(curve: str) -> np.ndarray:
         x = math.sqrt(float(match.group(1))) / 50  # UU/s to m/s.
         y = float(match.group(2))
         values.append([x, y])
-    print(curve, "->", values)
     return np.array(values)
 
 
@@ -261,17 +262,18 @@ def main():
     bullet_results: MutableMapping[str, BulletParseResult] = CaseInsensitiveDict()
     weapon_results: MutableMapping[str, WeaponParseResult] = CaseInsensitiveDict()
 
-    src_files = Path(SRC_DIR).rglob("*.uc")
-    with ProcessPoolExecutor() as executor:
+    src_files = [f for f in Path(SRC_DIR).rglob("*.uc")]
+    print(f"processing {len(src_files)} .uc files")
+    with ThreadPoolExecutor() as executor:
         fs = [executor.submit(process_file, file) for file in src_files]
-        result: Optional[ParseResult]
-        for future in futures.as_completed(fs):
-            result = future.result()
-            if result:
-                if isinstance(result, WeaponParseResult):
-                    weapon_results[result.class_name] = result
-                elif isinstance(result, BulletParseResult):
-                    bullet_results[result.class_name] = result
+    result: Optional[ParseResult]
+    for future in futures.as_completed(fs):
+        result = future.result()
+        if result:
+            if isinstance(result, WeaponParseResult):
+                weapon_results[result.class_name] = result
+            elif isinstance(result, BulletParseResult):
+                bullet_results[result.class_name] = result
 
     print(f"found {len(bullet_results)} bullet classes")
     print(f"found {len(weapon_results)} weapon classes")
@@ -362,6 +364,30 @@ def main():
     print(f"end: {end.isoformat()}")
     total_secs = round((end - begin).total_seconds(), 2)
     print(f"processing took {total_secs} seconds")
+
+    np.set_printoptions(suppress=True)
+
+    bullet = bullet_classes["L1A1Bullet"]
+    speed = bullet.speed
+    print(speed)
+    harr = np.hsplit(bullet.damage_falloff, 2)
+    x = harr[0].ravel()
+    y = harr[1].ravel()
+    f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
+    f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    print(f_xtoy(0))
+    print(f_ytox(1))
+    zero_dmg_speed = f_ytox(1)
+    x = np.insert(x, 0, zero_dmg_speed)
+    y = np.insert(y, 0, 1)
+    print(x)
+    print(y)
+    plt.plot(x, y, marker="o")
+    plt.axvline(speed)
+    plt.axvline(zero_dmg_speed)
+    plt.axvline(0)
+    plt.text(speed, 0.5, str(speed))
+    plt.show()
 
 
 if __name__ == "__main__":
