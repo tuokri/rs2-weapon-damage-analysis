@@ -1,4 +1,5 @@
 import datetime
+import math
 import re
 from concurrent import futures
 from concurrent.futures import ProcessPoolExecutor
@@ -16,14 +17,21 @@ from requests.structures import CaseInsensitiveDict
 
 SRC_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development"
 
+SPEED_PATTERN = re.compile(
+    r"^\s*Speed\s*=\s*(\d+).*$",
+    flags=re.IGNORECASE)
 DAMAGE_PATTERN = re.compile(
-    r"^\s*Damage\s*=\s*(\d+).*$", flags=re.IGNORECASE)
+    r"^\s*Damage\s*=\s*(\d+).*$",
+    flags=re.IGNORECASE)
 FALLOFF_PATTERN = re.compile(
-    r"^\s*VelocityDamageFalloffCurve\s*=\s*\(Points\s*=\s*(\(.*\))\).*$", flags=re.IGNORECASE)
+    r"^\s*VelocityDamageFalloffCurve\s*=\s*\(Points\s*=\s*(\(.*\))\).*$",
+    flags=re.IGNORECASE)
 CLASS_PATTERN = re.compile(
-    r"^\s*class\s+([\w]+)\s+extends\s+([\w\d_]+)\s*.*[;\n\s]+$", flags=re.IGNORECASE)
+    r"^\s*class\s+([\w]+)\s+extends\s+([\w\d_]+)\s*.*[;\n\s]+$",
+    flags=re.IGNORECASE)
 WEAPON_BULLET_PATTERN = re.compile(
-    r"^\s*WeaponProjectiles\(\d+\)\s*=\s*class\s*'(.*)'.*$", flags=re.IGNORECASE)
+    r"^\s*WeaponProjectiles\(\d+\)\s*=\s*class\s*'(.*)'.*$",
+    flags=re.IGNORECASE)
 
 
 @dataclass
@@ -39,6 +47,7 @@ class WeaponParseResult(ParseResult):
 
 @dataclass
 class BulletParseResult(ParseResult):
+    speed: float = math.inf
     damage: int = -1
     damage_falloff: np.ndarray = np.array([0, 0])
 
@@ -73,6 +82,7 @@ class ClassBase:
 @dataclass
 class Bullet(ClassBase):
     parent: Optional["Bullet"]
+    speed: float
     damage: int
     damage_falloff: np.ndarray
 
@@ -86,6 +96,7 @@ class Weapon(ClassBase):
 PROJECTILE = Bullet(
     name="Projectile",
     damage=0,
+    speed=math.inf,
     damage_falloff=np.array([0, 0]),
     parent=None,
 )
@@ -176,6 +187,11 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                 if match:
                     result.damage = int(match.group(1))
                     continue
+            if math.isnan(result.speed):
+                match = SPEED_PATTERN.match(line)
+                if match:
+                    result.speed = float(match.group(1))
+                    continue
             if not result.damage_falloff.all():
                 match = FALLOFF_PATTERN.match(line)
                 if match:
@@ -183,6 +199,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                         match.group(1))
                     continue
             if (result.class_name
+                    and not math.isnan(result.speed)
                     and result.damage > 0
                     and result.damage_falloff.all()):
                 break
@@ -190,9 +207,18 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
 
 
 def parse_interp_curve(curve: str) -> np.ndarray:
-    # (Points=((InVal=95062500,OutVal=1.0),(InVal=380250000,OutVal=0.55)))
-    points = curve.split["Points="]
-    return np.array([1, 1])
+    """Velocity damage falloff curve consists of (x,y)
+    pairs, where x is remaining projectile speed in m/s
+    and y is the damage scaler at that speed.
+    """
+    values = []
+    curve = re.sub(r"\s", "", curve)
+    for match in re.finditer(r"InVal=([\d.]+),OutVal=([\d.]+)", curve):
+        x = math.sqrt(float(match.group(1))) / 50  # UU/s to m/s.
+        y = float(match.group(2))
+        values.append([x, y])
+    print(curve, "->", values)
+    return np.array(values)
 
 
 def is_weapon_str(s: str) -> bool:
@@ -264,6 +290,7 @@ def main():
         bullet_classes[class_name] = Bullet(
             name=bullet_result.class_name,
             parent=parent,
+            speed=bullet_result.speed,
             damage=bullet_result.damage,
             damage_falloff=bullet_result.damage_falloff,
         )
