@@ -18,8 +18,114 @@
         "speed": 0
     },
     {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROFusedGrenadeProjectile",
+        "parent": "ROLaunchedGrenadeProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 20,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROFlameProjectile",
+        "parent": "ROProjectile",
+        "speed": 44.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROEggGrenadeProjectile",
+        "parent": "ROStickGrenadeProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0.24,
+        "damage": 147,
+        "damage_falloff": [
+            [
+                310.8,
+                0.85
+            ],
+            [
+                777.0,
+                0.2
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            310.8,
+            777.0
+        ],
+        "fo_y": [
+            0.85,
+            0.2
+        ],
+        "name": "XM21SubsonicBullet",
+        "parent": "ROBullet",
+        "speed": 340.0
+    },
+    {
+        "ballistic_coeff": 0.24,
+        "damage": 745,
+        "damage_falloff": [
+            [
+                310.8,
+                0.85
+            ],
+            [
+                777.0,
+                0.2
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            310.8,
+            777.0
+        ],
+        "fo_y": [
+            0.85,
+            0.2
+        ],
+        "name": "XM21ScopedBullet",
+        "parent": "ROBullet",
+        "speed": 765.0
+    },
+    {
         "ballistic_coeff": 0.12,
-        "damage": 396,
+        "damage": 285,
         "damage_falloff": [
             [
                 396.0,
@@ -39,9 +145,725 @@
             0.6,
             0.22
         ],
-        "name": "M16A1Bullet",
+        "name": "XM177E1Bullet",
+        "parent": "M16A1Bullet",
+        "speed": 840.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 200,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "Type67GrenadeProjectile",
+        "parent": "ROStickGrenadeProjectile",
+        "speed": 20.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 489,
+        "damage_falloff": [
+            [
+                348.0,
+                0.46
+            ],
+            [
+                790.0,
+                0.12
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            348.0,
+            790.0
+        ],
+        "fo_y": [
+            0.46,
+            0.12
+        ],
+        "name": "Type56_1Bullet",
+        "parent": "Type56Bullet",
+        "speed": 735.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 489,
+        "damage_falloff": [
+            [
+                348.0,
+                0.46
+            ],
+            [
+                790.0,
+                0.12
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            348.0,
+            790.0
+        ],
+        "fo_y": [
+            0.46,
+            0.12
+        ],
+        "name": "Type56Bullet",
         "parent": "ROBullet",
-        "speed": 990.0
+        "speed": 735.0
+    },
+    {
+        "ballistic_coeff": 0.113,
+        "damage": 122,
+        "damage_falloff": [
+            [
+                341.6,
+                0.8
+            ],
+            [
+                488.0,
+                0.36
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            341.6,
+            488.0
+        ],
+        "fo_y": [
+            0.8,
+            0.36
+        ],
+        "name": "TT33Bullet",
+        "parent": "ROBullet",
+        "speed": 442.0
+    },
+    {
+        "ballistic_coeff": 0.206,
+        "damage": 770,
+        "damage_falloff": [
+            [
+                415.0,
+                0.52
+            ],
+            [
+                830.0,
+                0.22
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            415.0,
+            830.0
+        ],
+        "fo_y": [
+            0.52,
+            0.22
+        ],
+        "name": "SVDScopedBullet",
+        "parent": "ROBullet",
+        "speed": 830.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 489,
+        "damage_falloff": [
+            [
+                348.0,
+                0.46
+            ],
+            [
+                790.0,
+                0.12
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            348.0,
+            790.0
+        ],
+        "fo_y": [
+            0.46,
+            0.12
+        ],
+        "name": "SKSBullet",
+        "parent": "ROBullet",
+        "speed": 735.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 0,
+        "damage_falloff": [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                0.02,
+                1.0
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            0.0,
+            0.02
+        ],
+        "fo_y": [
+            0.0,
+            1.0
+        ],
+        "name": "RPDBulletTracer",
+        "parent": "ROBulletTracer",
+        "speed": 735.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 489,
+        "damage_falloff": [
+            [
+                348.0,
+                0.46
+            ],
+            [
+                790.0,
+                0.12
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            348.0,
+            790.0
+        ],
+        "fo_y": [
+            0.46,
+            0.12
+        ],
+        "name": "RPDBullet",
+        "parent": "ROBullet",
+        "speed": 735.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 500,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROSatchelChargeProjectile",
+        "parent": "ROThrowableExplosiveProjectile",
+        "speed": 8.0
+    },
+    {
+        "ballistic_coeff": 0.377,
+        "damage": 0,
+        "damage_falloff": [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                0.02,
+                1.0
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0.0,
+            0.02
+        ],
+        "fo_y": [
+            0.0,
+            1.0
+        ],
+        "name": "RP46BulletTracer",
+        "parent": "DP28BulletTracer",
+        "speed": 840.0
+    },
+    {
+        "ballistic_coeff": 0.377,
+        "damage": 768,
+        "damage_falloff": [
+            [
+                432.5,
+                0.5
+            ],
+            [
+                865.0,
+                0.18
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            432.5,
+            865.0
+        ],
+        "fo_y": [
+            0.5,
+            0.18
+        ],
+        "name": "RP46Bullet",
+        "parent": "DP28Bullet",
+        "speed": 840.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 25,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROSpotFire",
+        "parent": "ROFlameProjectile",
+        "speed": 44.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROLaunchedGrenadeProjectile",
+        "parent": "ROBallisticProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 1000,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROCarpetBomb",
+        "parent": "ROBombProjectile",
+        "speed": 200.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                0.02,
+                1.0
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0.0,
+            0.02
+        ],
+        "fo_y": [
+            0.0,
+            1.0
+        ],
+        "name": "ROBulletTracer",
+        "parent": "ROBullet",
+        "speed": 70.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                0.02,
+                1.0
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0.0,
+            0.02
+        ],
+        "fo_y": [
+            0.0,
+            1.0
+        ],
+        "name": "ROBullet",
+        "parent": "ROBallisticProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROImpactGrenadeProjectile",
+        "parent": "ROLaunchedGrenadeProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROBombProjectile",
+        "parent": "ROProjectile",
+        "speed": 200.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROBallisticProjectile",
+        "parent": "ROProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 500,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROArtilleryShell",
+        "parent": "ROProjectile",
+        "speed": 160.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROSmokeStickGrenadeProjectile",
+        "parent": "ROStickGrenadeProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROAntiVehicleProjectile",
+        "parent": "ROBallisticProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROSmokeGrenadeProjectile",
+        "parent": "ROEggGrenadeProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROThrowableShapedChargeProjectile",
+        "parent": "ROAntiVehicleProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROThrowableExplosiveProjectile",
+        "parent": "ROProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROTankCannonSmokeRound",
+        "parent": "ROTankCannonProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROTankCannonProjectile",
+        "parent": "ROAntiVehicleProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 750,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROSurfaceToAirMissile",
+        "parent": "ROProjectile",
+        "speed": 300.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROStickGrenadeProjectile",
+        "parent": "ROThrowableExplosiveProjectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 1000,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "RONapalmCanister",
+        "parent": "ROBombProjectile",
+        "speed": 200.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 500,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "C4ExplosiveProjectile",
+        "parent": "RORemoteExplosiveProjectile",
+        "speed": 14.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 500,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "C4ExplosiveCharge",
+        "parent": "C4ExplosiveProjectile",
+        "speed": 14.0
+    },
+    {
+        "ballistic_coeff": 0.14,
+        "damage": 104,
+        "damage_falloff": [
+            [
+                195.0,
+                1.0
+            ],
+            [
+                390.0,
+                0.55
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            195.0,
+            390.0
+        ],
+        "fo_y": [
+            1.0,
+            0.55
+        ],
+        "name": "BHPBullet",
+        "parent": "ROBullet",
+        "speed": 350.0
+    },
+    {
+        "ballistic_coeff": 0.138,
+        "damage": 462,
+        "damage_falloff": [
+            [
+                348.0,
+                0.46
+            ],
+            [
+                790.0,
+                0.12
+            ]
+        ],
+        "drag_func": "RODF_G7",
+        "fo_x": [
+            348.0,
+            790.0
+        ],
+        "fo_y": [
+            0.46,
+            0.12
+        ],
+        "name": "AKMBullet",
+        "parent": "Type56Bullet",
+        "speed": 715.0
     },
     {
         "ballistic_coeff": 0.2,
@@ -348,6 +1170,58 @@
         "speed": 488.0
     },
     {
+        "ballistic_coeff": 0.07,
+        "damage": 725,
+        "damage_falloff": [
+            [
+                190.0,
+                0.7
+            ],
+            [
+                475.0,
+                0.5
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            190.0,
+            475.0
+        ],
+        "fo_y": [
+            0.7,
+            0.5
+        ],
+        "name": "IZH43Slug",
+        "parent": "ROBullet",
+        "speed": 475.0
+    },
+    {
+        "ballistic_coeff": 0.05,
+        "damage": 129,
+        "damage_falloff": [
+            [
+                195.0,
+                0.75
+            ],
+            [
+                390.0,
+                0.55
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            195.0,
+            390.0
+        ],
+        "fo_y": [
+            0.75,
+            0.55
+        ],
+        "name": "IZH43Buckshot",
+        "parent": "ROBullet",
+        "speed": 420.0
+    },
+    {
         "ballistic_coeff": 0.14,
         "damage": 123,
         "damage_falloff": [
@@ -560,6 +1434,24 @@
         "speed": 315.0
     },
     {
+        "ballistic_coeff": 0.15,
+        "damage": 150,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "PG7VRocket",
+        "parent": "RORocketProjectile",
+        "speed": 115.0
+    },
+    {
         "ballistic_coeff": 0.14,
         "damage": 149,
         "damage_falloff": [
@@ -700,24 +1592,6 @@
         "speed": 892.44
     },
     {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "RORocketProjectile",
-        "parent": "ROAntiVehicleProjectile",
-        "speed": 0
-    },
-    {
         "ballistic_coeff": 0.5,
         "damage": 350,
         "damage_falloff": [
@@ -752,6 +1626,24 @@
         "name": "Mk40RocketProjectile",
         "parent": "RORocketProjectile",
         "speed": 45.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "RORocketProjectile",
+        "parent": "ROAntiVehicleProjectile",
+        "speed": 0
     },
     {
         "ballistic_coeff": 0.14,
@@ -806,24 +1698,6 @@
         "speed": 460.0
     },
     {
-        "ballistic_coeff": 0,
-        "damage": 500,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "RORemoteExplosiveProjectile",
-        "parent": "ROSatchelChargeProjectile",
-        "speed": 8.0
-    },
-    {
         "ballistic_coeff": 0.407,
         "damage": 800,
         "damage_falloff": [
@@ -866,6 +1740,24 @@
         "name": "MAS49GrenadeProjectile",
         "parent": "ROImpactGrenadeProjectile",
         "speed": 0.02
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 500,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "RORemoteExplosiveProjectile",
+        "parent": "ROSatchelChargeProjectile",
+        "speed": 8.0
     },
     {
         "ballistic_coeff": 0.407,
@@ -948,24 +1840,6 @@
         "speed": 76.0
     },
     {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            1
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            1
-        ],
-        "name": "ROProjectile",
-        "parent": "Projectile",
-        "speed": 0
-    },
-    {
         "ballistic_coeff": 1.0,
         "damage": 0,
         "damage_falloff": [
@@ -1000,6 +1874,50 @@
         "name": "M79GrenadeProjectile",
         "parent": "ROImpactGrenadeProjectile",
         "speed": 76.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            1
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            1
+        ],
+        "name": "ROProjectile",
+        "parent": "Projectile",
+        "speed": 0
+    },
+    {
+        "ballistic_coeff": 0.05,
+        "damage": 50,
+        "damage_falloff": [
+            [
+                140.0,
+                0.1
+            ],
+            [
+                255.0,
+                0.8
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            140.0,
+            255.0
+        ],
+        "fo_y": [
+            0.1,
+            0.8
+        ],
+        "name": "M79Buckshot",
+        "parent": "ROBullet",
+        "speed": 269.0
     },
     {
         "ballistic_coeff": 0,
@@ -1174,6 +2092,50 @@
         "name": "M3A1Bullet",
         "parent": "ROBullet",
         "speed": 280.0
+    },
+    {
+        "ballistic_coeff": 0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "ROPlantedTrap",
+        "parent": "ROEggGrenadeProjectile",
+        "speed": 0.0
+    },
+    {
+        "ballistic_coeff": 0.05,
+        "damage": 129,
+        "damage_falloff": [
+            [
+                195.0,
+                0.75
+            ],
+            [
+                390.0,
+                0.55
+            ]
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            195.0,
+            390.0
+        ],
+        "fo_y": [
+            0.75,
+            0.55
+        ],
+        "name": "M37Buckshot",
+        "parent": "ROBullet",
+        "speed": 420.0
     },
     {
         "ballistic_coeff": 0,
@@ -1382,6 +2344,24 @@
         "speed": 285.0
     },
     {
+        "ballistic_coeff": 1.0,
+        "damage": 250,
+        "damage_falloff": [
+            0,
+            0
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            0
+        ],
+        "name": "M195Shell",
+        "parent": "ROImpactGrenadeProjectile",
+        "speed": 1050.0
+    },
+    {
         "ballistic_coeff": 0.408,
         "damage": 0,
         "damage_falloff": [
@@ -1531,7 +2511,7 @@
     },
     {
         "ballistic_coeff": 0,
-        "damage": 0,
+        "damage": 200,
         "damage_falloff": [
             0,
             0
@@ -1543,83 +2523,13 @@
         "fo_y": [
             0
         ],
-        "name": "ROFusedGrenadeProjectile",
-        "parent": "ROLaunchedGrenadeProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 20,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROFlameProjectile",
-        "parent": "ROProjectile",
-        "speed": 44.0
-    },
-    {
-        "ballistic_coeff": 0.24,
-        "damage": 147,
-        "damage_falloff": [
-            [
-                310.8,
-                0.85
-            ],
-            [
-                777.0,
-                0.2
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            310.8,
-            777.0
-        ],
-        "fo_y": [
-            0.85,
-            0.2
-        ],
-        "name": "XM21SubsonicBullet",
-        "parent": "ROBullet",
-        "speed": 340.0
-    },
-    {
-        "ballistic_coeff": 0.24,
-        "damage": 745,
-        "damage_falloff": [
-            [
-                310.8,
-                0.85
-            ],
-            [
-                777.0,
-                0.2
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            310.8,
-            777.0
-        ],
-        "fo_y": [
-            0.85,
-            0.2
-        ],
-        "name": "XM21ScopedBullet",
-        "parent": "ROBullet",
-        "speed": 765.0
+        "name": "M18ClaymoreMine",
+        "parent": "RORemoteExplosiveProjectile",
+        "speed": 8.0
     },
     {
         "ballistic_coeff": 0.12,
-        "damage": 285,
+        "damage": 396,
         "damage_falloff": [
             [
                 396.0,
@@ -1639,616 +2549,8 @@
             0.6,
             0.22
         ],
-        "name": "XM177E1Bullet",
-        "parent": "M16A1Bullet",
-        "speed": 840.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 200,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "Type67GrenadeProjectile",
-        "parent": "ROStickGrenadeProjectile",
-        "speed": 20.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 489,
-        "damage_falloff": [
-            [
-                348.0,
-                0.46
-            ],
-            [
-                790.0,
-                0.12
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            348.0,
-            790.0
-        ],
-        "fo_y": [
-            0.46,
-            0.12
-        ],
-        "name": "Type56_1Bullet",
-        "parent": "Type56Bullet",
-        "speed": 735.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 489,
-        "damage_falloff": [
-            [
-                348.0,
-                0.46
-            ],
-            [
-                790.0,
-                0.12
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            348.0,
-            790.0
-        ],
-        "fo_y": [
-            0.46,
-            0.12
-        ],
-        "name": "Type56Bullet",
+        "name": "M16A1Bullet",
         "parent": "ROBullet",
-        "speed": 735.0
-    },
-    {
-        "ballistic_coeff": 0.113,
-        "damage": 122,
-        "damage_falloff": [
-            [
-                341.6,
-                0.8
-            ],
-            [
-                488.0,
-                0.36
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            341.6,
-            488.0
-        ],
-        "fo_y": [
-            0.8,
-            0.36
-        ],
-        "name": "TT33Bullet",
-        "parent": "ROBullet",
-        "speed": 442.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROEggGrenadeProjectile",
-        "parent": "ROStickGrenadeProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0.206,
-        "damage": 770,
-        "damage_falloff": [
-            [
-                415.0,
-                0.52
-            ],
-            [
-                830.0,
-                0.22
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            415.0,
-            830.0
-        ],
-        "fo_y": [
-            0.52,
-            0.22
-        ],
-        "name": "SVDScopedBullet",
-        "parent": "ROBullet",
-        "speed": 830.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 489,
-        "damage_falloff": [
-            [
-                348.0,
-                0.46
-            ],
-            [
-                790.0,
-                0.12
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            348.0,
-            790.0
-        ],
-        "fo_y": [
-            0.46,
-            0.12
-        ],
-        "name": "SKSBullet",
-        "parent": "ROBullet",
-        "speed": 735.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 0,
-        "damage_falloff": [
-            [
-                0.0,
-                0.0
-            ],
-            [
-                0.02,
-                1.0
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            0.0,
-            0.02
-        ],
-        "fo_y": [
-            0.0,
-            1.0
-        ],
-        "name": "RPDBulletTracer",
-        "parent": "ROBulletTracer",
-        "speed": 735.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 489,
-        "damage_falloff": [
-            [
-                348.0,
-                0.46
-            ],
-            [
-                790.0,
-                0.12
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            348.0,
-            790.0
-        ],
-        "fo_y": [
-            0.46,
-            0.12
-        ],
-        "name": "RPDBullet",
-        "parent": "ROBullet",
-        "speed": 735.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 500,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROSatchelChargeProjectile",
-        "parent": "ROThrowableExplosiveProjectile",
-        "speed": 8.0
-    },
-    {
-        "ballistic_coeff": 0.377,
-        "damage": 0,
-        "damage_falloff": [
-            [
-                0.0,
-                0.0
-            ],
-            [
-                0.02,
-                1.0
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0.0,
-            0.02
-        ],
-        "fo_y": [
-            0.0,
-            1.0
-        ],
-        "name": "RP46BulletTracer",
-        "parent": "DP28BulletTracer",
-        "speed": 840.0
-    },
-    {
-        "ballistic_coeff": 0.377,
-        "damage": 768,
-        "damage_falloff": [
-            [
-                432.5,
-                0.5
-            ],
-            [
-                865.0,
-                0.18
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            432.5,
-            865.0
-        ],
-        "fo_y": [
-            0.5,
-            0.18
-        ],
-        "name": "RP46Bullet",
-        "parent": "DP28Bullet",
-        "speed": 840.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROLaunchedGrenadeProjectile",
-        "parent": "ROBallisticProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            [
-                0.0,
-                0.0
-            ],
-            [
-                0.02,
-                1.0
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0.0,
-            0.02
-        ],
-        "fo_y": [
-            0.0,
-            1.0
-        ],
-        "name": "ROBulletTracer",
-        "parent": "ROBullet",
-        "speed": 70.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            [
-                0.0,
-                0.0
-            ],
-            [
-                0.02,
-                1.0
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0.0,
-            0.02
-        ],
-        "fo_y": [
-            0.0,
-            1.0
-        ],
-        "name": "ROBullet",
-        "parent": "ROBallisticProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROImpactGrenadeProjectile",
-        "parent": "ROLaunchedGrenadeProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROBombProjectile",
-        "parent": "ROProjectile",
-        "speed": 200.0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROBallisticProjectile",
-        "parent": "ROProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROSmokeStickGrenadeProjectile",
-        "parent": "ROStickGrenadeProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROAntiVehicleProjectile",
-        "parent": "ROBallisticProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROSmokeGrenadeProjectile",
-        "parent": "ROEggGrenadeProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROThrowableShapedChargeProjectile",
-        "parent": "ROAntiVehicleProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROThrowableExplosiveProjectile",
-        "parent": "ROProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROTankCannonProjectile",
-        "parent": "ROAntiVehicleProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "ROStickGrenadeProjectile",
-        "parent": "ROThrowableExplosiveProjectile",
-        "speed": 0
-    },
-    {
-        "ballistic_coeff": 0,
-        "damage": 500,
-        "damage_falloff": [
-            0,
-            0
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            0
-        ],
-        "name": "C4ExplosiveProjectile",
-        "parent": "RORemoteExplosiveProjectile",
-        "speed": 14.0
-    },
-    {
-        "ballistic_coeff": 0.14,
-        "damage": 104,
-        "damage_falloff": [
-            [
-                195.0,
-                1.0
-            ],
-            [
-                390.0,
-                0.55
-            ]
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            195.0,
-            390.0
-        ],
-        "fo_y": [
-            1.0,
-            0.55
-        ],
-        "name": "BHPBullet",
-        "parent": "ROBullet",
-        "speed": 350.0
-    },
-    {
-        "ballistic_coeff": 0.138,
-        "damage": 462,
-        "damage_falloff": [
-            [
-                348.0,
-                0.46
-            ],
-            [
-                790.0,
-                0.12
-            ]
-        ],
-        "drag_func": "RODF_G7",
-        "fo_x": [
-            348.0,
-            790.0
-        ],
-        "fo_y": [
-            0.46,
-            0.12
-        ],
-        "name": "AKMBullet",
-        "parent": "Type56Bullet",
-        "speed": 715.0
+        "speed": 990.0
     }
 ]

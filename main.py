@@ -238,6 +238,42 @@ str_to_df = {
 
 
 @dataclass
+class WeaponSimulation:
+    weapon: Weapon
+    velocity: np.ndarray = np.array([1, 0], dtype=np.float64)
+    location: np.ndarray = np.array([0, 1], dtype=np.float64)
+    bullet: Bullet = field(init=False)
+    sim: "BulletSimulation" = field(init=False)
+
+    def __post_init__(self):
+        self.bullet = self.weapon.get_bullet()
+        self.sim = BulletSimulation(
+            bullet=self.bullet,
+            velocity=self.velocity,
+            location=self.location,
+        )
+
+    @property
+    def flight_time(self) -> float:
+        return self.sim.flight_time
+
+    @property
+    def ef_func(self) -> Callable:
+        return self.sim.ef_func
+
+    def calc_drag_coeff(self, mach: float) -> float:
+        return self.sim.calc_drag_coeff(mach)
+
+    def simulate(self, delta_time: float):
+        self.sim.simulate(delta_time)
+        self.velocity = self.sim.velocity
+        self.location = self.sim.location
+
+    def calc_damage(self) -> float:
+        return self.sim.calc_damage()
+
+
+@dataclass
 class BulletSimulation:
     bullet: Bullet
     flight_time: float = 0
@@ -252,6 +288,8 @@ class BulletSimulation:
         v_normalized = self.velocity / np.linalg.norm(self.velocity)
         self.velocity = v_normalized * self.bullet.get_speed_uu()
         fo_x, fo_y = interp_dmg_falloff(self.bullet.get_damage_falloff())
+        print(self.bullet)
+        print(self.bullet.get_damage_falloff())
         self.ef_func = interp1d(
             fo_x, fo_y, kind="linear",
             fill_value=(fo_y[0], fo_y[-1]), bounds_error=False)
@@ -442,9 +480,15 @@ def process_file(path: Path
                  ) -> Optional[Union[BulletParseResult, WeaponParseResult]]:
     path = path.resolve()
     stem = path.stem
-    if is_weapon_str(stem):
+    class_str = ""
+    with path.open("r", encoding="latin-1") as f:
+        for line in f:
+            match = CLASS_PATTERN.match(line)
+            if match:
+                class_str = match.group(0)
+    if is_weapon_str(stem) or is_weapon_str(class_str):
         return handle_weapon_file(path, base_class_name=WEAPON.name)
-    elif is_bullet_str(stem):
+    elif is_bullet_str(stem) or is_bullet_str(class_str):
         return handle_bullet_file(path, base_class_name=PROJECTILE.name)
     else:
         return None
@@ -646,9 +690,16 @@ def main():
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
     start_loc = np.array([0.0, 100.0], dtype=np.float64)
-    sim = BulletSimulation(
-        # weapon=weapon_classes[],
-        bullet=bullet_classes["akmbullet"],
+    # sim = BulletSimulation(
+    #     bullet=bullet_classes["akmbullet"],
+    #     location=start_loc.copy(),
+    # )
+    # print(bullet_classes["IZH43Buckshot"])
+    print(weapon_classes["ROWeap_IZH43_Shotgun"])
+    # print(weapon_classes["ROWeap_IZH43_Shotgun"].get_bullet())
+    sim = WeaponSimulation(
+        # weapon=weapon_classes["ROWeap_M16A1_AssaultRifle"],
+        weapon=weapon_classes["ROWeap_IZH43_Shotgun"],
         location=start_loc.copy(),
     )
 
@@ -696,6 +747,8 @@ def main():
 
     plt.figure()
     plt.title(f"{bullet.name} trajectory")
+    plt.ylabel("y (m)")
+    plt.xlabel("x (m)")
     plt.plot(trajectory_x, trajectory_y)
 
     plt.figure()
@@ -716,12 +769,12 @@ def main():
     plt.ylabel("speed (m/s)")
     plt.plot(speed_curve_x, speed_curve_y)
 
-    plt.show()
-
     end = datetime.datetime.now()
     print(f"end: {end.isoformat()}")
     total_secs = round((end - begin).total_seconds(), 2)
     print(f"processing took {total_secs} seconds")
+
+    plt.show()
 
 
 if __name__ == "__main__":
