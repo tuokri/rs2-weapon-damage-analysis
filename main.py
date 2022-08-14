@@ -226,6 +226,8 @@ WEAPON = Weapon(
     name="Weapon",
     bullet=PROJECTILE,
     parent=None,
+    pre_fire_length=50,
+    instant_damage=0
 )
 WEAPON.parent = WEAPON
 
@@ -338,9 +340,21 @@ def handle_weapon_file(path: Path, base_class_name: str) -> Optional[WeaponParse
                 if match:
                     result.bullet_name = match.group(1)
                     continue
+            if result.instant_damage:
+                match = INSTANT_DAMAGE_PATTERN.match(line)
+                if match:
+                    result.instant_damage = int(match.group(1))
+                    continue
+            if result.pre_fire_length:
+                match = PRE_FIRE_PATTERN.match(line)
+                if match:
+                    result.pre_fire_length = int(match.group(1)) // 50
+                    continue
             if (result.class_name
                     and result.bullet_name
-                    and result.parent_name):
+                    and result.parent_name
+                    and result.instant_damage != -1
+                    and result.pre_fire_length != -1):
                 break
     return result
 
@@ -559,6 +573,8 @@ def main():
             name=class_name,
             bullet=bullet,
             parent=parent,
+            instant_damage=weapon_result.instant_damage,
+            pre_fire_length=weapon_result.pre_fire_length,
         )
 
     print(f"{resolved_early} Weapon classes resolved early")
@@ -619,6 +635,8 @@ def main():
             "name": w.name,
             "parent": w.parent.name,
             "bullet": w.get_bullet().name,
+            "instant_damage": w.get_instant_damage(),
+            "pre_fire_length": w.get_pre_fire_length(),
         }
         for w in weapon_classes.values()
     ]
@@ -629,6 +647,7 @@ def main():
 
     start_loc = np.array([0.0, 100.0], dtype=np.float64)
     sim = BulletSimulation(
+        # weapon=weapon_classes[],
         bullet=bullet_classes["akmbullet"],
         location=start_loc.copy(),
     )
