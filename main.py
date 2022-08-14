@@ -12,9 +12,9 @@ from typing import Iterable
 from typing import MutableMapping
 from typing import Optional
 from typing import TextIO
+from typing import Tuple
 from typing import Union
 
-import matplotlib.pyplot as plt
 import numpy as np
 from requests.structures import CaseInsensitiveDict
 from scipy.interpolate import interp1d
@@ -118,10 +118,10 @@ class Bullet(ClassBase):
 
     def get_damage_falloff(self) -> np.ndarray:
         dmg_fo = self.damage_falloff
-        if dmg_fo.any():
+        if (dmg_fo > 0).any():
             return dmg_fo
         parent = self.parent
-        while not dmg_fo.any():
+        while not (dmg_fo > 0).any():
             dmg_fo = parent.damage_falloff
             parent = parent.parent
             if parent is parent.parent:
@@ -237,7 +237,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                 if match:
                     result.speed = float(match.group(1)) / 50
                     continue
-            if not result.damage_falloff.any():
+            if not (result.damage_falloff > 0).any():
                 match = FALLOFF_PATTERN.match(line)
                 if match:
                     result.damage_falloff = parse_interp_curve(
@@ -246,7 +246,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
             if (result.class_name
                     and result.speed != math.inf
                     and result.damage > 0
-                    and result.damage_falloff.any()):
+                    and (result.damage_falloff > 0).any()):
                 break
     return result
 
@@ -294,6 +294,24 @@ def resolve_parent(
     parent_name = parse_map[obj.name].parent_name
     obj.parent = class_map.get(parent_name)
     return obj.parent is not None
+
+
+def interp_dmg_falloff(arr: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Return damage falloff curve x and y sub-arrays with
+    zero damage speed data point added added via interpolation.
+    """
+    harr = np.hsplit(arr, 2)
+    x = harr[0].ravel()
+    y = harr[1].ravel()
+    # f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
+    try:
+        f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    except ValueError:
+        return x, y
+    zero_dmg_speed = f_ytox(1)
+    x = np.insert(x, 0, zero_dmg_speed)
+    y = np.insert(y, 0, 1)
+    return x, y
 
 
 def main():
@@ -415,16 +433,21 @@ def main():
     print(f"{len(weapon_classes)} total Weapon classes")
 
     with open("bullets.json", "w") as f:
-        bullets = [
-            {
-                "name": b.name,
-                "parent": b.parent.name,
-                "speed": b.get_speed(),
-                "damage": b.get_damage(),
-                "damage_falloff": b.get_damage_falloff().tolist(),
+        bullets = []
+        for bullet in bullet_classes.values():
+            b_data = {
+                "name": bullet.name,
+                "parent": bullet.parent.name,
+                "speed": bullet.get_speed(),
+                "damage": bullet.get_damage(),
+
             }
-            for b in bullet_classes.values()
-        ]
+            dmg_fo = bullet.get_damage_falloff()
+            fo_x, fo_y = interp_dmg_falloff(dmg_fo)
+            b_data["damage_falloff"] = dmg_fo.tolist()
+            b_data["fo_x"] = fo_x.tolist()
+            b_data["fo_y"] = fo_y.tolist()
+            bullets.append(b_data)
         f.write(json.dumps(bullets, sort_keys=True, indent=4))
 
     with open("weapons.json", "w") as f:
@@ -444,8 +467,8 @@ def main():
     print(f"processing took {total_secs} seconds")
 
     np.set_printoptions(suppress=True)
-
-    # bullet = bullet_classes["L1A1Bullet"]
+    bullet = bullet_classes["L1A1Bullet"]
+    print(interp_dmg_falloff(bullet.get_damage_falloff()))
     # speed = bullet.speed
     # # print(speed)
     # harr = np.hsplit(bullet.damage_falloff, 2)
