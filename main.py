@@ -448,7 +448,7 @@ def main():
             b_data["fo_x"] = fo_x.tolist()
             b_data["fo_y"] = fo_y.tolist()
             bullets.append(b_data)
-        f.write(json.dumps(bullets, sort_keys=True, indent=4))
+        f.write(json.dumps(bullets))
 
     with open("weapons.json", "w") as f:
         weapons = [
@@ -459,7 +459,7 @@ def main():
             }
             for w in weapon_classes.values()
         ]
-        f.write(json.dumps(weapons, sort_keys=True, indent=4))
+        f.write(json.dumps(weapons))
 
     end = datetime.datetime.now()
     print(f"end: {end.isoformat()}")
