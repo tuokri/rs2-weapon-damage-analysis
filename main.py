@@ -6,8 +6,11 @@ from concurrent import futures
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from dataclasses import field
+from enum import Enum
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from typing import Callable
 from typing import Iterable
 from typing import MutableMapping
 from typing import Optional
@@ -15,27 +18,54 @@ from typing import TextIO
 from typing import Tuple
 from typing import Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 from requests.structures import CaseInsensitiveDict
 from scipy.interpolate import interp1d
 
+from drag import drag_g1
+from drag import drag_g7
+
+# TODO: take as argument?
 SRC_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development"
 
+SCALE_FACTOR_INVERSE = 0.065618
+SCALE_FACTOR = 15.24
+
+DRAG_FUNC_PATTERN = re.compile(
+    r"^\s*DragFunction\s*=\s*([\w\d_]+).*$",
+    flags=re.IGNORECASE,
+)
+BALLISTIC_COEFF_PATTERN = re.compile(
+    r"^\s*BallisticCoefficient\s*=\s*([\d.]+).*$",
+    flags=re.IGNORECASE,
+)
 SPEED_PATTERN = re.compile(
     r"^\s*Speed\s*=\s*(\d+).*$",
-    flags=re.IGNORECASE)
+    flags=re.IGNORECASE,
+)
 DAMAGE_PATTERN = re.compile(
     r"^\s*Damage\s*=\s*(\d+).*$",
-    flags=re.IGNORECASE)
+    flags=re.IGNORECASE,
+)
 FALLOFF_PATTERN = re.compile(
     r"^\s*VelocityDamageFalloffCurve\s*=\s*\(Points\s*=\s*(\(.*\))\).*$",
-    flags=re.IGNORECASE)
+    flags=re.IGNORECASE,
+)
 CLASS_PATTERN = re.compile(
     r"^\s*class\s+([\w]+)\s+extends\s+([\w\d_]+)\s*.*[;\n\s]+$",
-    flags=re.IGNORECASE)
+    flags=re.IGNORECASE,
+)
 WEAPON_BULLET_PATTERN = re.compile(
     r"^\s*WeaponProjectiles\(\d+\)\s*=\s*class\s*'(.*)'.*$",
-    flags=re.IGNORECASE)
+    flags=re.IGNORECASE,
+)
+
+
+class DragFunction(Enum):
+    Invalid = ""
+    G1 = "RODF_G1"
+    G7 = "RODF_G7"
 
 
 @dataclass
@@ -54,6 +84,8 @@ class BulletParseResult(ParseResult):
     speed: float = math.inf
     damage: int = -1
     damage_falloff: np.ndarray = np.array([0, 0])
+    drag_func: DragFunction = DragFunction.Invalid
+    ballistic_coeff: float = math.inf
 
 
 @dataclass
@@ -61,6 +93,10 @@ class ClassBase:
     name: str = field(hash=True)
     parent: Optional["ClassBase"]
 
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    @lru_cache(maxsize=128, typed=True)
     def get_attr(self,
                  attr_name: str,
                  invalid_value: Optional[Any] = None) -> Any:
@@ -109,9 +145,19 @@ class Bullet(ClassBase):
     speed: float
     damage: int
     damage_falloff: np.ndarray
+    drag_func: DragFunction
+    ballistic_coeff: float
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
     def get_speed(self) -> float:
+        """Speed (muzzle velocity) in m/s."""
         return self.get_attr("speed", invalid_value=math.inf)
+
+    def get_speed_uu(self) -> float:
+        """Speed Unreal Units per second (UU/s)."""
+        return self.get_speed() * 50
 
     def get_damage(self) -> int:
         return self.get_attr("damage", invalid_value=-1)
@@ -128,11 +174,20 @@ class Bullet(ClassBase):
                 break
         return dmg_fo
 
+    def get_drag_func(self) -> DragFunction:
+        return self.get_attr("drag_func", invalid_value=DragFunction.Invalid)
+
+    def get_ballistic_coeff(self) -> float:
+        return self.get_attr("ballistic_coeff", invalid_value=math.inf)
+
 
 @dataclass
 class Weapon(ClassBase):
     parent: Optional["Weapon"]
     bullet: Optional[Bullet]
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
     def get_bullet(self) -> Bullet:
         return self.get_attr("bullet")
@@ -143,6 +198,8 @@ PROJECTILE = Bullet(
     damage=0,
     speed=0,
     damage_falloff=np.array([0, 1]),
+    ballistic_coeff=0,
+    drag_func=DragFunction.G1,
     parent=None,
 )
 PROJECTILE.parent = PROJECTILE
@@ -152,6 +209,65 @@ WEAPON = Weapon(
     parent=None,
 )
 WEAPON.parent = WEAPON
+
+str_to_df = {
+    DragFunction.G1: drag_g1,
+    DragFunction.G7: drag_g7,
+}
+
+
+@dataclass
+class BulletSimulation:
+    bullet: Bullet
+    flight_time: float = 0
+    bc_inverse: float = 0
+    velocity: np.ndarray = np.array([1, 0], dtype=np.float64)
+    location: np.ndarray = np.array([0, 1], dtype=np.float64)
+    ef_func: Callable = field(init=False)
+
+    def __post_init__(self):
+        self.bc_inverse = self.bullet.get_ballistic_coeff() / 1
+        # Initial velocity unit vector * muzzle speed.
+        v_normalized = self.velocity / np.linalg.norm(self.velocity)
+        self.velocity = v_normalized * self.bullet.get_speed_uu()
+        fo_x, fo_y = interp_dmg_falloff(self.bullet.get_damage_falloff())
+        self.ef_func = interp1d(
+            fo_x, fo_y, kind="linear", fill_value="extrapolate")
+
+    def calc_drag_coeff(self, mach: float) -> float:
+        return str_to_df[self.bullet.get_drag_func()](mach)
+
+    def simulate(self, delta_time: float):
+        if delta_time <= 0:
+            raise RuntimeError("simulation delta time must be >= 0")
+        self.flight_time += delta_time
+        if (self.velocity == 0).all():
+            return
+        # FLOAT V = Velocity.Size() * UCONST_ScaleFactorInverse.
+        v_size = np.linalg.norm(self.velocity)
+        v = v_size * SCALE_FACTOR_INVERSE
+        mach = v * 0.0008958245617
+        cd = self.calc_drag_coeff(mach)
+        # FVector AddVelocity = 0.00020874137882624 * (CD * BCInverse)
+        # * Square(V) * UCONST_ScaleFactor * (-1 * VelocityNormal * DeltaTime);
+        self.velocity += (
+                0.00020874137882624
+                * (cd * self.bc_inverse) * np.square(v)
+                * SCALE_FACTOR * (-1 * (self.velocity / v_size)))
+        # FLOAT ZAcceleration = 490.3325 * DeltaTime; // 490.3325 UU/S = 9.806 65 M/S
+        self.velocity[1] -= (490.3325 * delta_time)
+        self.location += (self.velocity * delta_time)
+
+    def calc_damage(self) -> float:
+        v_size = np.linalg.norm(self.velocity) / 50  # m/s.
+        print("speed =", v_size, "m/s")
+        power_left = v_size / self.bullet.get_speed()
+        print("power_left =", power_left * 100, "%")
+        damage = self.bullet.get_damage() * power_left
+        energy_transfer = self.ef_func(v_size)
+        print("energy_transfer=", energy_transfer)
+        damage *= energy_transfer
+        return damage
 
 
 def is_comment(line: str) -> bool:
@@ -243,18 +359,30 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                     result.damage_falloff = parse_interp_curve(
                         match.group(1))
                     continue
+            if result.ballistic_coeff == math.inf:
+                match = BALLISTIC_COEFF_PATTERN.match(line)
+                if match:
+                    result.ballistic_coeff = float(match.group(1))
+                    continue
+            if result.drag_func == DragFunction.Invalid:
+                match = DRAG_FUNC_PATTERN.match(line)
+                if match:
+                    result.drag_func = DragFunction(match.group(1))
+                    continue
             if (result.class_name
                     and result.speed != math.inf
                     and result.damage > 0
-                    and (result.damage_falloff > 0).any()):
+                    and (result.damage_falloff > 0).any()
+                    and result.ballistic_coeff != math.inf
+                    and result.drag_func != DragFunction.Invalid):
                 break
     return result
 
 
 def parse_interp_curve(curve: str) -> np.ndarray:
-    """Velocity damage falloff curve consists of (x,y)
-    pairs, where x is remaining projectile speed in m/s
-    and y is the damage scaler at that speed.
+    """The parsed velocity damage falloff curve consists
+    of (x,y) pairs, where x is remaining projectile
+    speed in m/s and y is the damage scaler at that speed.
     """
     values = []
     curve = re.sub(r"\s", "", curve)
@@ -356,6 +484,8 @@ def main():
             speed=bullet_result.speed,
             damage=bullet_result.damage,
             damage_falloff=bullet_result.damage_falloff,
+            drag_func=bullet_result.drag_func,
+            ballistic_coeff=bullet_result.ballistic_coeff,
         )
 
     print(f"{resolved_early} Bullet classes resolved early")
@@ -380,7 +510,7 @@ def main():
         del bullet_classes[td]
 
     if not all(b.is_child_of(PROJECTILE) for b in bullet_classes.values()):
-        raise SystemExit("got invalid Bullet classes")
+        raise RuntimeError("got invalid Bullet classes")
 
     print(f"{len(bullet_classes)} total Bullet classes")
 
@@ -432,63 +562,100 @@ def main():
 
     print(f"{len(weapon_classes)} total Weapon classes")
 
+    bullets_data = []
+    for bullet in bullet_classes.values():
+        b_data = {
+            "name": bullet.name,
+            "parent": bullet.parent.name,
+            "speed": bullet.get_speed(),
+            "damage": bullet.get_damage(),
+            "drag_func": bullet.get_drag_func().value,
+            "ballistic_coeff": bullet.get_ballistic_coeff(),
+        }
+        dmg_fo = bullet.get_damage_falloff()
+        fo_x, fo_y = interp_dmg_falloff(dmg_fo)
+        b_data["damage_falloff"] = dmg_fo.tolist()
+        b_data["fo_x"] = fo_x.tolist()
+        b_data["fo_y"] = fo_y.tolist()
+        bullets_data.append(b_data)
     with open("bullets.json", "w") as f:
-        bullets = []
-        for bullet in bullet_classes.values():
-            b_data = {
-                "name": bullet.name,
-                "parent": bullet.parent.name,
-                "speed": bullet.get_speed(),
-                "damage": bullet.get_damage(),
+        f.write(json.dumps(bullets_data))
+    with open("bullets_readable.json", "w") as f:
+        f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
 
-            }
-            dmg_fo = bullet.get_damage_falloff()
-            fo_x, fo_y = interp_dmg_falloff(dmg_fo)
-            b_data["damage_falloff"] = dmg_fo.tolist()
-            b_data["fo_x"] = fo_x.tolist()
-            b_data["fo_y"] = fo_y.tolist()
-            bullets.append(b_data)
-        f.write(json.dumps(bullets))
-
+    weapons_data = [
+        {
+            "name": w.name,
+            "parent": w.parent.name,
+            "bullet": w.get_bullet().name,
+        }
+        for w in weapon_classes.values()
+    ]
     with open("weapons.json", "w") as f:
-        weapons = [
-            {
-                "name": w.name,
-                "parent": w.parent.name,
-                "bullet": w.get_bullet().name,
-            }
-            for w in weapon_classes.values()
-        ]
-        f.write(json.dumps(weapons))
+        f.write(json.dumps(weapons_data))
+    with open("weapons_readable.json.json", "w") as f:
+        f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
+
+    np.set_printoptions(suppress=True)
+    bullet = bullet_classes["AKMBullet"]
+    x, y = interp_dmg_falloff(bullet.get_damage_falloff())
+    speed = bullet.get_speed()
+    f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
+    zero_dmg_speed = f_ytox(1)
+    plt.plot(x, y, marker="o")
+    plt.axvline(speed)
+    plt.axvline(zero_dmg_speed)
+    plt.axvline(0)
+    plt.text(speed, 0.5, str(speed))
+    plt.title(f"{bullet.name} damage falloff curve")
+
+    start_loc = np.array([0.0, 100.0], dtype=np.float64)
+    sim = BulletSimulation(
+        bullet=bullet_classes["AKMBullet"],
+        location=start_loc.copy(),
+    )
+    delta_time = 0.5
+    trajectory_x = []
+    trajectory_y = []
+    dmg_curve_x = []
+    dmg_curve_y = []
+    speed_curve_x = []
+    speed_curve_y = []
+    while sim.flight_time < 10:
+        sim.simulate(delta_time)
+        flight_time = sim.flight_time
+        print("flight_time =", flight_time)
+        dmg = sim.calc_damage()
+        print("damage =", dmg)
+        dmg_curve_x.append(flight_time)
+        dmg_curve_y.append(dmg)
+        loc = sim.location / 50
+        trajectory_x.append(loc[0])
+        trajectory_y.append(loc[1])
+        speed_curve_x.append(flight_time)
+        speed_curve_y.append(np.linalg.norm(sim.velocity) / 50)
+
+    print("distance traveled: ", np.linalg.norm(sim.location - start_loc) / 50, " meters")
+
+    plt.figure()
+    plt.title(f"{bullet.name} trajectory")
+    plt.plot(trajectory_x, trajectory_y)
+
+    plt.figure()
+    plt.title(f"{bullet.name} damage over time")
+    plt.plot(dmg_curve_x, dmg_curve_y)
+
+    plt.figure()
+    plt.title(f"{bullet.name} speed over time")
+    plt.plot(speed_curve_x, speed_curve_y)
+
+    plt.show()
 
     end = datetime.datetime.now()
     print(f"end: {end.isoformat()}")
     total_secs = round((end - begin).total_seconds(), 2)
     print(f"processing took {total_secs} seconds")
-
-    np.set_printoptions(suppress=True)
-    bullet = bullet_classes["L1A1Bullet"]
-    print(interp_dmg_falloff(bullet.get_damage_falloff()))
-    # speed = bullet.speed
-    # # print(speed)
-    # harr = np.hsplit(bullet.damage_falloff, 2)
-    # x = harr[0].ravel()
-    # y = harr[1].ravel()
-    # f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
-    # f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    # # print(f_xtoy(0))
-    # # print(f_ytox(1))
-    # zero_dmg_speed = f_ytox(1)
-    # x = np.insert(x, 0, zero_dmg_speed)
-    # y = np.insert(y, 0, 1)
-    # # print(x)
-    # # print(y)
-    # plt.plot(x, y, marker="o")
-    # plt.axvline(speed)
-    # plt.axvline(zero_dmg_speed)
-    # plt.axvline(0)
-    # plt.text(speed, 0.5, str(speed))
-    # plt.show()
 
 
 if __name__ == "__main__":
