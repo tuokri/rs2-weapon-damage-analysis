@@ -593,7 +593,7 @@ def main():
     ]
     with open("weapons.json", "w") as f:
         f.write(json.dumps(weapons_data))
-    with open("weapons_readable.json.json", "w") as f:
+    with open("weapons_readable.json", "w") as f:
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
     np.set_printoptions(suppress=True)
