@@ -11,6 +11,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 from typing import Callable
+from typing import Generator
 from typing import Iterable
 from typing import MutableMapping
 from typing import Optional
@@ -32,6 +33,14 @@ SRC_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Develop
 SCALE_FACTOR_INVERSE = 0.065618
 SCALE_FACTOR = 15.24
 
+INSTANT_DAMAGE_PATTERN = re.compile(
+    r"^\s*InstantHitDamage\(\d+\)\s*=\s*(\d+).*$",
+    flags=re.IGNORECASE,
+)
+PRE_FIRE_PATTERN = re.compile(
+    r"^\s*PreFireTraceLength\s*=\s*(\d+).*$",
+    flags=re.IGNORECASE,
+)
 DRAG_FUNC_PATTERN = re.compile(
     r"^\s*DragFunction\s*=\s*([\w\d_]+).*$",
     flags=re.IGNORECASE,
@@ -77,6 +86,8 @@ class ParseResult:
 @dataclass
 class WeaponParseResult(ParseResult):
     bullet_name: str = ""
+    instant_damage: int = -1
+    pre_fire_length: int = -1
 
 
 @dataclass
@@ -185,12 +196,20 @@ class Bullet(ClassBase):
 class Weapon(ClassBase):
     parent: Optional["Weapon"]
     bullet: Optional[Bullet]
+    instant_damage: int
+    pre_fire_length: int
 
     def __hash__(self) -> int:
         return super().__hash__()
 
     def get_bullet(self) -> Bullet:
         return self.get_attr("bullet")
+
+    def get_instant_damage(self) -> Bullet:
+        return self.get_attr("instant_damage", invalid_value=-1)
+
+    def get_pre_fire_length(self) -> Bullet:
+        return self.get_attr("pre_fire_length", invalid_value=-1)
 
 
 PROJECTILE = Bullet(
@@ -232,13 +251,15 @@ class BulletSimulation:
         self.velocity = v_normalized * self.bullet.get_speed_uu()
         fo_x, fo_y = interp_dmg_falloff(self.bullet.get_damage_falloff())
         self.ef_func = interp1d(
-            fo_x, fo_y, kind="linear", fill_value="extrapolate")
+            fo_x, fo_y, kind="linear",
+            fill_value=(fo_y[0], fo_y[-1]), bounds_error=False)
 
     def calc_drag_coeff(self, mach: float) -> float:
         return str_to_df[self.bullet.get_drag_func()](mach)
 
     def simulate(self, delta_time: float):
-        if delta_time <= 0:
+        print("delta_time =", delta_time)
+        if delta_time < 0:
             raise RuntimeError("simulation delta time must be >= 0")
         self.flight_time += delta_time
         if (self.velocity == 0).all():
@@ -432,14 +453,24 @@ def interp_dmg_falloff(arr: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     x = harr[0].ravel()
     y = harr[1].ravel()
     # f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
-    try:
-        f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    except ValueError:
-        return x, y
-    zero_dmg_speed = f_ytox(1)
-    x = np.insert(x, 0, zero_dmg_speed)
-    y = np.insert(y, 0, 1)
+    # try:
+    #     f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    # except ValueError:
+    #     return x, y
+    # zero_dmg_speed = f_ytox(1)
+    # x = np.insert(x, 0, zero_dmg_speed)
+    # y = np.insert(y, 0, 1)
     return x, y
+
+
+def gen_delta_time(step: float = 0.01) -> Generator[float, None, None]:
+    count = 0
+    while True:
+        if count == 0:
+            count += 1
+            yield 0
+        else:
+            yield step
 
 
 def main():
@@ -596,13 +627,19 @@ def main():
     with open("weapons_readable.json", "w") as f:
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
+    start_loc = np.array([0.0, 100.0], dtype=np.float64)
+    sim = BulletSimulation(
+        bullet=bullet_classes["akmbullet"],
+        location=start_loc.copy(),
+    )
+
     np.set_printoptions(suppress=True)
-    bullet = bullet_classes["AKMBullet"]
+    bullet = sim.bullet
     x, y = interp_dmg_falloff(bullet.get_damage_falloff())
     speed = bullet.get_speed()
     f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
-    zero_dmg_speed = f_ytox(1)
+    f_xtoy = sim.ef_func
+    zero_dmg_speed = f_ytox(1.0)
     plt.plot(x, y, marker="o")
     plt.axvline(speed)
     plt.axvline(zero_dmg_speed)
@@ -610,20 +647,16 @@ def main():
     plt.text(speed, 0.5, str(speed))
     plt.title(f"{bullet.name} damage falloff curve")
 
-    start_loc = np.array([0.0, 100.0], dtype=np.float64)
-    sim = BulletSimulation(
-        bullet=bullet_classes["AKMBullet"],
-        location=start_loc.copy(),
-    )
-    delta_time = 0.5
     trajectory_x = []
     trajectory_y = []
     dmg_curve_x = []
     dmg_curve_y = []
+    dmg_curve_distance_x = []
     speed_curve_x = []
     speed_curve_y = []
-    while sim.flight_time < 10:
-        sim.simulate(delta_time)
+    dt_generator = gen_delta_time(0.01)
+    while sim.flight_time < 5:
+        sim.simulate(next(dt_generator))
         flight_time = sim.flight_time
         print("flight_time =", flight_time)
         dmg = sim.calc_damage()
@@ -631,12 +664,16 @@ def main():
         dmg_curve_x.append(flight_time)
         dmg_curve_y.append(dmg)
         loc = sim.location / 50
+        velocity = np.linalg.norm(sim.velocity) / 50
+        dmg_curve_distance_x.append(velocity * flight_time)
         trajectory_x.append(loc[0])
         trajectory_y.append(loc[1])
         speed_curve_x.append(flight_time)
-        speed_curve_y.append(np.linalg.norm(sim.velocity) / 50)
+        speed_curve_y.append(velocity)
 
-    print("distance traveled: ", np.linalg.norm(sim.location - start_loc) / 50, " meters")
+    print("distance traveled: ",
+          np.linalg.norm(sim.location - start_loc) / 50,
+          " meters")
 
     plt.figure()
     plt.title(f"{bullet.name} trajectory")
@@ -644,10 +681,20 @@ def main():
 
     plt.figure()
     plt.title(f"{bullet.name} damage over time")
+    plt.xlabel("flight time (s)")
+    plt.ylabel("damage")
     plt.plot(dmg_curve_x, dmg_curve_y)
 
     plt.figure()
+    plt.title(f"{bullet.name} damage over distance")
+    plt.xlabel("distance (m)")
+    plt.ylabel("damage")
+    plt.plot(dmg_curve_distance_x, dmg_curve_y)
+
+    plt.figure()
     plt.title(f"{bullet.name} speed over time")
+    plt.xlabel("flight time (s)")
+    plt.ylabel("speed (m/s)")
     plt.plot(speed_curve_x, speed_curve_y)
 
     plt.show()
