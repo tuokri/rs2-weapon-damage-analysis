@@ -1,4 +1,5 @@
 import datetime
+import json
 import math
 import re
 from concurrent import futures
@@ -6,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from dataclasses import field
 from pathlib import Path
+from typing import Any
 from typing import Iterable
 from typing import MutableMapping
 from typing import Optional
@@ -59,6 +61,34 @@ class ClassBase:
     name: str = field(hash=True)
     parent: Optional["ClassBase"]
 
+    def get_attr(self,
+                 attr_name: str,
+                 invalid_value: Optional[Any] = None) -> Any:
+        if invalid_value is not None:
+            attr = getattr(self, attr_name)
+            if attr != invalid_value:
+                return attr
+            parent = self.parent
+            while attr == invalid_value:
+                attr = getattr(parent, attr_name)
+                parent = parent.parent
+                if parent is parent.parent:
+                    attr = getattr(parent.parent, attr_name)
+                    break
+            return attr
+        else:
+            attr = getattr(self, attr_name)
+            if attr:
+                return attr
+            parent = self.parent
+            while not attr:
+                attr = getattr(parent, attr_name)
+                parent = parent.parent
+                if parent is parent.parent:
+                    attr = getattr(parent.parent, attr_name)
+                    break
+            return attr
+
     def is_child_of(self, obj: "ClassBase") -> bool:
         if not self.parent:
             return False
@@ -71,14 +101,6 @@ class ClassBase:
         if not next_parent:
             return False
         return next_parent.is_child_of(obj)
-        # while parent:
-        #     next_parent = parent.parent
-        #     if next_parent.name == obj.name:
-        #         return True
-        #     # Found base class.
-        #     elif next_parent.name == parent.name:
-        #         return False
-        # return False
 
 
 @dataclass
@@ -88,18 +110,39 @@ class Bullet(ClassBase):
     damage: int
     damage_falloff: np.ndarray
 
+    def get_speed(self) -> float:
+        return self.get_attr("speed", invalid_value=math.inf)
+
+    def get_damage(self) -> int:
+        return self.get_attr("damage", invalid_value=-1)
+
+    def get_damage_falloff(self) -> np.ndarray:
+        dmg_fo = self.damage_falloff
+        if dmg_fo.any():
+            return dmg_fo
+        parent = self.parent
+        while not dmg_fo.any():
+            dmg_fo = parent.damage_falloff
+            parent = parent.parent
+            if parent is parent.parent:
+                break
+        return dmg_fo
+
 
 @dataclass
 class Weapon(ClassBase):
     parent: Optional["Weapon"]
     bullet: Optional[Bullet]
 
+    def get_bullet(self) -> Bullet:
+        return self.get_attr("bullet")
+
 
 PROJECTILE = Bullet(
     name="Projectile",
     damage=0,
-    speed=math.inf,
-    damage_falloff=np.array([0, 0]),
+    speed=0,
+    damage_falloff=np.array([0, 1]),
     parent=None,
 )
 PROJECTILE.parent = PROJECTILE
@@ -194,7 +237,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                 if match:
                     result.speed = float(match.group(1)) / 50
                     continue
-            if not result.damage_falloff.all():
+            if not result.damage_falloff.any():
                 match = FALLOFF_PATTERN.match(line)
                 if match:
                     result.damage_falloff = parse_interp_curve(
@@ -203,7 +246,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
             if (result.class_name
                     and result.speed != math.inf
                     and result.damage > 0
-                    and result.damage_falloff.all()):
+                    and result.damage_falloff.any()):
                 break
     return result
 
@@ -235,8 +278,6 @@ def is_bullet_str(s: str) -> bool:
 def process_file(path: Path
                  ) -> Optional[Union[BulletParseResult, WeaponParseResult]]:
     path = path.resolve()
-    # print(f"processing: '{path}'")
-    # print(f"class is: '{path.stem}'")
     stem = path.stem
     if is_weapon_str(stem):
         return handle_weapon_file(path, base_class_name=WEAPON.name)
@@ -285,6 +326,8 @@ def main():
     bullet_classes: MutableMapping[str, Bullet] = CaseInsensitiveDict()
     bullet_classes[PROJECTILE.name] = PROJECTILE
     for class_name, bullet_result in bullet_results.items():
+        if class_name == PROJECTILE.name:
+            continue
         # May or may not be available, depending on the order.
         parent = bullet_classes.get(bullet_result.parent_name)
         if parent:
@@ -297,7 +340,7 @@ def main():
             damage_falloff=bullet_result.damage_falloff,
         )
 
-    print(f"{resolved_early} bullet classes resolved early")
+    print(f"{resolved_early} Bullet classes resolved early")
     print(f"{len(bullet_results) - resolved_early} still unresolved")
 
     to_del = set()
@@ -314,28 +357,32 @@ def main():
                 break
             obj = obj.parent
 
+    print(f"discarding {len(to_del)} invalid Bullet classes")
     for td in to_del:
         del bullet_classes[td]
 
     if not all(b.is_child_of(PROJECTILE) for b in bullet_classes.values()):
         raise SystemExit("got invalid Bullet classes")
 
-    print(f"{len(bullet_classes)} total bullet classes")
+    print(f"{len(bullet_classes)} total Bullet classes")
 
     resolved_early = 0
     weapon_classes: MutableMapping[str, Weapon] = CaseInsensitiveDict()
     weapon_classes[WEAPON.name] = WEAPON
     for class_name, weapon_result in weapon_results.items():
+        if class_name == WEAPON.name:
+            continue
         parent = weapon_classes.get(weapon_result.parent_name)
-        if parent:
+        bullet = bullet_classes.get(weapon_result.bullet_name)
+        if parent and bullet:
             resolved_early += 1
         weapon_classes[class_name] = Weapon(
             name=class_name,
-            bullet=bullet_classes.get(weapon_result.bullet_name),
+            bullet=bullet,
             parent=parent,
         )
 
-    print(f"{resolved_early} weapon classes resolved early")
+    print(f"{resolved_early} Weapon classes resolved early")
     print(f"{len(weapon_results) - resolved_early} still unresolved")
 
     to_del.clear()
@@ -352,13 +399,44 @@ def main():
                 break
             obj = obj.parent
 
+    print(f"discarding {len(to_del)} invalid Weapon classes")
     for td in to_del:
         del weapon_classes[td]
 
     if not all(w.is_child_of(WEAPON) for w in weapon_classes.values()):
-        raise SystemExit("got invalid Weapon classes")
+        raise RuntimeError("got invalid Weapon classes")
 
-    print(f"{len(weapon_classes)} total weapon classes")
+    if not all(w.get_bullet() for w in weapon_classes.values()):
+        for w in weapon_classes.values():
+            if not w.get_bullet():
+                print(w)
+        raise RuntimeError("got Weapon classes without Bullet")
+
+    print(f"{len(weapon_classes)} total Weapon classes")
+
+    with open("bullets.json", "w") as f:
+        bullets = [
+            {
+                "name": b.name,
+                "parent": b.parent.name,
+                "speed": b.get_speed(),
+                "damage": b.get_damage(),
+                "damage_falloff": b.get_damage_falloff().tolist(),
+            }
+            for b in bullet_classes.values()
+        ]
+        f.write(json.dumps(bullets, sort_keys=True, indent=4))
+
+    with open("weapons.json", "w") as f:
+        weapons = [
+            {
+                "name": w.name,
+                "parent": w.parent.name,
+                "bullet": w.get_bullet().name,
+            }
+            for w in weapon_classes.values()
+        ]
+        f.write(json.dumps(weapons, sort_keys=True, indent=4))
 
     end = datetime.datetime.now()
     print(f"end: {end.isoformat()}")
@@ -367,27 +445,27 @@ def main():
 
     np.set_printoptions(suppress=True)
 
-    bullet = bullet_classes["L1A1Bullet"]
-    speed = bullet.speed
-    print(speed)
-    harr = np.hsplit(bullet.damage_falloff, 2)
-    x = harr[0].ravel()
-    y = harr[1].ravel()
-    f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
-    f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    print(f_xtoy(0))
-    print(f_ytox(1))
-    zero_dmg_speed = f_ytox(1)
-    x = np.insert(x, 0, zero_dmg_speed)
-    y = np.insert(y, 0, 1)
-    print(x)
-    print(y)
-    plt.plot(x, y, marker="o")
-    plt.axvline(speed)
-    plt.axvline(zero_dmg_speed)
-    plt.axvline(0)
-    plt.text(speed, 0.5, str(speed))
-    plt.show()
+    # bullet = bullet_classes["L1A1Bullet"]
+    # speed = bullet.speed
+    # # print(speed)
+    # harr = np.hsplit(bullet.damage_falloff, 2)
+    # x = harr[0].ravel()
+    # y = harr[1].ravel()
+    # f_xtoy = interp1d(x, y, fill_value="extrapolate", kind="linear")
+    # f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    # # print(f_xtoy(0))
+    # # print(f_ytox(1))
+    # zero_dmg_speed = f_ytox(1)
+    # x = np.insert(x, 0, zero_dmg_speed)
+    # y = np.insert(y, 0, 1)
+    # # print(x)
+    # # print(y)
+    # plt.plot(x, y, marker="o")
+    # plt.axvline(speed)
+    # plt.axvline(zero_dmg_speed)
+    # plt.axvline(0)
+    # plt.text(speed, 0.5, str(speed))
+    # plt.show()
 
 
 if __name__ == "__main__":
