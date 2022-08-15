@@ -10,7 +10,6 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
 from requests.structures import CaseInsensitiveDict
-from scipy.interpolate import interp1d
 
 from dataio import process_file
 from dataio import resolve_parent
