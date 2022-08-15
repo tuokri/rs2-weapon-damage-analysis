@@ -177,8 +177,11 @@ def main():
         b_data["fo_x"] = fo_x.tolist()
         b_data["fo_y"] = fo_y.tolist()
         bullets_data.append(b_data)
+
+    print("writing bullets.json")
     with open("bullets.json", "w") as f:
         f.write(json.dumps(bullets_data))
+    print("writing bullets_readable.json")
     with open("bullets_readable.json", "w") as f:
         f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
 
@@ -192,8 +195,11 @@ def main():
         }
         for w in weapon_classes.values()
     ]
+
+    print("writing weapons.json")
     with open("weapons.json", "w") as f:
         f.write(json.dumps(weapons_data))
+    print("writing weapons_readable.json")
     with open("weapons_readable.json", "w") as f:
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
@@ -214,9 +220,9 @@ def main():
     bullet = sim.bullet
     x, y = interp_dmg_falloff(bullet.get_damage_falloff())
     speed = bullet.get_speed()
-    f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
+    # f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
     # f_xtoy = sim.ef_func
-    zero_dmg_speed = f_ytox(1.0)
+    # zero_dmg_speed = f_ytox(1.0)
     plt.plot(x, y, marker="o")
     plt.axvline(speed)
     # plt.axvline(zero_dmg_speed)
@@ -253,11 +259,11 @@ def main():
         l_trajectory_y.append(loc[1])
         l_speed_curve_x.append(flight_time)
         l_speed_curve_y.append(velocity_ms)
-        print("flight_time (s) =", flight_time)
-        print("damage          =", dmg)
-        print("distance (m)    =", sim.distance_traveled_m)
-        print("velocity (m/s)  =", velocity_ms)
-        print("velocity[1] (Z) =", sim.velocity[1])
+        # print("flight_time (s) =", flight_time)
+        # print("damage          =", dmg)
+        # print("distance (m)    =", sim.distance_traveled_m)
+        # print("velocity (m/s)  =", velocity_ms)
+        # print("velocity[1] (Z) =", sim.velocity[1])
 
     print(f"simulation did {steps} steps")
     print("distance traveled from start to end (Euclidean):",
