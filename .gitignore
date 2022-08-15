@@ -130,3 +130,9 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+weapons.json
+weapons_readable.json
+bullets.json
+bullets_readable.json
+
