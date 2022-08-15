@@ -205,10 +205,10 @@ class Weapon(ClassBase):
     def get_bullet(self) -> Bullet:
         return self.get_attr("bullet")
 
-    def get_instant_damage(self) -> Bullet:
+    def get_instant_damage(self) -> int:
         return self.get_attr("instant_damage", invalid_value=-1)
 
-    def get_pre_fire_length(self) -> Bullet:
+    def get_pre_fire_length(self) -> int:
         return self.get_attr("pre_fire_length", invalid_value=-1)
 
 
@@ -240,8 +240,8 @@ str_to_df = {
 @dataclass
 class WeaponSimulation:
     weapon: Weapon
-    velocity: np.ndarray = np.array([1, 0], dtype=np.float64)
-    location: np.ndarray = np.array([0, 1], dtype=np.float64)
+    velocity: np.ndarray = np.array([1, 0], dtype=np.longfloat)
+    location: np.ndarray = np.array([0, 1], dtype=np.longfloat)
     bullet: Bullet = field(init=False)
     sim: "BulletSimulation" = field(init=False)
 
@@ -249,9 +249,17 @@ class WeaponSimulation:
         self.bullet = self.weapon.get_bullet()
         self.sim = BulletSimulation(
             bullet=self.bullet,
-            velocity=self.velocity,
-            location=self.location,
+            velocity=self.velocity.copy(),
+            location=self.location.copy(),
         )
+
+    @property
+    def distance_traveled_uu(self) -> float:
+        return self.sim.distance_traveled_uu
+
+    @property
+    def distance_traveled_m(self) -> float:
+        return self.distance_traveled_uu / 50
 
     @property
     def flight_time(self) -> float:
@@ -264,10 +272,10 @@ class WeaponSimulation:
     def calc_drag_coeff(self, mach: float) -> float:
         return self.sim.calc_drag_coeff(mach)
 
-    def simulate(self, delta_time: float):
+    def simulate(self, delta_time: np.longfloat):
         self.sim.simulate(delta_time)
-        self.velocity = self.sim.velocity
-        self.location = self.sim.location
+        self.velocity = self.sim.velocity.copy()
+        self.location = self.sim.location.copy()
 
     def calc_damage(self) -> float:
         return self.sim.calc_damage()
@@ -278,8 +286,9 @@ class BulletSimulation:
     bullet: Bullet
     flight_time: float = 0
     bc_inverse: float = 0
-    velocity: np.ndarray = np.array([1, 0], dtype=np.float64)
-    location: np.ndarray = np.array([0, 1], dtype=np.float64)
+    distance_traveled_uu: float = 0
+    velocity: np.ndarray = np.array([1, 0], dtype=np.longfloat)
+    location: np.ndarray = np.array([0, 1], dtype=np.longfloat)
     ef_func: Callable = field(init=False)
 
     def __post_init__(self):
@@ -288,22 +297,20 @@ class BulletSimulation:
         v_normalized = self.velocity / np.linalg.norm(self.velocity)
         self.velocity = v_normalized * self.bullet.get_speed_uu()
         fo_x, fo_y = interp_dmg_falloff(self.bullet.get_damage_falloff())
-        print(self.bullet)
-        print(self.bullet.get_damage_falloff())
         self.ef_func = interp1d(
             fo_x, fo_y, kind="linear",
+            # fill_value="extrapolate", bounds_error=False)
             fill_value=(fo_y[0], fo_y[-1]), bounds_error=False)
 
     def calc_drag_coeff(self, mach: float) -> float:
         return str_to_df[self.bullet.get_drag_func()](mach)
 
-    def simulate(self, delta_time: float):
-        print("delta_time =", delta_time)
+    def simulate(self, delta_time: np.longfloat):
         if delta_time < 0:
             raise RuntimeError("simulation delta time must be >= 0")
         self.flight_time += delta_time
-        if (self.velocity == 0).all():
-            return
+        # if (self.velocity == 0).all():
+        #     return
         # FLOAT V = Velocity.Size() * UCONST_ScaleFactorInverse.
         v_size = np.linalg.norm(self.velocity)
         v = v_size * SCALE_FACTOR_INVERSE
@@ -315,18 +322,22 @@ class BulletSimulation:
                 0.00020874137882624
                 * (cd * self.bc_inverse) * np.square(v)
                 * SCALE_FACTOR * (-1 * (self.velocity / v_size)))
-        # FLOAT ZAcceleration = 490.3325 * DeltaTime; // 490.3325 UU/S = 9.806 65 M/S
+        # FLOAT ZAcceleration = 490.3325 * DeltaTime; // 490.3325 UU/s = 9.806 65 m/s.
         self.velocity[1] -= (490.3325 * delta_time)
-        self.location += (self.velocity * delta_time)
+        loc_change = self.velocity * delta_time
+        prev_loc = self.location.copy()
+        self.location += loc_change
+        self.distance_traveled_uu += abs(np.linalg.norm(prev_loc - self.location))
 
     def calc_damage(self) -> float:
-        v_size = np.linalg.norm(self.velocity) / 50  # m/s.
-        print("speed =", v_size, "m/s")
-        power_left = v_size / self.bullet.get_speed()
-        print("power_left =", power_left * 100, "%")
+        # v_size = np.linalg.norm(self.velocity) / 50  # m/s.
+        v_size_sq = np.linalg.norm(self.velocity) ** 2
+        # print("speed =", v_size, "m/s")
+        power_left = v_size_sq / (self.bullet.get_speed_uu() ** 2)
         damage = self.bullet.get_damage() * power_left
-        energy_transfer = self.ef_func(v_size)
-        print("energy_transfer=", energy_transfer)
+        energy_transfer = self.ef_func(v_size_sq)
+        print("power_left      =", power_left)
+        print("energy_transfer =", energy_transfer)
         damage *= energy_transfer
         return damage
 
@@ -460,7 +471,8 @@ def parse_interp_curve(curve: str) -> np.ndarray:
     values = []
     curve = re.sub(r"\s", "", curve)
     for match in re.finditer(r"InVal=([\d.]+),OutVal=([\d.]+)", curve):
-        x = math.sqrt(float(match.group(1))) / 50  # UU/s to m/s.
+        # x = math.sqrt(float(match.group(1))) / 50  # UU/s to m/s.
+        x = float(match.group(1))
         y = float(match.group(2))
         values.append([x, y])
     return np.array(values)
@@ -521,12 +533,14 @@ def interp_dmg_falloff(arr: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     return x, y
 
 
-def gen_delta_time(step: float = 0.01) -> Generator[float, None, None]:
+def gen_delta_time(step: np.longfloat = 0.01
+                   ) -> Generator[np.longfloat, None, None]:
     count = 0
     while True:
         if count == 0:
             count += 1
-            yield 0
+            # Make the first step extra small.
+            yield step / np.longfloat(1000)
         else:
             yield step
 
@@ -689,18 +703,17 @@ def main():
     with open("weapons_readable.json", "w") as f:
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
-    start_loc = np.array([0.0, 100.0], dtype=np.float64)
+    start_loc = np.array([0.0, 0.0], dtype=np.longfloat) * 50
     # sim = BulletSimulation(
     #     bullet=bullet_classes["akmbullet"],
     #     location=start_loc.copy(),
     # )
-    # print(bullet_classes["IZH43Buckshot"])
-    print(weapon_classes["ROWeap_IZH43_Shotgun"])
-    # print(weapon_classes["ROWeap_IZH43_Shotgun"].get_bullet())
     sim = WeaponSimulation(
-        # weapon=weapon_classes["ROWeap_M16A1_AssaultRifle"],
-        weapon=weapon_classes["ROWeap_IZH43_Shotgun"],
+        weapon=weapon_classes["ROWeap_AK47_AssaultRifle_Type56"],
         location=start_loc.copy(),
+        # Initial velocity direction. Magnitude doesn't matter.
+        # velocity=np.array([5.0, 0.05]),
+        velocity=np.array([1.0, 0.0]),
     )
 
     np.set_printoptions(suppress=True)
@@ -708,42 +721,70 @@ def main():
     x, y = interp_dmg_falloff(bullet.get_damage_falloff())
     speed = bullet.get_speed()
     f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    f_xtoy = sim.ef_func
+    # f_xtoy = sim.ef_func
     zero_dmg_speed = f_ytox(1.0)
     plt.plot(x, y, marker="o")
     plt.axvline(speed)
-    plt.axvline(zero_dmg_speed)
-    plt.axvline(0)
+    # plt.axvline(zero_dmg_speed)
+    # plt.axvline(0)
     plt.text(speed, 0.5, str(speed))
     plt.title(f"{bullet.name} damage falloff curve")
+    plt.xlabel(r"bullet speed squared $(\frac{UU}{s})^2$")
+    plt.ylabel("energy transfer function")
 
-    trajectory_x = []
-    trajectory_y = []
-    dmg_curve_x = []
-    dmg_curve_y = []
-    dmg_curve_distance_x = []
-    speed_curve_x = []
-    speed_curve_y = []
-    dt_generator = gen_delta_time(0.01)
-    while sim.flight_time < 5:
-        sim.simulate(next(dt_generator))
+    l_trajectory_x = []
+    l_trajectory_y = []
+    l_dmg_curve_x_flight_time = []
+    l_dmg_curve_y_damage = []
+    l_dmg_curve_x_distance = []
+    l_speed_curve_x = []
+    l_speed_curve_y = []
+    # dt_generator = gen_delta_time(np.longfloat(1) / np.longfloat(500))
+    # dt_generator = gen_delta_time(0.0069444444444)
+    # prev_dist_incr = 0
+    steps = 0
+    time_step = 0.016
+    sim_time = 2.15
+    while sim.flight_time < sim_time:
+        steps += 1
+        sim.simulate(np.longfloat(time_step))
         flight_time = sim.flight_time
-        print("flight_time =", flight_time)
         dmg = sim.calc_damage()
-        print("damage =", dmg)
-        dmg_curve_x.append(flight_time)
-        dmg_curve_y.append(dmg)
-        loc = sim.location / 50
-        velocity = np.linalg.norm(sim.velocity) / 50
-        dmg_curve_distance_x.append(velocity * flight_time)
-        trajectory_x.append(loc[0])
-        trajectory_y.append(loc[1])
-        speed_curve_x.append(flight_time)
-        speed_curve_y.append(velocity)
+        l_dmg_curve_x_flight_time.append(flight_time)
+        l_dmg_curve_y_damage.append(dmg)
+        loc = sim.location.copy()
+        velocity_ms = np.linalg.norm(sim.velocity) / 50
+        l_dmg_curve_x_distance.append(sim.distance_traveled_m)
+        l_trajectory_x.append(loc[0])
+        l_trajectory_y.append(loc[1])
+        l_speed_curve_x.append(flight_time)
+        l_speed_curve_y.append(velocity_ms)
+        print("flight_time (s) =", flight_time)
+        print("damage          =", dmg)
+        print("distance (m)    =", sim.distance_traveled_m)
+        print("velocity (m/s)  =", velocity_ms)
+        print("velocity[1] (Z) =", sim.velocity[1])
 
-    print("distance traveled: ",
+    print(f"simulation did {steps} steps")
+    print("distance traveled from start to end (Euclidean):",
           np.linalg.norm(sim.location - start_loc) / 50,
-          " meters")
+          "meters")
+    print("bullet distance traveled (simulated accumulation)",
+          sim.distance_traveled_m, "meters")
+
+    trajectory_x = np.array(l_trajectory_x) / 50
+    trajectory_y = np.array(l_trajectory_y) / 50
+    dmg_curve_x_flight_time = np.array(l_dmg_curve_x_flight_time)
+    dmg_curve_y_damage = np.array(l_dmg_curve_y_damage)
+    dmg_curve_x_distance = np.array(l_dmg_curve_x_distance)
+    speed_curve_x = np.array(l_speed_curve_x)
+    speed_curve_y = np.array(l_speed_curve_y)
+
+    print("vertical delta (bullet drop) (m):",
+          trajectory_y[-1] - trajectory_y[0])
+
+    pref_length = sim.weapon.get_pre_fire_length()
+    instant_dmg = sim.weapon.get_instant_damage()
 
     plt.figure()
     plt.title(f"{bullet.name} trajectory")
@@ -751,17 +792,34 @@ def main():
     plt.xlabel("x (m)")
     plt.plot(trajectory_x, trajectory_y)
 
+    last_pref = np.where(dmg_curve_y_damage[dmg_curve_x_distance < pref_length])[-1]
+    # print(last_pref)
+    # dmg_curve_y_damage[last_pref + 1]
+    dmg_curve_y_damage_padded = np.insert(dmg_curve_y_damage, last_pref + 1, instant_dmg)
+    dmg_curve_x_distance_padded = np.insert(dmg_curve_x_distance, last_pref + 1, pref_length)
+
+    dmg_curve_y_damage[dmg_curve_x_distance <= pref_length] = instant_dmg
+    dmg_curve_y_damage_padded[dmg_curve_x_distance_padded <= pref_length] = instant_dmg
+
     plt.figure()
     plt.title(f"{bullet.name} damage over time")
     plt.xlabel("flight time (s)")
     plt.ylabel("damage")
-    plt.plot(dmg_curve_x, dmg_curve_y)
+    plt.plot(dmg_curve_x_flight_time, dmg_curve_y_damage)
 
     plt.figure()
-    plt.title(f"{bullet.name} damage over distance")
-    plt.xlabel("distance (m)")
+    plt.title(f"{bullet.name} damage over bullet travel distance")
+    plt.xlabel("bullet distance traveled (m)")
     plt.ylabel("damage")
-    plt.plot(dmg_curve_distance_x, dmg_curve_y)
+    plt.axvline(pref_length, color="red")
+    plt.plot(dmg_curve_x_distance_padded, dmg_curve_y_damage_padded)
+
+    plt.figure()
+    plt.title(f"{bullet.name} damage on target at distance")
+    plt.xlabel("horizontal distance to target (m)")
+    plt.ylabel("damage")
+    plt.axvline(pref_length, color="red")
+    plt.plot(trajectory_x, dmg_curve_y_damage)
 
     plt.figure()
     plt.title(f"{bullet.name} speed over time")
