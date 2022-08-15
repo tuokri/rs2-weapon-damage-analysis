@@ -292,6 +292,7 @@ class BulletSimulation:
 def interp_dmg_falloff(arr: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Return damage falloff curve x and y sub-arrays with
     zero damage speed data point added added via interpolation.
+    TODO: actually, let's not do any interpolation for now.
     """
     harr = np.hsplit(arr, 2)
     x = harr[0].ravel()
