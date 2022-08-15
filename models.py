@@ -283,8 +283,8 @@ class BulletSimulation:
         power_left = v_size_sq / (self.bullet.get_speed_uu() ** 2)
         damage = self.bullet.get_damage() * power_left
         energy_transfer = self.ef_func(v_size_sq)
-        print("power_left      =", power_left)
-        print("energy_transfer =", energy_transfer)
+        # print("power_left      =", power_left)
+        # print("energy_transfer =", energy_transfer)
         damage *= energy_transfer
         return damage
 
