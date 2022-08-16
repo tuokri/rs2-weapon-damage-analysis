@@ -21,16 +21,29 @@ external_scripts = load_external_scripts("EXTERNAL_SCRIPTS")
 app = dash.Dash(
     __name__,
     external_scripts=external_scripts,
+    title="rs2sim",
 )
 server = app.server
 
 fig = px.line(x=[0, 1], y=[1, 2])
 
-app.layout = html.Div(children=[
-    html.H1(children="Rising Storm 2: Vietnam Weapon Simulator"),
-    html.Div(children="Work in progress."),
-    dcc.Graph(id="test-graph", figure=fig),
-])
+app.layout = html.Div(
+    className="container",
+    children=[
+        html.H1(
+            children="Rising Storm 2: Vietnam Weapon Simulator",
+        ),
+        html.Div(
+            className="container",
+            children="Work in progress."
+        ),
+        dcc.Graph(
+            className="container",
+            id="test-graph",
+            figure=fig
+        ),
+    ]
+)
 
 if __name__ == "__main__":
     app.run_server(debug=False)
