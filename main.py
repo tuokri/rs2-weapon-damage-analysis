@@ -291,6 +291,13 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     speed_curve_y_velocity_ms = np.insert(
         speed_curve_y_velocity_ms, last_pref, speed_curve_y_velocity_ms[last_pref])
 
+    damage_curve = pd.DataFrame({
+        "dmg_curve_x_flight_time": dmg_curve_x_flight_time,
+        "dmg_curve_y_damage": dmg_curve_y_damage,
+    })
+    p = p.with_name("damage_curve.csv")
+    damage_curve.to_csv(p.absolute())
+
     speed_curve = pd.DataFrame({
         "speed_curve_x_flight_time": speed_curve_x_flight_time,
         "speed_curve_y_velocity_ms": speed_curve_y_velocity_ms,
@@ -577,7 +584,7 @@ def main():
     total_secs = round((end - begin).total_seconds(), 2)
     print(f"processing took {total_secs} seconds")
 
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
