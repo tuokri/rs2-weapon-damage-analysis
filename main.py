@@ -225,8 +225,8 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     l_dmg_curve_x_flight_time = []
     l_dmg_curve_y_damage = []
     l_dmg_curve_x_distance = []
-    l_speed_curve_x = []
-    l_speed_curve_y = []
+    l_speed_curve_x_flight_time = []
+    l_speed_curve_y_velocity_ms = []
     steps = 0
     time_step = 1 / 500  # 0.0165 / 10
     while sim.flight_time < sim_time:
@@ -241,13 +241,18 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
         l_dmg_curve_x_distance.append(sim.distance_traveled_m)
         l_trajectory_x.append(loc[0])
         l_trajectory_y.append(loc[1])
-        l_speed_curve_x.append(flight_time)
-        l_speed_curve_y.append(velocity_ms)
+        l_speed_curve_x_flight_time.append(flight_time)
+        l_speed_curve_y_velocity_ms.append(velocity_ms)
         # print("flight_time (s) =", flight_time)
         # print("damage          =", dmg)
         # print("distance (m)    =", sim.distance_traveled_m)
         # print("velocity (m/s)  =", velocity_ms)
         # print("velocity[1] (Z) =", sim.velocity[1])
+
+    p = (Path(f"./sim_data/") / sim.weapon.name)
+    p = p.resolve()
+    p.mkdir(parents=True, exist_ok=True)
+    p = p / "dummy_name.txt"
 
     print(f"simulation did {steps} steps")
     print("distance traveled from start to end (Euclidean):",
@@ -261,8 +266,8 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     dmg_curve_x_flight_time = np.array(l_dmg_curve_x_flight_time)
     dmg_curve_y_damage = np.array(l_dmg_curve_y_damage)
     dmg_curve_x_distance = np.array(l_dmg_curve_x_distance)
-    speed_curve_x = np.array(l_speed_curve_x)
-    speed_curve_y = np.array(l_speed_curve_y)
+    speed_curve_x_flight_time = np.array(l_speed_curve_x_flight_time)
+    speed_curve_y_velocity_ms = np.array(l_speed_curve_y_velocity_ms)
 
     # print("vertical delta (bullet drop) (m):",
     #       trajectory_y[-1] - trajectory_y[0])
@@ -281,14 +286,23 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
 
     dmg_curve_x_flight_time = np.insert(
         dmg_curve_x_flight_time, last_pref, dmg_curve_x_flight_time[last_pref])
-    speed_curve_x = np.insert(speed_curve_x, last_pref, speed_curve_x[last_pref])
-    speed_curve_y = np.insert(speed_curve_y, last_pref, speed_curve_y[last_pref])
+    speed_curve_x_flight_time = np.insert(
+        speed_curve_x_flight_time, last_pref, speed_curve_x_flight_time[last_pref])
+    speed_curve_y_velocity_ms = np.insert(
+        speed_curve_y_velocity_ms, last_pref, speed_curve_y_velocity_ms[last_pref])
+
+    speed_curve = pd.DataFrame({
+        "speed_curve_x_flight_time": speed_curve_x_flight_time,
+        "speed_curve_y_velocity_ms": speed_curve_y_velocity_ms,
+    })
+    p = p.with_name("speed_curve.csv")
+    speed_curve.to_csv(p.absolute())
 
     trajectory = pd.DataFrame({
         "trajectory_x": trajectory_x,
-        "trajectory_y": trajectory_y
+        "trajectory_y": trajectory_y,
     })
-    p = (Path(f"./sim_data/") / sim.weapon.name).resolve().with_name("trajectory.csv")
+    p = p.with_name("trajectory.csv")
     trajectory.to_csv(p.absolute())
 
 
