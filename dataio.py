@@ -1,5 +1,4 @@
-import json
-import math
+import pickle
 import re
 from pathlib import Path
 from typing import Iterable
@@ -56,10 +55,22 @@ WEAPON_BULLET_PATTERN = re.compile(
 )
 
 
-def read_weapon_classes(path: Path) -> MutableMapping[str, Weapon]:
-    with path.open("r", encoding="utf-8") as f:
-        data = json.loads(f.read())
-    return {}
+# def read_weapon_classes(path: Path) -> MutableMapping[str, Weapon]:
+#     with path.open("r", encoding="utf-8") as f:
+#         data = json.loads(f.read())
+#     weapon_classes = {}
+#     return weapon_classes
+
+def pdumps_weapon_classes(weapon_classes: MutableMapping[str, Weapon]):
+    return pickle.dumps({
+        k: v for
+        k, v in weapon_classes.items()
+        # if k != WEAPON.name
+    })
+
+
+def ploads_weapon_classes(pickle_str: bytes) -> MutableMapping[str, Weapon]:
+    return pickle.loads(pickle_str)
 
 
 def parse_interp_curve(curve: str) -> np.ndarray:
@@ -167,7 +178,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                 if match:
                     result.damage = int(match.group(1))
                     continue
-            if result.speed == math.inf:
+            if result.speed == -1:
                 match = SPEED_PATTERN.match(line)
                 if match:
                     result.speed = float(match.group(1)) / 50
@@ -178,7 +189,7 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                     result.damage_falloff = parse_interp_curve(
                         match.group(1))
                     continue
-            if result.ballistic_coeff == math.inf:
+            if result.ballistic_coeff == -1:
                 match = BALLISTIC_COEFF_PATTERN.match(line)
                 if match:
                     result.ballistic_coeff = float(match.group(1))
@@ -189,10 +200,10 @@ def handle_bullet_file(path: Path, base_class_name: str) -> Optional[BulletParse
                     result.drag_func = DragFunction(match.group(1))
                     continue
             if (result.class_name
-                    and result.speed != math.inf
+                    and result.speed != -1
                     and result.damage > 0
                     and (result.damage_falloff > 0).any()
-                    and result.ballistic_coeff != math.inf
+                    and result.ballistic_coeff != -1
                     and result.drag_func != DragFunction.Invalid):
                 break
     return result
