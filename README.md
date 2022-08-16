@@ -1,0 +1,1 @@
+TODO: parsing multiple projectiles per wepaon (shotguns, alt loadouts etc.).
