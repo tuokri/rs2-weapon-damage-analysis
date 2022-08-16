@@ -7,6 +7,230 @@
         "pre_fire_length": 50
     },
     {
+        "bullet": "XM21ScopedBullet",
+        "instant_damage": 160,
+        "name": "ROWeap_XM21Scoped_Rifle_Level2",
+        "parent": "ROWeap_XM21Scoped_Rifle_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "XM21ScopedBullet",
+        "instant_damage": 160,
+        "name": "ROWeap_XM21Scoped_Rifle_Content",
+        "parent": "ROWeap_XM21Scoped_Rifle",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "XM177E1Bullet",
+        "instant_damage": 99,
+        "name": "ROWeap_XM177E1_Carbine_Late",
+        "parent": "ROWeap_XM177E1_Carbine",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "XM177E1Bullet",
+        "instant_damage": 99,
+        "name": "ROWeap_XM177E1_Carbine_Content",
+        "parent": "ROWeap_XM177E1_Carbine",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "XM177E1Bullet",
+        "instant_damage": 99,
+        "name": "ROWeap_XM177E1_Carbine_30rd",
+        "parent": "ROWeap_XM177E1_Carbine_20rd",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "XM177E1Bullet",
+        "instant_damage": 99,
+        "name": "ROWeap_XM177E1_Carbine_20rd",
+        "parent": "ROWeap_XM177E1_Carbine_Late",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "ROSatchelChargeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_VietSatchel_Content",
+        "parent": "ROWeap_VietSatchel",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_Grenade_ContentSingle",
+        "parent": "ROWeap_Type67_Grenade_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_Grenade_ContentDouble",
+        "parent": "ROWeap_Type67_Grenade_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_Grenade_Content",
+        "parent": "ROWeap_Type67_Grenade",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "TT33Bullet",
+        "instant_damage": 63,
+        "name": "ROWeap_TT33_Pistol_Content",
+        "parent": "ROWeap_TT33_Pistol",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_TripwireTrap_ContentSingle",
+        "parent": "ROWeap_TripwireTrap_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_TripwireTrap_Content",
+        "parent": "ROWeap_TripwireTrap",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "XM177E1Bullet",
+        "instant_damage": 99,
+        "name": "ROWeap_XM177E1_Carbine",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "SVDScopedBullet",
+        "instant_damage": 169,
+        "name": "ROWeap_SVDScoped_Rifle_Content",
+        "parent": "ROWeap_SVDScoped_Rifle",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "SKSBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_SKS_Rifle_Content",
+        "parent": "ROWeap_SKS_Rifle",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PG7VRocket",
+        "instant_damage": 0,
+        "name": "ROWeap_RPG7_RocketLauncher_Content_SK",
+        "parent": "ROWeap_RPG7_RocketLauncher_Content",
+        "pre_fire_length": 0
+    },
+    {
+        "bullet": "PG7VRocket",
+        "instant_damage": 0,
+        "name": "ROWeap_RPG7_RocketLauncher_Content",
+        "parent": "ROWeap_RPG7_RocketLauncher",
+        "pre_fire_length": 0
+    },
+    {
+        "bullet": "RPDBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_RPD_LMG_Content_NLF",
+        "parent": "ROWeap_RPD_LMG_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RPDBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_RPD_LMG_Content",
+        "parent": "ROWeap_RPD_LMG",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RPDBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_RPD_LMG_200rd",
+        "parent": "ROWeap_RPD_LMG_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RP46Bullet",
+        "instant_damage": 153,
+        "name": "ROWeap_RP46_LMG_Content",
+        "parent": "ROWeap_RP46_LMG",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RDG1SmokeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_RDG1_Smoke_ContentSingle",
+        "parent": "ROWeap_RDG1_Smoke_Content",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RDG1SmokeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_RDG1_Smoke_Content",
+        "parent": "ROWeap_RDG1_Smoke",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_PunjiTrap_Content",
+        "parent": "ROWeap_PunjiTrap",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PPSH41Bullet",
+        "instant_damage": 54,
+        "name": "ROWeap_PPSH41_SMG_Drum",
+        "parent": "ROWeap_PPSH41_SMG_Content",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "XM21ScopedBullet",
+        "instant_damage": 160,
+        "name": "ROWeap_XM21Scoped_Rifle",
+        "parent": "ROSniperWeaponAdvanced",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PPSH41Bullet",
+        "instant_damage": 54,
+        "name": "ROWeap_PPSH41_SMG_Content",
+        "parent": "ROWeap_PPSH41_SMG",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "PMBullet",
+        "instant_damage": 74,
+        "name": "ROWeap_PM_Pistol_Content",
+        "parent": "ROWeap_PM_Pistol",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "OwenBullet",
+        "instant_damage": 82,
+        "name": "ROWeap_Owen_SMG_Content",
+        "parent": "ROWeap_Owen_SMG",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "MP40Bullet",
+        "instant_damage": 71,
+        "name": "ROWeap_MP40_SMG_Content",
+        "parent": "ROWeap_MP40_SMG",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "MolotovProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Molotov_Content",
+        "parent": "ROWeap_Molotov",
+        "pre_fire_length": 50
+    },
+    {
         "bullet": "MN9130Bullet",
         "instant_damage": 179,
         "name": "ROWeap_MN9130_Rifle_Content",
@@ -39,13 +263,6 @@
         "instant_damage": 0,
         "name": "ROWeap_MD82_Mine_Content",
         "parent": "ROWeap_MD82_Mine",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROProjectileWeapon",
-        "parent": "ROWeapon",
         "pre_fire_length": 50
     },
     {
@@ -131,13 +348,6 @@
         "name": "ROWeap_M79_GrenadeLauncher_Content",
         "parent": "ROWeap_M79_GrenadeLauncher",
         "pre_fire_length": 25
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROPlantableTrapWeapon",
-        "parent": "ROOneShotWeapon",
-        "pre_fire_length": 50
     },
     {
         "bullet": "M79GrenadeProjectile",
@@ -308,13 +518,6 @@
         "pre_fire_length": 25
     },
     {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROOneShotWeapon",
-        "parent": "ROWeapon",
-        "pre_fire_length": 50
-    },
-    {
         "bullet": "M1911Bullet",
         "instant_damage": 105,
         "name": "ROWeap_M1911_Pistol_Content",
@@ -326,6 +529,13 @@
         "instant_damage": 0,
         "name": "ROWeap_M18_SignalSmoke_Purple",
         "parent": "ROWeap_M18_SignalSmoke",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "ROSatchelChargeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_VietSatchel",
+        "parent": "ROSatchelChargeWeapon",
         "pre_fire_length": 50
     },
     {
@@ -362,6 +572,13 @@
         "name": "ROWeap_M16A1_AssaultRifle_20rd",
         "parent": "ROWeap_M16A1_AssaultRifle_Late",
         "pre_fire_length": 25
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_GrenadeSingle",
+        "parent": "ROWeap_Type67_Grenade",
+        "pre_fire_length": 50
     },
     {
         "bullet": "M14Bullet",
@@ -410,6 +627,13 @@
         "instant_damage": 323,
         "name": "ROWeap_IZH43_Shotgun_Level2",
         "parent": "ROWeap_IZH43_Shotgun_Content",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "XM21SubsonicBullet",
+        "instant_damage": 160,
+        "name": "ROWeap_XM21Scoped_Rifle_Suppressed",
+        "parent": "ROWeap_XM21Scoped_Rifle_Content",
         "pre_fire_length": 25
     },
     {
@@ -483,38 +707,10 @@
         "pre_fire_length": 25
     },
     {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROVehicleWeapon",
-        "parent": "ROWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "MAT49Bullet_9mm",
-        "instant_damage": 71,
-        "name": "ROWeap_MAT49_SMG",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
         "bullet": "MAS49Bullet",
         "instant_damage": 123,
         "name": "ROWeap_MAS49_Rifle_Grenade",
         "parent": "ROWeap_MAS49_Rifle",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "MAS49Bullet",
-        "instant_damage": 123,
-        "name": "ROWeap_MAS49_Rifle",
-        "parent": "RORifleGrenadeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROFixedMGWeapon",
-        "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
@@ -523,6 +719,13 @@
         "name": "ROWeap_MAS49Scoped_Rifle",
         "parent": "ROSniperWeaponAdvanced",
         "pre_fire_length": 50
+    },
+    {
+        "bullet": "MAT49Bullet_9mm",
+        "instant_damage": 71,
+        "name": "ROWeap_MAT49_SMG",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
     },
     {
         "bullet": "M9FlameProjectile",
@@ -534,9 +737,233 @@
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROExplosiveWeapon",
+        "name": "ROWeap_MD82_Mine",
+        "parent": "ROPlantableTrapWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M1919Bullet",
+        "instant_damage": 154,
+        "name": "ROWeap_MG34_LMG",
+        "parent": "ROMGWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "MAS49Bullet",
+        "instant_damage": 123,
+        "name": "ROWeap_MAS49_Rifle",
+        "parent": "RORifleGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "MN9130ScopedBullet",
+        "instant_damage": 178,
+        "name": "ROWeap_MN9130Scoped_Rifle",
+        "parent": "ROSniperWeaponAdvanced",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROProjectileWeapon",
+        "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROOneShotWeapon",
+        "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "MN9130Bullet",
+        "instant_damage": 179,
+        "name": "ROWeap_MN9130_Rifle",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "ROSatchelChargeProjectile",
+        "instant_damage": 0,
+        "name": "RORemoteExplosiveWeapon",
+        "parent": "ROSatchelChargeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_MD82_MineTriple",
+        "parent": "ROWeap_MD82_Mine",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PPSH41Bullet",
+        "instant_damage": 54,
+        "name": "ROWeap_PPSH41_SMG",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "OwenBullet",
+        "instant_damage": 82,
+        "name": "ROWeap_Owen_SMG",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "RDG1SmokeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_RDG1_Smoke",
+        "parent": "ROStielGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PMBullet",
+        "instant_damage": 74,
+        "name": "ROWeap_PM_Pistol",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_PunjiTrap",
+        "parent": "ROPlantableTrapWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "MP40Bullet",
+        "instant_damage": 71,
+        "name": "ROWeap_MP40_SMG",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "RORifleGrenadeWeapon",
+        "parent": "ROBipodWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RDG1SmokeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_RDG1_SmokeSingle",
+        "parent": "ROWeap_RDG1_Smoke",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RPDBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_RPD_LMG_NLF",
+        "parent": "ROWeap_RPD_LMG",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "RORocketWeapon",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RP46Bullet",
+        "instant_damage": 153,
+        "name": "ROWeap_RP46_LMG",
+        "parent": "ROMGWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "SKSBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_SKS_Rifle",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "MolotovProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Molotov",
+        "parent": "ROStielGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "SVDScopedBullet",
+        "instant_damage": 169,
+        "name": "ROWeap_SVDScoped_Rifle",
+        "parent": "ROSniperWeaponAdvanced",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "RPDBullet",
+        "instant_damage": 86,
+        "name": "ROWeap_RPD_LMG",
+        "parent": "ROMGWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M8SmokeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M8_Smoke",
+        "parent": "ROEggGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_TripwireTrap_Single",
+        "parent": "ROWeap_TripwireTrap",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_GrenadeDouble",
+        "parent": "ROWeap_Type67_Grenade",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "PG7VRocket",
+        "instant_damage": 0,
+        "name": "ROWeap_RPG7_RocketLauncher_SK",
+        "parent": "ROWeap_RPG7_RocketLauncher",
+        "pre_fire_length": 0
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROPlantableTrapWeapon",
         "parent": "ROOneShotWeapon",
         "pre_fire_length": 50
+    },
+    {
+        "bullet": "Type67GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_Type67_Grenade",
+        "parent": "ROStielGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeap_TripwireTrap",
+        "parent": "ROPlantableTrapWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "TT33Bullet",
+        "instant_damage": 63,
+        "name": "ROWeap_TT33_Pistol",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "PG7VRocket",
+        "instant_damage": 0,
+        "name": "ROWeap_RPG7_RocketLauncher",
+        "parent": "RORocketWeapon",
+        "pre_fire_length": 0
     },
     {
         "bullet": "M8SmokeProjectile",
@@ -548,134 +975,78 @@
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROExplosiveATWeapon",
+        "name": "ROStielGrenadeWeapon",
         "parent": "ROExplosiveWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M8SmokeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M8_Smoke",
-        "parent": "ROEggGrenadeWeapon",
+        "bullet": "L1A1Bullet",
+        "instant_damage": 140,
+        "name": "ROWeap_L1A1_Rifle",
+        "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M79GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M79_GrenadeLauncherSmoke",
-        "parent": "ROWeap_M79_GrenadeLauncher",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "M79GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M79_GrenadeLauncher",
+        "bullet": "M16A1Bullet",
+        "instant_damage": 95,
+        "name": "ROWeap_M16A1_AssaultRifle",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
     },
     {
-        "bullet": "M61GrenadeProjectile",
+        "bullet": "IZH43Buckshot",
+        "instant_damage": 363,
+        "name": "ROWeap_IZH43_Shotgun",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "M18ClaymoreMine",
         "instant_damage": 0,
-        "name": "ROWeap_M61_GrenadeSingle",
-        "parent": "ROWeap_M61_Grenade",
+        "name": "ROWeap_M18_Claymore",
+        "parent": "RORemoteExplosiveWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M61GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M61_GrenadeQuad",
-        "parent": "ROWeap_M61_Grenade",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M61GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M61_GrenadeDouble",
-        "parent": "ROWeap_M61_Grenade",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROEggGrenadeWeapon",
-        "parent": "ROExplosiveWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M61GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_M61_Grenade",
-        "parent": "ROEggGrenadeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M60Bullet",
-        "instant_damage": 120,
-        "name": "ROWeap_M60_GPMG",
+        "bullet": "L2A1Bullet",
+        "instant_damage": 140,
+        "name": "ROWeap_L2A1_LMG",
         "parent": "ROMGWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M40Bullet",
-        "instant_damage": 154,
-        "name": "ROWeap_M40Scoped_Rifle",
-        "parent": "ROSniperWeaponAdvanced",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M3A1Bullet",
-        "instant_damage": 106,
-        "name": "ROWeap_M3A1_SMG",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 71,
-        "name": "ROWeap_M37_Shotgun",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "M34GrenadeProjectile",
+        "bullet": "M18SmokeProjectilePurple",
         "instant_damage": 0,
-        "name": "ROWeap_M34_WP",
+        "name": "ROWeap_M18_SignalSmoke",
         "parent": "ROEggGrenadeWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M2Bullet",
-        "instant_damage": 135,
-        "name": "ROWeap_M2_HMG_Tripod",
-        "parent": "ROFixedMGWeapon",
-        "pre_fire_length": 50
+        "bullet": "K50MBullet",
+        "instant_damage": 54,
+        "name": "ROWeap_K50M_SMG",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
     },
     {
-        "bullet": "M2CarbineBullet",
-        "instant_damage": 75,
-        "name": "ROWeap_M2_Carbine",
+        "bullet": "M14Bullet",
+        "instant_damage": 123,
+        "name": "ROWeap_M14_Rifle",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M1CarbineBullet",
-        "instant_damage": 75,
-        "name": "ROWeap_M1_Carbine",
-        "parent": "ROWeap_M2_Carbine",
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROMGWeapon",
+        "parent": "ROBipodWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "M1GarandBullet",
+        "bullet": "M1918Bullet",
         "instant_damage": 154,
-        "name": "ROWeap_M1Garand_Rifle",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M1DGarandBullet",
-        "instant_damage": 160,
-        "name": "ROWeap_M1DGarand_SniperRifle",
-        "parent": "ROSniperWeaponAdvanced",
+        "name": "ROWeap_M1918_BAR",
+        "parent": "ROMGWeapon",
         "pre_fire_length": 50
     },
     {
@@ -693,10 +1064,17 @@
         "pre_fire_length": 50
     },
     {
-        "bullet": "M1918Bullet",
+        "bullet": "M18ClaymoreMine",
+        "instant_damage": 0,
+        "name": "ROWeap_M18_ClaymoreSingle",
+        "parent": "ROWeap_M18_Claymore",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M1GarandBullet",
         "instant_damage": 154,
-        "name": "ROWeap_M1918_BAR",
-        "parent": "ROMGWeapon",
+        "name": "ROWeap_M1Garand_Rifle",
+        "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
@@ -707,31 +1085,10 @@
         "pre_fire_length": 25
     },
     {
-        "bullet": "M1911Bullet",
-        "instant_damage": 105,
-        "name": "ROWeap_M1911_Pistol",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "M18SmokeProjectilePurple",
-        "instant_damage": 0,
-        "name": "ROWeap_M18_SignalSmoke",
-        "parent": "ROEggGrenadeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M18ClaymoreMine",
-        "instant_damage": 0,
-        "name": "ROWeap_M18_ClaymoreSingle",
-        "parent": "ROWeap_M18_Claymore",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M18ClaymoreMine",
-        "instant_damage": 0,
-        "name": "ROWeap_M18_Claymore",
-        "parent": "RORemoteExplosiveWeapon",
+        "bullet": "M1DGarandBullet",
+        "instant_damage": 160,
+        "name": "ROWeap_M1DGarand_SniperRifle",
+        "parent": "ROSniperWeaponAdvanced",
         "pre_fire_length": 50
     },
     {
@@ -742,402 +1099,38 @@
         "pre_fire_length": 25
     },
     {
-        "bullet": "M16A1Bullet",
-        "instant_damage": 95,
-        "name": "ROWeap_M16A1_AssaultRifle",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "M14Bullet",
-        "instant_damage": 123,
-        "name": "ROWeap_M14_Rifle",
+        "bullet": "M2CarbineBullet",
+        "instant_damage": 75,
+        "name": "ROWeap_M2_Carbine",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "L2A1Bullet",
-        "instant_damage": 140,
-        "name": "ROWeap_L2A1_LMG",
-        "parent": "ROMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "L1A1Bullet",
-        "instant_damage": 140,
-        "name": "ROWeap_L1A1_Rifle",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "K50MBullet",
-        "instant_damage": 54,
-        "name": "ROWeap_K50M_SMG",
+        "bullet": "M1911Bullet",
+        "instant_damage": 105,
+        "name": "ROWeap_M1911_Pistol",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
     },
     {
-        "bullet": "IZH43Buckshot",
-        "instant_damage": 363,
-        "name": "ROWeap_IZH43_Shotgun",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
+        "bullet": "M1CarbineBullet",
+        "instant_damage": 75,
+        "name": "ROWeap_M1_Carbine",
+        "parent": "ROWeap_M2_Carbine",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M2Bullet",
+        "instant_damage": 135,
+        "name": "ROWeap_M2_HMG_Tripod",
+        "parent": "ROFixedMGWeapon",
+        "pre_fire_length": 50
     },
     {
         "bullet": "Projectile",
         "instant_damage": 0,
         "name": "ROWeap_Fougasse_Mine",
         "parent": "ROWeap_PunjiTrap",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "XM21SubsonicBullet",
-        "instant_damage": 160,
-        "name": "ROWeap_XM21Scoped_Rifle_Suppressed",
-        "parent": "ROWeap_XM21Scoped_Rifle_Content",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "F1Bullet",
-        "instant_damage": 71,
-        "name": "ROWeap_F1_SMG",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "XM21ScopedBullet",
-        "instant_damage": 160,
-        "name": "ROWeap_XM21Scoped_Rifle_Level2",
-        "parent": "ROWeap_XM21Scoped_Rifle_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "DShKBullet",
-        "instant_damage": 135,
-        "name": "ROWeap_DShK_HMG_Tripod",
-        "parent": "ROFixedMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "XM21ScopedBullet",
-        "instant_damage": 160,
-        "name": "ROWeap_XM21Scoped_Rifle_Content",
-        "parent": "ROWeap_XM21Scoped_Rifle",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "DP28Bullet",
-        "instant_damage": 153,
-        "name": "ROWeap_DP28_LMG",
-        "parent": "ROMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "XM177E1Bullet",
-        "instant_damage": 99,
-        "name": "ROWeap_XM177E1_Carbine_Content",
-        "parent": "ROWeap_XM177E1_Carbine",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "C4ExplosiveProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_C4_Explosive",
-        "parent": "RORemoteExplosiveWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "XM177E1Bullet",
-        "instant_damage": 99,
-        "name": "ROWeap_XM177E1_Carbine_30rd",
-        "parent": "ROWeap_XM177E1_Carbine_20rd",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "BHPBullet",
-        "instant_damage": 69,
-        "name": "ROWeap_BHP_Pistol",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "XM177E1Bullet",
-        "instant_damage": 99,
-        "name": "ROWeap_XM177E1_Carbine_20rd",
-        "parent": "ROWeap_XM177E1_Carbine_Late",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Type56Bullet",
-        "instant_damage": 86,
-        "name": "ROWeap_AK47_AssaultRifle_NLF",
-        "parent": "ROWeap_AK47_AssaultRifle",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "ROSatchelChargeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_VietSatchel_Content",
-        "parent": "ROWeap_VietSatchel",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Type56Bullet",
-        "instant_damage": 86,
-        "name": "ROWeap_AK47_AssaultRifle",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_Grenade_ContentSingle",
-        "parent": "ROWeap_Type67_Grenade_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_Grenade_ContentDouble",
-        "parent": "ROWeap_Type67_Grenade_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_Grenade_Content",
-        "parent": "ROWeap_Type67_Grenade",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "TT33Bullet",
-        "instant_damage": 63,
-        "name": "ROWeap_TT33_Pistol_Content",
-        "parent": "ROWeap_TT33_Pistol",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_TripwireTrap_ContentSingle",
-        "parent": "ROWeap_TripwireTrap_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_TripwireTrap_Content",
-        "parent": "ROWeap_TripwireTrap",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "SVDScopedBullet",
-        "instant_damage": 169,
-        "name": "ROWeap_SVDScoped_Rifle_Content",
-        "parent": "ROWeap_SVDScoped_Rifle",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "SKSBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_SKS_Rifle_Content",
-        "parent": "ROWeap_SKS_Rifle",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "PG7VRocket",
-        "instant_damage": 0,
-        "name": "ROWeap_RPG7_RocketLauncher_Content_SK",
-        "parent": "ROWeap_RPG7_RocketLauncher_Content",
-        "pre_fire_length": 0
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeaponArtillery",
-        "parent": "ROWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "PG7VRocket",
-        "instant_damage": 0,
-        "name": "ROWeap_RPG7_RocketLauncher_Content",
-        "parent": "ROWeap_RPG7_RocketLauncher",
-        "pre_fire_length": 0
-    },
-    {
-        "bullet": "RPDBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_RPD_LMG_Content_NLF",
-        "parent": "ROWeap_RPD_LMG_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeapon",
-        "parent": "Weapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RPDBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_RPD_LMG_Content",
-        "parent": "ROWeap_RPD_LMG",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RPDBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_RPD_LMG_200rd",
-        "parent": "ROWeap_RPD_LMG_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RP46Bullet",
-        "instant_damage": 153,
-        "name": "ROWeap_RP46_LMG_Content",
-        "parent": "ROWeap_RP46_LMG",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RDG1SmokeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_RDG1_Smoke_ContentSingle",
-        "parent": "ROWeap_RDG1_Smoke_Content",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "RORocketWeapon",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RDG1SmokeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_RDG1_Smoke_Content",
-        "parent": "ROWeap_RDG1_Smoke",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_PunjiTrap_Content",
-        "parent": "ROWeap_PunjiTrap",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROVWeap_TankTurret",
-        "parent": "ROVehicleWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "PPSH41Bullet",
-        "instant_damage": 54,
-        "name": "ROWeap_PPSH41_SMG_Drum",
-        "parent": "ROWeap_PPSH41_SMG_Content",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROVWeap_HullMG",
-        "parent": "ROVehicleWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "PPSH41Bullet",
-        "instant_damage": 54,
-        "name": "ROWeap_PPSH41_SMG_Content",
-        "parent": "ROWeap_PPSH41_SMG",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "PMBullet",
-        "instant_damage": 74,
-        "name": "ROWeap_PM_Pistol_Content",
-        "parent": "ROWeap_PM_Pistol",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "RORifleGrenadeWeapon",
-        "parent": "ROBipodWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "OwenBullet",
-        "instant_damage": 82,
-        "name": "ROWeap_Owen_SMG_Content",
-        "parent": "ROWeap_Owen_SMG",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "MP40Bullet",
-        "instant_damage": 71,
-        "name": "ROWeap_MP40_SMG_Content",
-        "parent": "ROWeap_MP40_SMG",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "ROSatchelChargeProjectile",
-        "instant_damage": 0,
-        "name": "RORemoteExplosiveWeapon",
-        "parent": "ROSatchelChargeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "MolotovProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Molotov_Content",
-        "parent": "ROWeap_Molotov",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROScopedMGWeapon",
-        "parent": "ROMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "ROSatchelChargeProjectile",
-        "instant_damage": 0,
-        "name": "ROSatchelChargeWeapon",
-        "parent": "ROExplosiveWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROSniperWeaponAdvanced",
-        "parent": "ROSniperWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROSniperWeapon",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROHelicopterWeapon",
-        "parent": "ROVehicleWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROHelicopterDoorWeapon",
-        "parent": "ROHelicopterWeapon",
         "pre_fire_length": 50
     },
     {
@@ -1148,220 +1141,206 @@
         "pre_fire_length": 50
     },
     {
-        "bullet": "XM21ScopedBullet",
-        "instant_damage": 160,
-        "name": "ROWeap_XM21Scoped_Rifle",
+        "bullet": "Projectile",
+        "instant_damage": 71,
+        "name": "ROWeap_M37_Shotgun",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROHelicopterDoorWeapon",
+        "parent": "ROHelicopterWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M40Bullet",
+        "instant_damage": 154,
+        "name": "ROWeap_M40Scoped_Rifle",
         "parent": "ROSniperWeaponAdvanced",
         "pre_fire_length": 50
     },
     {
-        "bullet": "XM177E1Bullet",
-        "instant_damage": 99,
-        "name": "ROWeap_XM177E1_Carbine_Late",
-        "parent": "ROWeap_XM177E1_Carbine",
+        "bullet": "M60Bullet",
+        "instant_damage": 120,
+        "name": "ROWeap_M60_GPMG",
+        "parent": "ROMGWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M79GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M79_GrenadeLauncher",
+        "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
     },
     {
-        "bullet": "XM177E1Bullet",
-        "instant_damage": 99,
-        "name": "ROWeap_XM177E1_Carbine",
+        "bullet": "M61GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M61_GrenadeQuad",
+        "parent": "ROWeap_M61_Grenade",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M34GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M34_WP",
+        "parent": "ROEggGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M61GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M61_GrenadeSingle",
+        "parent": "ROWeap_M61_Grenade",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROHelicopterWeapon",
+        "parent": "ROVehicleWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M79GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M79_GrenadeLauncherSmoke",
+        "parent": "ROWeap_M79_GrenadeLauncher",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "M3A1Bullet",
+        "instant_damage": 106,
+        "name": "ROWeap_M3A1_SMG",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
+    },
+    {
+        "bullet": "M61GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M61_Grenade",
+        "parent": "ROEggGrenadeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M61GrenadeProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_M61_GrenadeDouble",
+        "parent": "ROWeap_M61_Grenade",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeaponArtillery",
+        "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROWeapon",
+        "parent": "Weapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROVWeap_TankTurret",
+        "parent": "ROVehicleWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROVWeap_HullMG",
+        "parent": "ROVehicleWeapon",
+        "pre_fire_length": 50
     },
     {
         "bullet": "ROSatchelChargeProjectile",
         "instant_damage": 0,
-        "name": "ROWeap_VietSatchel",
-        "parent": "ROSatchelChargeWeapon",
+        "name": "ROSatchelChargeWeapon",
+        "parent": "ROExplosiveWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_GrenadeSingle",
-        "parent": "ROWeap_Type67_Grenade",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_GrenadeDouble",
-        "parent": "ROWeap_Type67_Grenade",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Type67GrenadeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_Type67_Grenade",
-        "parent": "ROStielGrenadeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "TT33Bullet",
-        "instant_damage": 63,
-        "name": "ROWeap_TT33_Pistol",
+        "bullet": "Type56Bullet",
+        "instant_damage": 86,
+        "name": "ROWeap_AK47_AssaultRifle",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
     },
     {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_TripwireTrap_Single",
-        "parent": "ROWeap_TripwireTrap",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_TripwireTrap",
-        "parent": "ROPlantableTrapWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "SVDScopedBullet",
-        "instant_damage": 169,
-        "name": "ROWeap_SVDScoped_Rifle",
-        "parent": "ROSniperWeaponAdvanced",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "SKSBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_SKS_Rifle",
+        "bullet": "BHPBullet",
+        "instant_damage": 69,
+        "name": "ROWeap_BHP_Pistol",
         "parent": "ROProjectileWeapon",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "C4ExplosiveProjectile",
+        "instant_damage": 0,
+        "name": "ROWeap_C4_Explosive",
+        "parent": "RORemoteExplosiveWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "PG7VRocket",
+        "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROWeap_RPG7_RocketLauncher_SK",
-        "parent": "ROWeap_RPG7_RocketLauncher",
-        "pre_fire_length": 0
-    },
-    {
-        "bullet": "PG7VRocket",
-        "instant_damage": 0,
-        "name": "ROWeap_RPG7_RocketLauncher",
-        "parent": "RORocketWeapon",
-        "pre_fire_length": 0
-    },
-    {
-        "bullet": "RPDBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_RPD_LMG_NLF",
-        "parent": "ROWeap_RPD_LMG",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RPDBullet",
-        "instant_damage": 86,
-        "name": "ROWeap_RPD_LMG",
+        "name": "ROScopedMGWeapon",
         "parent": "ROMGWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "RP46Bullet",
+        "bullet": "Type56Bullet",
+        "instant_damage": 86,
+        "name": "ROWeap_AK47_AssaultRifle_NLF",
+        "parent": "ROWeap_AK47_AssaultRifle",
+        "pre_fire_length": 25
+    },
+    {
+        "bullet": "DShKBullet",
+        "instant_damage": 135,
+        "name": "ROWeap_DShK_HMG_Tripod",
+        "parent": "ROFixedMGWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "DP28Bullet",
         "instant_damage": 153,
-        "name": "ROWeap_RP46_LMG",
+        "name": "ROWeap_DP28_LMG",
         "parent": "ROMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RDG1SmokeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_RDG1_SmokeSingle",
-        "parent": "ROWeap_RDG1_Smoke",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "RDG1SmokeProjectile",
-        "instant_damage": 0,
-        "name": "ROWeap_RDG1_Smoke",
-        "parent": "ROStielGrenadeWeapon",
         "pre_fire_length": 50
     },
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROWeap_PunjiTrap",
-        "parent": "ROPlantableTrapWeapon",
+        "name": "ROMeleeWeapon",
+        "parent": "ROWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "PPSH41Bullet",
-        "instant_damage": 54,
-        "name": "ROWeap_PPSH41_SMG",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "PMBullet",
-        "instant_damage": 74,
-        "name": "ROWeap_PM_Pistol",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "OwenBullet",
-        "instant_damage": 82,
-        "name": "ROWeap_Owen_SMG",
-        "parent": "ROProjectileWeapon",
-        "pre_fire_length": 25
-    },
-    {
-        "bullet": "MP40Bullet",
+        "bullet": "F1Bullet",
         "instant_damage": 71,
-        "name": "ROWeap_MP40_SMG",
+        "name": "ROWeap_F1_SMG",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 25
     },
     {
-        "bullet": "MolotovProjectile",
+        "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROWeap_Molotov",
-        "parent": "ROStielGrenadeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "MN9130Bullet",
-        "instant_damage": 179,
-        "name": "ROWeap_MN9130_Rifle",
+        "name": "ROFixedMGWeapon",
         "parent": "ROProjectileWeapon",
         "pre_fire_length": 50
     },
     {
-        "bullet": "MN9130ScopedBullet",
-        "instant_damage": 178,
-        "name": "ROWeap_MN9130Scoped_Rifle",
-        "parent": "ROSniperWeaponAdvanced",
-        "pre_fire_length": 50
-    },
-    {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROFlamethrowerWeapon",
+        "name": "ROBipodWeapon",
         "parent": "ROProjectileWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M1919Bullet",
-        "instant_damage": 154,
-        "name": "ROWeap_MG34_LMG",
-        "parent": "ROMGWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_MD82_MineTriple",
-        "parent": "ROWeap_MD82_Mine",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROWeap_MD82_Mine",
-        "parent": "ROPlantableTrapWeapon",
         "pre_fire_length": 50
     },
     {
@@ -1372,30 +1351,37 @@
         "pre_fire_length": 50
     },
     {
-        "bullet": "M60DBullet",
+        "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROHWeap_UH1_DoorMG_L",
-        "parent": "ROHelicopterDoorWeapon",
+        "name": "ROExplosiveWeapon",
+        "parent": "ROOneShotWeapon",
         "pre_fire_length": 50
     },
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROMGWeapon",
-        "parent": "ROBipodWeapon",
+        "name": "ROFlamethrowerWeapon",
+        "parent": "ROProjectileWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROExplosiveATWeapon",
+        "parent": "ROExplosiveWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROEggGrenadeWeapon",
+        "parent": "ROExplosiveWeapon",
         "pre_fire_length": 50
     },
     {
         "bullet": "M134Bullet_UH1H",
         "instant_damage": 0,
         "name": "ROHWeap_UH1H_M21",
-        "parent": "ROHelicopterWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "M18SmokeProjectilePurple",
-        "instant_damage": 0,
-        "name": "ROHWeap_OH6_PurpleSmoke",
         "parent": "ROHelicopterWeapon",
         "pre_fire_length": 50
     },
@@ -1407,45 +1393,24 @@
         "pre_fire_length": 50
     },
     {
+        "bullet": "M18SmokeProjectilePurple",
+        "instant_damage": 0,
+        "name": "ROHWeap_OH6_PurpleSmoke",
+        "parent": "ROHelicopterWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "M60DBullet",
+        "instant_damage": 0,
+        "name": "ROHWeap_UH1_DoorMG_L",
+        "parent": "ROHelicopterDoorWeapon",
+        "pre_fire_length": 50
+    },
+    {
         "bullet": "M129GrenadeProjectile",
         "instant_damage": 0,
         "name": "ROHWeap_AH1G_Turret",
         "parent": "ROHelicopterWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Mk40RocketProjectile",
-        "instant_damage": 0,
-        "name": "ROHWeap_AH1G_RocketPods",
-        "parent": "ROHelicopterWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROMeleeWeapon",
-        "parent": "ROWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROStielGrenadeWeapon",
-        "parent": "ROExplosiveWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROItem_TunnelTool",
-        "parent": "ROMeleeWeapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
-        "name": "ROItem_Binoculars",
-        "parent": "ROWeapon",
         "pre_fire_length": 50
     },
     {
@@ -1458,8 +1423,43 @@
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "ROBipodWeapon",
+        "name": "ROSniperWeaponAdvanced",
+        "parent": "ROSniperWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROItem_Binoculars",
+        "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROVehicleWeapon",
+        "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROSniperWeapon",
         "parent": "ROProjectileWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "ROItem_TunnelTool",
+        "parent": "ROMeleeWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Mk40RocketProjectile",
+        "instant_damage": 0,
+        "name": "ROHWeap_AH1G_RocketPods",
+        "parent": "ROHelicopterWeapon",
         "pre_fire_length": 50
     }
 ]
