@@ -5,6 +5,8 @@ from typing import List
 
 import dash
 import plotly.express as px
+from dash import dcc
+from dash import html
 
 
 def load_external_scripts(var: str) -> List[Dict]:
@@ -17,12 +19,18 @@ def load_external_scripts(var: str) -> List[Dict]:
 external_scripts = load_external_scripts("EXTERNAL_SCRIPTS")
 
 app = dash.Dash(
-    "RS2 Weapon Simulator",
+    __name__,
     external_scripts=external_scripts,
 )
 server = app.server
 
-fig = px.line()
+fig = px.line(x=[0, 1], y=[1, 2])
+
+app.layout = html.Div(children=[
+    html.H1(children="Rising Storm 2: Vietnam Weapon Simulator"),
+    html.Div(children="Work in progress."),
+    dcc.Graph(id="test-graph", figure=fig),
+])
 
 if __name__ == "__main__":
     app.run_server(debug=False)
