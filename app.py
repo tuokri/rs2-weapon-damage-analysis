@@ -20,6 +20,7 @@ app = dash.Dash(
     "RS2 Weapon Simulator",
     external_scripts=external_scripts,
 )
+server = app.server
 
 fig = px.line()
 
