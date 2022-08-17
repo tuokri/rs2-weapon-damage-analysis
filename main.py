@@ -13,6 +13,7 @@ from typing import Generator
 from typing import MutableMapping
 from typing import Optional
 
+import natsort
 import numpy as np
 import pandas as pd
 from requests.structures import CaseInsensitiveDict
@@ -52,6 +53,9 @@ def parse_uscript(src_dir: Path):
     bullet_results: MutableMapping[str, BulletParseResult] = CaseInsensitiveDict()
     weapon_results: MutableMapping[str, WeaponParseResult] = CaseInsensitiveDict()
 
+    temp_bullet_results: MutableMapping[str, BulletParseResult] = {}
+    temp_weapon_results: MutableMapping[str, WeaponParseResult] = {}
+
     print(f"reading '{src_dir.absolute()}'")
     src_files = [f for f in Path(src_dir).rglob("*.uc")]
     print(f"processing {len(src_files)} .uc files")
@@ -62,9 +66,21 @@ def parse_uscript(src_dir: Path):
         result = future.result()
         if result:
             if isinstance(result, WeaponParseResult):
-                weapon_results[result.class_name] = result
+                temp_weapon_results[result.class_name] = result
             elif isinstance(result, BulletParseResult):
-                bullet_results[result.class_name] = result
+                temp_bullet_results[result.class_name] = result
+
+    temp_bullet_results = {
+        key: temp_bullet_results[key]
+        for key in temp_weapon_results.keys()
+    }
+    # temp_weapon_results =
+    pprint(temp_weapon_results)
+
+    bullet_results = CaseInsensitiveDict({
+
+    })
+
 
     print(f"found {len(bullet_results)} bullet classes")
     print(f"found {len(weapon_results)} weapon classes")
@@ -190,7 +206,8 @@ def parse_uscript(src_dir: Path):
 
     print("writing bullets.json")
     with open("bullets.json", "w") as f:
-        f.write(json.dumps(bullets_data))
+        f.write(json.dumps(bullets_data, separators=(",", ":")))
+
     print("writing bullets_readable.json")
     with open("bullets_readable.json", "w") as f:
         f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
@@ -208,7 +225,7 @@ def parse_uscript(src_dir: Path):
 
     print("writing weapons.json")
     with open("weapons.json", "w") as f:
-        f.write(json.dumps(weapons_data))
+        f.write(json.dumps(weapons_data, separators=(",", ":")))
 
     print("writing weapons_readable.json")
     with open("weapons_readable.json", "w") as f:
