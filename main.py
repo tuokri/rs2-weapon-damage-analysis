@@ -13,9 +13,9 @@ from typing import Generator
 from typing import MutableMapping
 from typing import Optional
 
-import natsort
 import numpy as np
 import pandas as pd
+from natsort import natsorted
 from requests.structures import CaseInsensitiveDict
 from werkzeug.datastructures import MultiDict
 
@@ -53,9 +53,6 @@ def parse_uscript(src_dir: Path):
     bullet_results: MutableMapping[str, BulletParseResult] = CaseInsensitiveDict()
     weapon_results: MutableMapping[str, WeaponParseResult] = CaseInsensitiveDict()
 
-    temp_bullet_results: MutableMapping[str, BulletParseResult] = {}
-    temp_weapon_results: MutableMapping[str, WeaponParseResult] = {}
-
     print(f"reading '{src_dir.absolute()}'")
     src_files = [f for f in Path(src_dir).rglob("*.uc")]
     print(f"processing {len(src_files)} .uc files")
@@ -66,21 +63,19 @@ def parse_uscript(src_dir: Path):
         result = future.result()
         if result:
             if isinstance(result, WeaponParseResult):
-                temp_weapon_results[result.class_name] = result
+                weapon_results[result.class_name] = result
             elif isinstance(result, BulletParseResult):
-                temp_bullet_results[result.class_name] = result
+                bullet_results[result.class_name] = result
 
-    temp_bullet_results = {
-        key: temp_bullet_results[key]
-        for key in temp_weapon_results.keys()
+    bullet_results = {
+        key: bullet_results[key]
+        for key in natsorted(bullet_results.keys())
     }
-    # temp_weapon_results =
-    pprint(temp_weapon_results)
 
-    bullet_results = CaseInsensitiveDict({
-
+    weapon_results = CaseInsensitiveDict({
+        key: weapon_results[key]
+        for key in natsorted(weapon_results.keys())
     })
-
 
     print(f"found {len(bullet_results)} bullet classes")
     print(f"found {len(weapon_results)} weapon classes")
@@ -187,6 +182,16 @@ def parse_uscript(src_dir: Path):
 
     print(f"{len(weapon_classes)} total Weapon classes")
 
+    # Second sort may be unnecessary.
+    weapon_classes = {
+        key: weapon_classes[key]
+        for key in natsorted(weapon_classes.keys())
+    }
+    bullet_classes = {
+        key: bullet_classes[key]
+        for key in natsorted(bullet_classes.keys())
+    }
+
     bullets_data = []
     for bullet in bullet_classes.values():
         b_data = {
@@ -202,7 +207,10 @@ def parse_uscript(src_dir: Path):
         b_data["damage_falloff"] = dmg_fo.tolist()
         b_data["fo_x"] = fo_x.tolist()
         b_data["fo_y"] = fo_y.tolist()
-        bullets_data.append(b_data)
+        bullets_data.append({
+            key: b_data[key]
+            for key in natsorted(b_data.keys())
+        })
 
     print("writing bullets.json")
     with open("bullets.json", "w") as f:
@@ -212,16 +220,19 @@ def parse_uscript(src_dir: Path):
     with open("bullets_readable.json", "w") as f:
         f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
 
-    weapons_data = [
-        {
-            "name": w.name,
-            "parent": w.parent.name,
-            "bullet": w.get_bullet().name,
-            "instant_damage": w.get_instant_damage(),
-            "pre_fire_length": w.get_pre_fire_length(),
+    weapons_data = []
+    for weapon in weapon_classes.values():
+        w_data = {
+            "name": weapon.name,
+            "parent": weapon.parent.name,
+            "bullet": weapon.get_bullet().name,
+            "instant_damage": weapon.get_instant_damage(),
+            "pre_fire_length": weapon.get_pre_fire_length(),
         }
-        for w in weapon_classes.values()
-    ]
+        weapons_data.append({
+            key: w_data[key]
+            for key in natsorted(w_data.keys())
+        })
 
     print("writing weapons.json")
     with open("weapons.json", "w") as f:
