@@ -9,6 +9,7 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
+from typing import Dict
 from typing import Generator
 from typing import MutableMapping
 from typing import Optional
@@ -345,7 +346,7 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
 def parse_localization(path: Path):
     """Read localization file and parse class metadata."""
     try:
-        with Path("weapons_readable.json").open("r", encoding="utf-8") as f:
+        with Path("weapons.json").open("r") as f:
             weapons_metadata = json.load(f)
     except Exception as e:
         print(f"error reading weapons_readable.json: {e}")
@@ -359,13 +360,15 @@ def parse_localization(path: Path):
     for i, wm in enumerate(weapons_metadata):
         name = wm["name"]
         try:
-            print(name, ":", sep="")
+            # print(name, ":", sep="")
             w_section = cg[name]
             try:
                 print(w_section["DisplayName"])
                 print(w_section["ShortDisplayName"])
-                weapons_metadata[i]["display_name"] = w_section["DisplayName"]
-                weapons_metadata[i]["short_display_name"] = w_section["ShortDisplayName"]
+                display_name = w_section["DisplayName"].replace('"', "")
+                short_name = w_section["ShortDisplayName"].replace('"', "")
+                weapons_metadata[i]["display_name"] = display_name
+                weapons_metadata[i]["short_display_name"] = short_name
             except KeyError:
                 skip_keys.add(name)
                 raise
@@ -374,9 +377,45 @@ def parse_localization(path: Path):
             error_keys.add(name)
 
     retry_keys = error_keys - skip_keys
-    print(retry_keys)
+    wm_map: Dict[str, Dict] = {}
+    if retry_keys:
+        for wm in weapons_metadata:
+            wm_map[wm["name"]] = wm
 
-    pprint(weapons_metadata)
+    for rk in retry_keys:
+        wm = wm_map[rk]
+
+        display_name = wm.get("display_name")
+        parent = wm_map.get(wm.get("parent"))
+        while not display_name and parent:
+            display_name = parent.get("display_name")
+            parent = wm_map.get(wm.get("parent"))
+            if parent == wm_map.get(wm.get("parent")):
+                break
+        if not display_name:
+            display_name = "NO_DISPLAY_NAME"
+        wm_map[rk]["display_name"] = display_name
+
+        s_display_name = wm.get("short_display_name")
+        parent = wm_map.get(wm.get("parent"))
+        while not s_display_name and parent:
+            s_display_name = parent.get("short_display_name")
+            parent = wm_map.get(wm.get("parent"))
+            if parent == wm_map.get(wm.get("parent")):
+                break
+        if not s_display_name:
+            s_display_name = "NO_SHORT_DISPLAY_NAME"
+        wm_map[rk]["short_display_name"] = s_display_name
+
+    weapons_metadata = list(wm_map.values())
+
+    print("writing weapons.json")
+    with Path("weapons.json").open("w") as f:
+        f.write(json.dumps(weapons_metadata, separators=(",", ":")))
+
+    print("writing weapons_readable.json")
+    with Path("weapons_readable.json").open("w") as f:
+        f.write(json.dumps(weapons_metadata, indent=4, sort_keys=True))
 
 
 def run_simulation(weapon: Weapon):
@@ -517,7 +556,7 @@ def main():
     elif args.parse_localization:
         parse_localization(Path(args.parse_localization).resolve())
     elif args.simulate:
-        run_simulations(Path(args.pickle_file).resolve())
+        run_simulations(Path(args.simulate).resolve())
     else:
         raise SystemExit("no valid action specified")
 
