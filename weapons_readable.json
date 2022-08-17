@@ -325,12 +325,12 @@
     },
     {
         "bullet": "AKMBullet",
-        "display_name": "AK-47 Assault Rifle",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 93,
         "name": "ROWeap_AK47_AssaultRifle_AKM",
         "parent": "ROWeap_AK47_AssaultRifle_Type56",
         "pre_fire_length": 25,
-        "short_display_name": "AK-47"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "Type56Bullet",
@@ -352,12 +352,12 @@
     },
     {
         "bullet": "Type56_1Bullet",
-        "display_name": "AK-47 Assault Rifle",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 86,
         "name": "ROWeap_AK47_AssaultRifle_Type56_1",
         "parent": "ROWeap_AK47_AssaultRifle_Type56",
         "pre_fire_length": 25,
-        "short_display_name": "AK-47"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "BHPBullet",
@@ -487,12 +487,12 @@
     },
     {
         "bullet": "IZH43Buckshot",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "SxS Shotgun",
         "instant_damage": 323,
         "name": "ROWeap_IZH43_Shotgun_Level2",
         "parent": "ROWeap_IZH43_Shotgun_Content",
         "pre_fire_length": 25,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "SxS"
     },
     {
         "bullet": "IZH43Buckshot",
@@ -973,12 +973,12 @@
     },
     {
         "bullet": "M60Bullet",
-        "display_name": "M60 GPMG",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 120,
         "name": "ROWeap_M60_GPMG_Level2",
         "parent": "ROWeap_M60_GPMG_Content",
         "pre_fire_length": 50,
-        "short_display_name": "M60"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "M61GrenadeProjectile",
@@ -1027,21 +1027,21 @@
     },
     {
         "bullet": "M61GrenadeProjectile",
-        "display_name": "M61 Grenade",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 0,
         "name": "ROWeap_M61_Grenade_ContentDouble",
         "parent": "ROWeap_M61_Grenade_Content",
         "pre_fire_length": 50,
-        "short_display_name": "M61 GRENADE"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "M61GrenadeProjectile",
-        "display_name": "M61 Grenade",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 0,
         "name": "ROWeap_M61_Grenade_ContentQuad",
         "parent": "ROWeap_M61_Grenade_Content",
         "pre_fire_length": 50,
-        "short_display_name": "M61 GRENADE"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "M61GrenadeProjectile",
@@ -1063,21 +1063,21 @@
     },
     {
         "bullet": "M79GrenadeProjectile",
-        "display_name": "M79 Grenade Launcher",
+        "display_name": "M79 with Sidearm",
         "instant_damage": 0,
         "name": "ROWeap_M79_GrenadeLauncherSmoke",
         "parent": "ROWeap_M79_GrenadeLauncher",
         "pre_fire_length": 25,
-        "short_display_name": "M79"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "M79GrenadeProjectile",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "M79 Grenade Launcher",
         "instant_damage": 0,
         "name": "ROWeap_M79_GrenadeLauncherSmoke_Content",
         "parent": "ROWeap_M79_GrenadeLauncher_Level3",
         "pre_fire_length": 25,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "M79"
     },
     {
         "bullet": "M79GrenadeProjectile",
@@ -1090,12 +1090,12 @@
     },
     {
         "bullet": "M79GrenadeProjectile",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "M79 Grenade Launcher",
         "instant_damage": 0,
         "name": "ROWeap_M79_GrenadeLauncher_Level2",
         "parent": "ROWeap_M79_GrenadeLauncher_Content",
         "pre_fire_length": 25,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "M79"
     },
     {
         "bullet": "M79GrenadeProjectile",
@@ -1297,12 +1297,12 @@
     },
     {
         "bullet": "Projectile",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "MD-82 Mine",
         "instant_damage": 0,
         "name": "ROWeap_MD82_Mine_ContentTriple",
         "parent": "ROWeap_MD82_Mine_Content",
         "pre_fire_length": 50,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "MD-82 MINE"
     },
     {
         "bullet": "M1919Bullet",
@@ -1540,12 +1540,12 @@
     },
     {
         "bullet": "RPDBullet",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "RPD LMG",
         "instant_damage": 86,
         "name": "ROWeap_RPD_LMG_200rd",
         "parent": "ROWeap_RPD_LMG_Content",
         "pre_fire_length": 50,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "RPD"
     },
     {
         "bullet": "RPDBullet",
@@ -1594,12 +1594,12 @@
     },
     {
         "bullet": "PG7VRocket",
-        "display_name": "RPG-7 Rocket Launcher",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 0,
         "name": "ROWeap_RPG7_RocketLauncher_Content_SK",
         "parent": "ROWeap_RPG7_RocketLauncher_Content",
         "pre_fire_length": 0,
-        "short_display_name": "RPG-7"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "PG7VRocket",
@@ -1684,12 +1684,12 @@
     },
     {
         "bullet": "Projectile",
-        "display_name": "Tripwire Trap",
+        "display_name": "NO_DISPLAY_NAME",
         "instant_damage": 0,
         "name": "ROWeap_TripwireTrap_ContentSingle",
         "parent": "ROWeap_TripwireTrap_Content",
         "pre_fire_length": 50,
-        "short_display_name": "TRIPWIRE TRAP"
+        "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
         "bullet": "Projectile",
@@ -1801,12 +1801,12 @@
     },
     {
         "bullet": "XM21SubsonicBullet",
-        "display_name": "NO_DISPLAY_NAME",
+        "display_name": "XM21 Scoped Rifle",
         "instant_damage": 160,
         "name": "ROWeap_XM21Scoped_Rifle_Suppressed",
         "parent": "ROWeap_XM21Scoped_Rifle_Content",
         "pre_fire_length": 25,
-        "short_display_name": "NO_SHORT_DISPLAY_NAME"
+        "short_display_name": "XM21"
     },
     {
         "bullet": "XM177E1Bullet",

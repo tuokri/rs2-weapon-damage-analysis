@@ -9,7 +9,6 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
-from typing import Dict
 from typing import Generator
 from typing import MutableMapping
 from typing import Optional
@@ -355,23 +354,27 @@ def parse_localization(path: Path):
     cg = configparser.ConfigParser(dict_type=MultiDict, strict=False)
     cg.read(path.absolute())
 
-    retry_keys = set()
+    retry_keys = []
     for i, wm in enumerate(weapons_metadata):
         name = wm["name"]
         try:
             w_section = cg[name]
-            display_name = w_section["DisplayName"].replace('"', "")
-            short_name = w_section["ShortDisplayName"].replace('"', "")
+            display_name = w_section.get("DisplayName", "").replace('"', "")
+            short_name = w_section.get("ShortDisplayName", "").replace('"', "")
             weapons_metadata[i]["display_name"] = display_name
             weapons_metadata[i]["short_display_name"] = short_name
         except KeyError:
-            retry_keys.add(name)
+            # print("error :", name)
+            retry_keys.append(name)
 
-    wm_map: Dict[str, Dict] = {}
-    if retry_keys:
-        for wm in weapons_metadata:
-            wm_map[wm["name"]] = wm
+    wm_map = {
+        wm["name"]: wm
+        for wm in weapons_metadata
+    }
 
+    retry_keys = natsorted(retry_keys)
+
+    # order matters because parent might not be resolved yet
     for rk in retry_keys:
         wm = wm_map[rk]
 
@@ -382,9 +385,7 @@ def parse_localization(path: Path):
             parent = wm_map.get(wm.get("parent"))
             if parent == wm_map.get(wm.get("parent")):
                 break
-        if not display_name:
-            display_name = "NO_DISPLAY_NAME"
-        wm_map[rk]["display_name"] = display_name
+        wm_map[rk]["display_name"] = display_name or "NO_DISPLAY_NAME"
 
         s_display_name = wm.get("short_display_name")
         parent = wm_map.get(wm.get("parent"))
@@ -393,11 +394,14 @@ def parse_localization(path: Path):
             parent = wm_map.get(wm.get("parent"))
             if parent == wm_map.get(wm.get("parent")):
                 break
-        if not s_display_name:
-            s_display_name = "NO_SHORT_DISPLAY_NAME"
-        wm_map[rk]["short_display_name"] = s_display_name
+        wm_map[rk]["short_display_name"] = s_display_name or "NO_SHORT_DISPLAY_NAME"
 
-    weapons_metadata = list(wm_map.values())
+    for i, wm in enumerate(weapons_metadata):
+        name = wm["name"]
+        weapons_metadata[i]["display_name"] = wm_map.get(
+            name)["display_name"] or "NO_DISPLAY_NAME"
+        weapons_metadata[i]["short_display_name"] = wm_map.get(
+            name)["short_display_name"] or "NO_SHORT_DISPLAY_NAME"
 
     print("writing weapons.json")
     with Path("weapons.json").open("w") as f:
