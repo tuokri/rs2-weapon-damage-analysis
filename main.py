@@ -355,28 +355,18 @@ def parse_localization(path: Path):
     cg = configparser.ConfigParser(dict_type=MultiDict, strict=False)
     cg.read(path.absolute())
 
-    error_keys = set()
-    skip_keys = set()
+    retry_keys = set()
     for i, wm in enumerate(weapons_metadata):
         name = wm["name"]
         try:
-            # print(name, ":", sep="")
             w_section = cg[name]
-            try:
-                print(w_section["DisplayName"])
-                print(w_section["ShortDisplayName"])
-                display_name = w_section["DisplayName"].replace('"', "")
-                short_name = w_section["ShortDisplayName"].replace('"', "")
-                weapons_metadata[i]["display_name"] = display_name
-                weapons_metadata[i]["short_display_name"] = short_name
-            except KeyError:
-                skip_keys.add(name)
-                raise
-        except KeyError as ke:
-            print("error :", ke)
-            error_keys.add(name)
+            display_name = w_section["DisplayName"].replace('"', "")
+            short_name = w_section["ShortDisplayName"].replace('"', "")
+            weapons_metadata[i]["display_name"] = display_name
+            weapons_metadata[i]["short_display_name"] = short_name
+        except KeyError:
+            retry_keys.add(name)
 
-    retry_keys = error_keys - skip_keys
     wm_map: Dict[str, Dict] = {}
     if retry_keys:
         for wm in weapons_metadata:
