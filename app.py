@@ -8,6 +8,9 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash import dcc
 from dash import html
+from dash_bootstrap_templates import load_figure_template
+
+load_figure_template("vapor")
 
 
 def load_external_scripts(var: str) -> List[Dict]:
@@ -27,6 +30,9 @@ app = dash.Dash(
 )
 server = app.server
 
+app.css.config.serve_locally = False
+app.scripts.config.serve_locally = False
+
 fig = px.line(x=[0, 1], y=[1, 2])
 
 app.layout = html.Div(
@@ -45,4 +51,8 @@ app.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(
+        debug=True,
+        threaded=True,
+        dev_tools_hot_reload=True
+    )
