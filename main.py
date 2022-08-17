@@ -1,3 +1,4 @@
+import configparser
 import datetime
 import json
 import os
@@ -12,10 +13,10 @@ from typing import Generator
 from typing import MutableMapping
 from typing import Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from requests.structures import CaseInsensitiveDict
+from werkzeug.datastructures import MultiDict
 
 from dataio import pdumps_weapon_classes
 from dataio import ploads_weapon_classes
@@ -313,6 +314,43 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     trajectory.to_csv(p.absolute())
 
 
+def parse_localization(path: Path):
+    """Read localization file and parse class metadata."""
+    try:
+        with Path("weapons_readable.json").open("r", encoding="utf-8") as f:
+            weapons_metadata = json.load(f)
+    except Exception as e:
+        print(f"error reading weapons_readable.json: {e}")
+        print("make sure script sources are parsed")
+
+    cg = configparser.ConfigParser(dict_type=MultiDict, strict=False)
+    cg.read(path.absolute())
+
+    error_keys = set()
+    skip_keys = set()
+    for i, wm in enumerate(weapons_metadata):
+        name = wm["name"]
+        try:
+            print(name, ":", sep="")
+            w_section = cg[name]
+            try:
+                print(w_section["DisplayName"])
+                print(w_section["ShortDisplayName"])
+                weapons_metadata[i]["display_name"] = w_section["DisplayName"]
+                weapons_metadata[i]["short_display_name"] = w_section["ShortDisplayName"]
+            except KeyError:
+                skip_keys.add(name)
+                raise
+        except KeyError as ke:
+            print("error :", ke)
+            error_keys.add(name)
+
+    retry_keys = error_keys - skip_keys
+    print(retry_keys)
+
+    pprint(weapons_metadata)
+
+
 def run_simulation(weapon: Weapon):
     # Degrees up from positive x axis.
     aim_angles = np.radians([0, 1, 2, 3, 4, 5])
@@ -392,199 +430,73 @@ def run_simulations(classes_file: Path):
         print("done:", done)
 
 
+src_default = (
+    r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development")
+loc_default = (
+    r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\ROGame\Localization\INT\ROGame.int")
+
+
 def parse_args() -> Namespace:
     ap = ArgumentParser()
-    actions = {
-        "parse": "parse UnrealScript source files and write classes",
-        "simulate": "read class file and run simulations",
-    }
-    ap.add_argument(
-        "action",
-        choices=actions.keys(),
-        help="the action to perform",
-        type=str,
+    group = ap.add_argument_group("mutually exclusive arguments")
+    group.add_argument(
+        "-p", "--parse-src",
+        help="parse Rising Storm 2: Vietnam UnrealScript source code",
+        default=None,
+        const=src_default,
+        nargs="?",
+        metavar="USCRIPT_SRC_DIR",
+        action="store",
     )
-    ap.add_argument(
-        "-s", "--src-dir",
-        help="Rising Storm 2: Vietnam UnrealScript "
-             "source code directory, only used if "
-             "'parse' action is chosen",
-        type=str,
-        default=r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development",
+    group.add_argument(
+        "-l", "--parse-localization",
+        help="parse localization file and read weapon metadata, "
+             "source code should be parsed before parsing localization",
+        default=None,
+        const=loc_default,
+        nargs="?",
+        metavar="LOCALIZATION_FILE",
+        action="store",
     )
-    ap.add_argument(
-        "-p", "--pickle-file",
-        help="Weapon classes pickle file the load "
-             "for simulations, only used if "
-             "'simulate' action is chosen",
-        type=str,
-        default="weapon_classes.pickle",
+    group.add_argument(
+        "-s", "--simulate",
+        help="load weapon class pickle file and run simulations, "
+             "both source code and localization should be "
+             "parsed before running simulations",
+        default=None,
+        const="weapon_classes.pickle",
+        nargs="?",
+        metavar="CLASS_PICKLE_FILE",
+        action="store",
     )
 
     args = ap.parse_args()
-    args.action = args.action.lower()
+    mutex_args = (args.simulate, args.parse_src, args.parse_localization)
+    if mutex_args.count(None) != len(mutex_args) - 1:
+        ap.error("exactly one mutually exclusive argument is required")
+
     return args
 
 
 def main():
     args = parse_args()
-    src_dir = Path(args.src_dir).resolve()
-    pickle_file = Path(args.pickle_file).resolve()
 
     begin = datetime.datetime.now()
     print(f"begin: {begin.isoformat()}")
 
-    if args.action == "parse":
-        parse_uscript(src_dir)
-    elif args.action == "simulate":
-        run_simulations(pickle_file)
+    if args.parse_src:
+        parse_uscript(Path(args.parse_src).resolve())
+    elif args.parse_localization:
+        parse_localization(Path(args.parse_localization).resolve())
+    elif args.simulate:
+        run_simulations(Path(args.pickle_file).resolve())
     else:
-        raise SystemExit("invalid action")
-
-    # with open("weapon_classes.pickle", "rb") as f:
-    #     wc2 = preads_weapon_classes(f.read())
-
-    # start_loc = np.array([0.0, 0.0], dtype=np.longfloat)
-    # # sim = BulletSimulation(
-    # #     bullet=bullet_classes["akmbullet"],
-    # #     location=start_loc.copy(),
-    # # )
-    # sim = WeaponSimulation(
-    #     # weapon=weapon_classes["ROWeap_IZH43_Shotgun"],
-    #     weapon=weapon_classes["ROWeap_AK47_AssaultRifle"],
-    #     location=start_loc.copy(),
-    #     # Initial velocity direction. Magnitude doesn't matter.
-    #     # velocity=np.array([5.0, 0.05]),
-    #     velocity=np.array([1.0, 0.00]),
-    # )
-    #
-    # np.set_printoptions(suppress=True),
-    # np.set_printoptions(formatter={"all": lambda _x: str(_x)})
-    #
-    # # izh = weapon_classes["ROWeap_IZH43_Shotgun"]
-    # # pprint(izh)
-    # # print(izh.get_bullet().get_speed_uu())
-    # # print(izh.get_bullet().get_speed_uu() ** 2)
-    # # print(izh.get_bullet().get_speed())
-    # # print(izh.get_bullet().get_ballistic_coeff())
-    # # print(izh.get_bullet().get_damage_falloff())
-    #
-    # bullet = sim.bullet
-    # x, y = interp_dmg_falloff(bullet.get_damage_falloff())
-    # speed = bullet.get_speed()
-    # # f_ytox = interp1d(y, x, fill_value="extrapolate", kind="linear")
-    # # f_xtoy = sim.ef_func
-    # # zero_dmg_speed = f_ytox(1.0)
-    # plt.plot(x, y, marker="o")
-    # plt.axvline(speed)
-    # # plt.axvline(zero_dmg_speed)
-    # # plt.axvline(0)
-    # plt.text(speed, 0.5, str(speed))
-    # plt.title(f"{bullet.name} damage falloff curve")
-    # plt.xlabel(r"bullet speed squared $(\frac{UU}{s})^2$")
-    # plt.ylabel("energy transfer function")
-    #
-    # l_trajectory_x = []
-    # l_trajectory_y = []
-    # l_dmg_curve_x_flight_time = []
-    # l_dmg_curve_y_damage = []
-    # l_dmg_curve_x_distance = []
-    # l_speed_curve_x = []
-    # l_speed_curve_y = []
-    # # dt_generator = gen_delta_time(np.longfloat(1) / np.longfloat(500))
-    # # dt_generator = gen_delta_time(0.0069444444444)
-    # # prev_dist_incr = 0
-    # steps = 0
-    # time_step = 1 / 500  # 0.0165 / 10
-    # sim_time = 2.15
-    # while sim.flight_time < sim_time:
-    #     steps += 1
-    #     sim.simulate(time_step)
-    #     flight_time = sim.flight_time
-    #     dmg = sim.calc_damage()
-    #     l_dmg_curve_x_flight_time.append(flight_time)
-    #     l_dmg_curve_y_damage.append(dmg)
-    #     loc = sim.location.copy()
-    #     velocity_ms = np.linalg.norm(sim.velocity) / 50
-    #     l_dmg_curve_x_distance.append(sim.distance_traveled_m)
-    #     l_trajectory_x.append(loc[0])
-    #     l_trajectory_y.append(loc[1])
-    #     l_speed_curve_x.append(flight_time)
-    #     l_speed_curve_y.append(velocity_ms)
-    #     # print("flight_time (s) =", flight_time)
-    #     # print("damage          =", dmg)
-    #     # print("distance (m)    =", sim.distance_traveled_m)
-    #     # print("velocity (m/s)  =", velocity_ms)
-    #     # print("velocity[1] (Z) =", sim.velocity[1])
-    #
-    # print(f"simulation did {steps} steps")
-    # print("distance traveled from start to end (Euclidean):",
-    #       np.linalg.norm(sim.location - start_loc) / 50,
-    #       "meters")
-    # print("bullet distance traveled (simulated accumulation)",
-    #       sim.distance_traveled_m, "meters")
-    #
-    # trajectory_x = np.array(l_trajectory_x) / 50
-    # trajectory_y = np.array(l_trajectory_y) / 50
-    # dmg_curve_x_flight_time = np.array(l_dmg_curve_x_flight_time)
-    # dmg_curve_y_damage = np.array(l_dmg_curve_y_damage)
-    # dmg_curve_x_distance = np.array(l_dmg_curve_x_distance)
-    # speed_curve_x = np.array(l_speed_curve_x)
-    # speed_curve_y = np.array(l_speed_curve_y)
-    #
-    # print("vertical delta (bullet drop) (m):",
-    #       trajectory_y[-1] - trajectory_y[0])
-    #
-    # pref_length = sim.weapon.get_pre_fire_length()
-    # instant_dmg = sim.weapon.get_instant_damage()
-    #
-    # plt.figure()
-    # plt.title(f"{bullet.name} trajectory")
-    # plt.ylabel("y (m)")
-    # plt.xlabel("x (m)")
-    # plt.plot(trajectory_x, trajectory_y)
-    #
-    # last_pref = np.where(dmg_curve_y_damage[dmg_curve_x_distance < pref_length])[-1]
-    # # print(last_pref)
-    # # dmg_curve_y_damage[last_pref + 1]
-    # dmg_curve_y_damage_padded = np.insert(dmg_curve_y_damage, last_pref + 1, instant_dmg)
-    # dmg_curve_x_distance_padded = np.insert(dmg_curve_x_distance, last_pref + 1, pref_length)
-    #
-    # dmg_curve_y_damage[dmg_curve_x_distance <= pref_length] = instant_dmg
-    # dmg_curve_y_damage_padded[dmg_curve_x_distance_padded <= pref_length] = instant_dmg
-    #
-    # plt.figure()
-    # plt.title(f"{bullet.name} damage over time")
-    # plt.xlabel("flight time (s)")
-    # plt.ylabel("damage")
-    # plt.plot(dmg_curve_x_flight_time, dmg_curve_y_damage)
-    #
-    # plt.figure()
-    # plt.title(f"{bullet.name} damage over bullet travel distance")
-    # plt.xlabel("bullet distance traveled (m)")
-    # plt.ylabel("damage")
-    # plt.axvline(pref_length, color="red")
-    # plt.plot(dmg_curve_x_distance_padded, dmg_curve_y_damage_padded)
-    #
-    # plt.figure()
-    # plt.title(f"{bullet.name} damage on target at distance")
-    # plt.xlabel("horizontal distance to target (m)")
-    # plt.ylabel("damage")
-    # plt.axvline(pref_length, color="red")
-    # plt.plot(trajectory_x, dmg_curve_y_damage)
-    #
-    # plt.figure()
-    # plt.title(f"{bullet.name} speed over time")
-    # plt.xlabel("flight time (s)")
-    # plt.ylabel("speed (m/s)")
-    # plt.plot(speed_curve_x, speed_curve_y)
+        raise SystemExit("no valid action specified")
 
     end = datetime.datetime.now()
     print(f"end: {end.isoformat()}")
     total_secs = round((end - begin).total_seconds(), 2)
     print(f"processing took {total_secs} seconds")
-
-    # plt.show()
 
 
 if __name__ == "__main__":
