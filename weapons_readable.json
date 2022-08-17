@@ -2,13 +2,6 @@
     {
         "bullet": "Projectile",
         "instant_damage": 0,
-        "name": "Weapon",
-        "parent": "Weapon",
-        "pre_fire_length": 50
-    },
-    {
-        "bullet": "Projectile",
-        "instant_damage": 0,
         "name": "ROATWeapon",
         "parent": "ROBipodWeapon",
         "pre_fire_length": 50
@@ -1460,6 +1453,13 @@
         "instant_damage": 0,
         "name": "ROWeaponArtillery",
         "parent": "ROWeapon",
+        "pre_fire_length": 50
+    },
+    {
+        "bullet": "Projectile",
+        "instant_damage": 0,
+        "name": "Weapon",
+        "parent": "Weapon",
         "pre_fire_length": 50
     }
 ]

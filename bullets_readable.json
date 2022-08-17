@@ -1,23 +1,5 @@
 [
     {
-        "ballistic_coeff": 1.0,
-        "damage": 0,
-        "damage_falloff": [
-            0,
-            1
-        ],
-        "drag_func": "RODF_G1",
-        "fo_x": [
-            0
-        ],
-        "fo_y": [
-            1
-        ],
-        "name": "Projectile",
-        "parent": "Projectile",
-        "speed": 0
-    },
-    {
         "ballistic_coeff": 0.138,
         "damage": 462,
         "damage_falloff": [
@@ -1702,6 +1684,24 @@
         "name": "PPSH41Bullet",
         "parent": "ROBullet",
         "speed": 488.0
+    },
+    {
+        "ballistic_coeff": 1.0,
+        "damage": 0,
+        "damage_falloff": [
+            0,
+            1
+        ],
+        "drag_func": "RODF_G1",
+        "fo_x": [
+            0
+        ],
+        "fo_y": [
+            1
+        ],
+        "name": "Projectile",
+        "parent": "Projectile",
+        "speed": 0
     },
     {
         "ballistic_coeff": 1.0,
