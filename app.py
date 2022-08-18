@@ -20,9 +20,7 @@ def load_external_scripts(var: str) -> List[Dict]:
     return json.loads(scripts)
 
 
-external_scripts = [{
-    "src": "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
-}]
+external_scripts = []
 external_scripts.extend(load_external_scripts("EXTERNAL_SCRIPTS"))
 
 app = dash.Dash(
@@ -40,16 +38,6 @@ app.index_string = """
 <!DOCTYPE html>
 <html>
     <head>
-        <script>
-          window.dataLayer = window.dataLayer ||[];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('consent','default',{
-            'ad_storage':'denied',
-            'analytics_storage':'denied',
-            'wait_for_update': 500
-          });
-          gtag("set", "ads_data_redaction", true);
-        </script>
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
