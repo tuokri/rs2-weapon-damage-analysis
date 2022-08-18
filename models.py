@@ -170,6 +170,19 @@ class Weapon(ClassBase):
         return self.get_attr("pre_fire_length", invalid_value=-1)
 
 
+@dataclass
+class WeaponLoadout(ClassBase):
+    """Alternate bullet loadout for a weapon.
+    TODO: how to name these? Is is better to just
+      use another weapon class with _loadoutX suffix?
+    """
+    weapon: Weapon
+    bullet: Bullet
+
+    def __hash__(self) -> int:
+        return super().__hash__()
+
+
 PROJECTILE = Bullet(
     name="Projectile",
     damage=0,
