@@ -20,7 +20,10 @@ def load_external_scripts(var: str) -> List[Dict]:
     return json.loads(scripts)
 
 
-external_scripts = load_external_scripts("EXTERNAL_SCRIPTS")
+external_scripts = [{
+    "src": "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
+}]
+external_scripts.extend(load_external_scripts("EXTERNAL_SCRIPTS"))
 
 app = dash.Dash(
     __name__,
@@ -33,8 +36,38 @@ server = app.server
 app.css.config.serve_locally = False
 app.scripts.config.serve_locally = False
 
-fig = px.line(x=[0, 1], y=[1, 2])
+app.index_string = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-N97VFK2');</script>
+        <!-- End Google Tag Manager -->
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N97VFK2"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+"""
 
+fig = px.line(x=[0, 1], y=[1, 2])
 app.layout = html.Div(
     children=[
         html.H1(
