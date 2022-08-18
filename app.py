@@ -40,6 +40,16 @@ app.index_string = """
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+          window.dataLayer = window.dataLayer ||[];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent','default',{
+            'ad_storage':'denied',
+            'analytics_storage':'denied',
+            'wait_for_update': 500
+          });
+          gtag("set", "ads_data_redaction", true);
+        </script>
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
