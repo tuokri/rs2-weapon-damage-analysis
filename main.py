@@ -4,6 +4,7 @@ import json
 import os
 from argparse import ArgumentParser
 from argparse import Namespace
+from collections import deque
 from concurrent import futures
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
@@ -372,29 +373,36 @@ def parse_localization(path: Path):
         for wm in weapons_metadata
     }
 
-    retry_keys = natsorted(retry_keys)
+    wm_map["Weapon"]["display_name"] = "NO_DISPLAY_NAME"
+    wm_map["Weapon"]["short_display_name"] = "NO_SHORT_DISPLAY_NAME"
 
-    # order matters because parent might not be resolved yet
-    for rk in retry_keys:
+    retry_queue = deque(natsorted(retry_keys))
+    while retry_queue:
+        rk = retry_queue.popleft()
         wm = wm_map[rk]
 
         display_name = wm.get("display_name")
         parent = wm_map.get(wm.get("parent"))
         while not display_name and parent:
             display_name = parent.get("display_name")
-            parent = wm_map.get(wm.get("parent"))
-            if parent == wm_map.get(wm.get("parent")):
+            parent = wm_map.get(parent.get("parent"))
+            if parent == wm_map.get(parent.get("parent")):
+                display_name = parent.get("display_name")
                 break
-        wm_map[rk]["display_name"] = display_name or "NO_DISPLAY_NAME"
+        wm_map[rk]["display_name"] = display_name
 
         s_display_name = wm.get("short_display_name")
         parent = wm_map.get(wm.get("parent"))
         while not s_display_name and parent:
             s_display_name = parent.get("short_display_name")
-            parent = wm_map.get(wm.get("parent"))
-            if parent == wm_map.get(wm.get("parent")):
+            parent = wm_map.get(parent.get("parent"))
+            if parent == wm_map.get(parent.get("parent")):
+                s_display_name = parent.get("short_display_name")
                 break
-        wm_map[rk]["short_display_name"] = s_display_name or "NO_SHORT_DISPLAY_NAME"
+        wm_map[rk]["short_display_name"] = s_display_name
+
+        if not display_name or not s_display_name:
+            retry_queue.append(rk)
 
     for i, wm in enumerate(weapons_metadata):
         name = wm["name"]
