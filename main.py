@@ -20,19 +20,19 @@ from natsort import natsorted
 from requests.structures import CaseInsensitiveDict
 from werkzeug.datastructures import MultiDict
 
-from dataio import pdumps_weapon_classes
-from dataio import ploads_weapon_classes
-from dataio import process_file
-from dataio import resolve_parent
-from models import Bullet
-from models import BulletParseResult
-from models import PROJECTILE
-from models import ParseResult
-from models import WEAPON
-from models import Weapon
-from models import WeaponParseResult
-from models import WeaponSimulation
-from models import interp_dmg_falloff
+from rs2simlib.dataio import pdumps_weapon_classes
+from rs2simlib.dataio import ploads_weapon_classes
+from rs2simlib.dataio import process_file
+from rs2simlib.dataio import resolve_parent
+from rs2simlib.models import Bullet
+from rs2simlib.models import BulletParseResult
+from rs2simlib.models import PROJECTILE
+from rs2simlib.models import ParseResult
+from rs2simlib.models import WEAPON
+from rs2simlib.models import Weapon
+from rs2simlib.models import WeaponParseResult
+from rs2simlib.models import WeaponSimulation
+from rs2simlib.models import interp_dmg_falloff
 
 
 def gen_delta_time(step: np.longfloat = 0.01
