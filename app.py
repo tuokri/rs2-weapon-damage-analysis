@@ -1,9 +1,13 @@
+import os
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import html
 from dash_bootstrap_templates import ThemeSwitchAIO
 from dash_bootstrap_templates import load_figure_template
+from flask import redirect
+from flask import request
 
 load_figure_template("vapor")
 
@@ -110,6 +114,18 @@ app.layout = dbc.Container([
 
     dash.page_container,
 ])
+
+
+@server.before_request
+def before_request():
+    if "DYNO" in os.environ and not request.is_secure:
+        # noinspection HttpUrlsUsage
+        url = request.url.replace("http://", "https://", 1)
+        return redirect(
+            location=url,
+            code=301,
+        )
+
 
 if __name__ == "__main__":
     app.run_server(
