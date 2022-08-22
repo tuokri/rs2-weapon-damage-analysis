@@ -10,7 +10,6 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
-from typing import Generator
 from typing import MutableMapping
 from typing import Optional
 
@@ -18,8 +17,6 @@ import numpy as np
 import pandas as pd
 from natsort import natsorted
 from requests.structures import CaseInsensitiveDict
-from werkzeug.datastructures import MultiDict
-
 from rs2simlib.dataio import pdumps_weapon_classes
 from rs2simlib.dataio import ploads_weapon_classes
 from rs2simlib.dataio import process_file
@@ -33,18 +30,7 @@ from rs2simlib.models import Weapon
 from rs2simlib.models import WeaponParseResult
 from rs2simlib.models import WeaponSimulation
 from rs2simlib.models import interp_dmg_falloff
-
-
-def gen_delta_time(step: np.longfloat = 0.01
-                   ) -> Generator[np.longfloat, None, None]:
-    count = 0
-    while True:
-        if count == 0:
-            count += 1
-            # Make the first step extra small.
-            yield step / np.longfloat(1000)
-        else:
-            yield step
+from werkzeug.datastructures import MultiDict
 
 
 def parse_uscript(src_dir: Path):
