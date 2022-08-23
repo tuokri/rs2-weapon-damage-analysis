@@ -10,6 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
+from typing import List
 from typing import MutableMapping
 from typing import Optional
 
@@ -49,10 +50,11 @@ def parse_uscript(src_dir: Path):
     for future in futures.as_completed(fs):
         result = future.result()
         if result:
-            if isinstance(result, WeaponParseResult):
-                weapon_results[result.class_name] = result
-            elif isinstance(result, BulletParseResult):
-                bullet_results[result.class_name] = result
+            if result.class_name:
+                if isinstance(result, WeaponParseResult):
+                    weapon_results[result.class_name] = result
+                elif isinstance(result, BulletParseResult):
+                    bullet_results[result.class_name] = result
 
     bullet_results = {
         key: bullet_results[key]
@@ -125,15 +127,26 @@ def parse_uscript(src_dir: Path):
     for class_name, weapon_result in weapon_results.items():
         if class_name == WEAPON.name:
             continue
+
         parent = weapon_classes.get(weapon_result.parent_name)
-        bullet = bullet_classes.get(weapon_result.bullet_name)
-        if parent and bullet:
+
+        bullets = [None] * (max(weapon_result.bullet_names, default=0) + 1)
+        for idx, bullet_name in weapon_result.bullet_names.items():
+            bullets[idx] = bullet_classes.get(bullet_name)
+
+        instant_damages: List[Optional[int]] = [None] * (
+                max(weapon_result.instant_damages, default=0) + 1)
+        for i_idx, instant_dmg in weapon_result.instant_damages.items():
+            instant_damages[i_idx] = instant_dmg
+
+        if parent and any(bullets):
             resolved_early += 1
+
         weapon_classes[class_name] = Weapon(
             name=class_name,
-            bullet=bullet,
+            bullets=bullets,
             parent=parent,
-            instant_damage=weapon_result.instant_damage,
+            instant_damages=instant_damages,
             pre_fire_length=weapon_result.pre_fire_length,
         )
 
@@ -158,13 +171,16 @@ def parse_uscript(src_dir: Path):
     for td in to_del:
         del weapon_classes[td]
 
+    # weapon_classes["ROBipodWeapon"].get_bullets()
+    # pprint(weapon_classes["ROBipodWeapon"].get_bullets())
+
     if not all(w.is_child_of(WEAPON) for w in weapon_classes.values()):
         raise RuntimeError("got invalid Weapon classes")
 
-    if not all(w.get_bullet() for w in weapon_classes.values()):
+    if not all(any(w.get_bullets()) for w in weapon_classes.values()):
         for w in weapon_classes.values():
-            if not w.get_bullet():
-                print(w)
+            if not all(w.get_bullets()):
+                print(w.name, w.get_bullets())
         raise RuntimeError("got Weapon classes without Bullet")
 
     print(f"{len(weapon_classes)} total Weapon classes")
@@ -212,8 +228,8 @@ def parse_uscript(src_dir: Path):
         w_data = {
             "name": weapon.name,
             "parent": weapon.parent.name,
-            "bullet": weapon.get_bullet().name,
-            "instant_damage": weapon.get_instant_damage(),
+            "bullets": [b.name if b else None for b in weapon.get_bullets()],
+            "instant_damages": [i or 0 for i in weapon.get_instant_damages()],
             "pre_fire_length": weapon.get_pre_fire_length(),
         }
         weapons_data.append({
@@ -289,7 +305,7 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     #       trajectory_y[-1] - trajectory_y[0])
 
     pref_length = sim.weapon.get_pre_fire_length()
-    instant_dmg = sim.weapon.get_instant_damage()
+    instant_dmg = sim.weapon.get_instant_damage(0)
 
     last_pref = np.where(dmg_curve_y_damage[dmg_curve_x_distance < pref_length])[-1] + 1
     dmg_curve_y_damage = np.insert(dmg_curve_y_damage, last_pref, instant_dmg)
@@ -442,7 +458,7 @@ def run_simulations(classes_file: Path):
 
     # TODO: Pretty dumb way of doing this. Fix later.
     ak47 = weapon_classes["ROWeap_AK47_AssaultRifle"]
-    ballistic_proj = ak47.get_bullet().find_parent("ROBallisticProjectile")
+    ballistic_proj = ak47.get_bullet(0).find_parent("ROBallisticProjectile")
     sim_classes = []
 
     pprint(weapon_classes["ROWeap_IZH43_Shotgun"])
@@ -459,7 +475,8 @@ def run_simulations(classes_file: Path):
 
             if (weapon.name.lower().startswith("roweap_")
                     and not weapon.is_child_of(ro_one_shot)
-                    and weapon.get_bullet().is_child_of(ballistic_proj)):
+                    and weapon.get_bullet(0) is not None
+                    and weapon.get_bullet(0).is_child_of(ballistic_proj)):
                 sim_classes.append(weapon)
         except Exception as e:
             print(e)
