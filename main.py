@@ -22,8 +22,10 @@ from rs2simlib.dataio import pdumps_weapon_classes
 from rs2simlib.dataio import ploads_weapon_classes
 from rs2simlib.dataio import process_file
 from rs2simlib.dataio import resolve_parent
+from rs2simlib.fast import sim as fastsim
 from rs2simlib.models import Bullet
 from rs2simlib.models import BulletParseResult
+from rs2simlib.models import DragFunction
 from rs2simlib.models import PROJECTILE
 from rs2simlib.models import ParseResult
 from rs2simlib.models import WEAPON
@@ -345,6 +347,51 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     trajectory.to_csv(p.absolute())
 
 
+def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
+    bullet = weapon.get_bullet(0)
+    drag_func = {
+        DragFunction.G1: 1,
+        DragFunction.G7: 7,
+    }[bullet.get_drag_func()]
+    fo_x, fo_y = interp_dmg_falloff(bullet.get_damage_falloff())
+
+    aim_x = aim_dir[0]
+    aim_y = aim_dir[1]
+
+    results = fastsim.simulate(
+        sim_time=np.float64(5.0),
+        time_step=np.float64(1 / 500),
+        drag_func=drag_func,
+        ballistic_coeff=np.float64(bullet.get_ballistic_coeff()),
+        aim_dir_x=aim_x,
+        aim_dir_y=aim_y,
+        muzzle_velocity=np.float64(bullet.get_speed_uu()),
+        falloff_x=fo_x,
+        falloff_y=fo_y,
+        bullet_damage=bullet.get_damage(),
+        instant_damage=weapon.get_instant_damage(0),
+        pre_fire_trace_len=weapon.get_pre_fire_length(),
+        start_loc_x=np.float64(0.0),
+        start_loc_y=np.float64(0.0),
+    )
+
+    aim_str = f"{aim_deg}_deg".replace(".", "_")
+    p = Path(f"./sim_data/") / weapon.name
+    p.mkdir(parents=True, exist_ok=True)
+    p = p / f"sim_{aim_str}.csv"
+    p.touch(exist_ok=True)
+
+    df = pd.DataFrame({
+        "trajectory_x": results[0],
+        "trajectory_y": results[1],
+        "damage": results[2],
+        "distance": results[3],
+        "time_at_flight": results[4],
+        "bullet_velocity": results[5],
+    })
+    df.to_csv(p.absolute())
+
+
 def parse_localization(path: Path):
     """Read localization file and parse class metadata."""
     try:
@@ -424,16 +471,18 @@ def parse_localization(path: Path):
 
 def run_simulation(weapon: Weapon):
     # Degrees up from positive x axis.
-    aim_angles = np.radians([0, 1, 2, 3, 4, 5])
-    aim_dirs = np.array([(1, np.sin(a)) for a in aim_angles])
+    aim_angles = [0, 1, 2, 3, 4, 5]
+    aim_rads = np.radians(aim_angles)
+    aim_dirs = np.array([(1, np.sin(a)) for a in aim_rads])
     try:
-        for aim_dir in aim_dirs:
+        for aim_dir, aim_deg in zip(aim_dirs, aim_angles):
             # print("aim angle:", np.degrees(np.arctan2(aim_dir[1], aim_dir[0])))
-            sim = WeaponSimulation(
-                weapon=weapon,
-                velocity=aim_dir,
-            )
-            process_sim(sim, sim_time=5)
+            # sim = WeaponSimulation(
+            #     weapon=weapon,
+            #     velocity=aim_dir,
+            # )
+            # process_sim(sim, sim_time=5)
+            process_fast_sim(weapon, aim_dir, aim_deg=aim_deg)
     except Exception as e:
         print(e)
         print(weapon.name)
