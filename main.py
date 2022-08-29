@@ -38,7 +38,21 @@ from werkzeug.datastructures import MultiDict
 
 def parse_uscript(src_dir: Path):
     """Parse UnrealScript source files and write
-    parsed weapon classes to JSON and pickle files.
+    parsed weapon and bullet (projectile) class data
+    to JSON and pickle files. The JSON files contain
+    flattened representation of the data, whereas the
+    pickle files contain the full class hierarchy trees.
+    
+    Parsing is done in an ad hoc manner where the
+    first pass builds a ParseResult map from
+    each UnrealScript file, making its best effort
+    to only return ParseResult objects for valid
+    Weapon and Projectile (sub)classes. Both ParseResult
+    maps are then processed to build class result maps
+    that contain ClassBase objects with full inheritance
+    chains upto their parent classes (Weapon or Projectile).
+    Any invalid objects that do not inherit from either
+    valid base class are discarded at this stage.
     """
     bullet_results: MutableMapping[str, BulletParseResult] = CaseInsensitiveDict()
     weapon_results: MutableMapping[str, WeaponParseResult] = CaseInsensitiveDict()
