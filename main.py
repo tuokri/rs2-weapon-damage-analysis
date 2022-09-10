@@ -363,10 +363,12 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
 
 def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
     bullet = weapon.get_bullet(0)
+
     drag_func = {
-        DragFunction.G1: 1,
-        DragFunction.G7: 7,
+        DragFunction.G1: np.int64(1),
+        DragFunction.G7: np.int64(7),
     }[bullet.get_drag_func()]
+
     fo_x, fo_y = interp_dmg_falloff(bullet.get_damage_falloff())
 
     aim_x = aim_dir[0]
