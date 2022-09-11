@@ -1,5 +1,6 @@
 [
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -13,6 +14,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -26,6 +28,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -39,6 +42,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -52,6 +56,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -65,6 +70,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -78,6 +84,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -91,6 +98,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -104,6 +112,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Mk40RocketProjectile"
         ],
@@ -117,6 +126,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M129GrenadeProjectile",
             "M134Bullet_AH1G"
@@ -131,6 +141,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M134Bullet_OH6"
         ],
@@ -144,6 +155,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18SmokeProjectilePurple"
         ],
@@ -157,6 +169,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M134Bullet_UH1H"
         ],
@@ -170,6 +183,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M60DBullet"
         ],
@@ -183,6 +197,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -196,6 +211,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -209,6 +225,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -222,6 +239,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -235,6 +253,7 @@
         "short_display_name": "BINOCS"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -248,6 +267,7 @@
         "short_display_name": "MATTOCK"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -261,6 +281,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -274,6 +295,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -287,6 +309,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -300,6 +323,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -313,6 +337,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "ROSatchelChargeProjectile",
             "ROSatchelChargeProjectile"
@@ -327,6 +352,7 @@
         "short_display_name": "SATCHEL"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -340,6 +366,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -353,6 +380,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "ROSatchelChargeProjectile",
             "ROSatchelChargeProjectile"
@@ -367,6 +395,7 @@
         "short_display_name": "SATCHEL"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -380,6 +409,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -393,6 +423,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -406,6 +437,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -419,6 +451,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -432,6 +465,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -445,6 +479,7 @@
         "short_display_name": "TANK CANNON"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -458,6 +493,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type56Bullet",
             "Type56Bullet"
@@ -473,6 +509,7 @@
         "short_display_name": "AK-47"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "AKMBullet",
             "AKMBullet"
@@ -488,6 +525,7 @@
         "short_display_name": "AK-47"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type56Bullet",
             "Type56Bullet"
@@ -503,6 +541,7 @@
         "short_display_name": "AK-47"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type56Bullet",
             "Type56Bullet"
@@ -518,6 +557,7 @@
         "short_display_name": "AK-47"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type56_1Bullet",
             "Type56_1Bullet"
@@ -533,6 +573,7 @@
         "short_display_name": "AK-47"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "BHPBullet"
         ],
@@ -547,6 +588,7 @@
         "short_display_name": "Hi-Power"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "BHPBullet"
         ],
@@ -561,6 +603,7 @@
         "short_display_name": "Hi-Power"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "C4ExplosiveProjectile",
             "C4ExplosiveProjectile"
@@ -575,6 +618,7 @@
         "short_display_name": "C-4"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "C4ExplosiveProjectile",
             "C4ExplosiveProjectile"
@@ -589,6 +633,7 @@
         "short_display_name": "C-4"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "DP28Bullet"
         ],
@@ -603,6 +648,7 @@
         "short_display_name": "DP-28"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "DP28Bullet"
         ],
@@ -617,6 +663,7 @@
         "short_display_name": "DP-28"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "DShKBullet"
         ],
@@ -631,6 +678,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "DShKBullet"
         ],
@@ -645,6 +693,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "F1Bullet",
             "F1Bullet"
@@ -660,6 +709,7 @@
         "short_display_name": "F1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "F1Bullet",
             "F1Bullet"
@@ -675,6 +725,7 @@
         "short_display_name": "F1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -688,6 +739,7 @@
         "short_display_name": "FOUGASSE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -701,6 +753,28 @@
         "short_display_name": "FOUGASSE"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    "IZH43Slug",
+                    null
+                ],
+                "instant_damages": [
+                    363,
+                    0
+                ]
+            },
+            {
+                "bullets": [
+                    "IZH43Buckshot",
+                    "IZH43Slug"
+                ],
+                "instant_damages": [
+                    71,
+                    363
+                ]
+            }
+        ],
         "bullets": [
             "IZH43Buckshot"
         ],
@@ -715,6 +789,28 @@
         "short_display_name": "SxS"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    "IZH43Slug",
+                    null
+                ],
+                "instant_damages": [
+                    363,
+                    0
+                ]
+            },
+            {
+                "bullets": [
+                    "IZH43Buckshot",
+                    "IZH43Slug"
+                ],
+                "instant_damages": [
+                    71,
+                    363
+                ]
+            }
+        ],
         "bullets": [
             "IZH43Buckshot"
         ],
@@ -729,6 +825,28 @@
         "short_display_name": "SxS"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    323,
+                    0
+                ]
+            },
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    52,
+                    363
+                ]
+            }
+        ],
         "bullets": [
             "IZH43Buckshot"
         ],
@@ -743,6 +861,28 @@
         "short_display_name": "SxS"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    323,
+                    0
+                ]
+            },
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    52,
+                    363
+                ]
+            }
+        ],
         "bullets": [
             "IZH43Buckshot"
         ],
@@ -757,6 +897,7 @@
         "short_display_name": "SxS"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "K50MBullet",
             "K50MBullet"
@@ -772,6 +913,7 @@
         "short_display_name": "K-50M"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "K50MBullet",
             "K50MBullet"
@@ -787,6 +929,7 @@
         "short_display_name": "K-50M"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "K50MBullet",
             "K50MBullet"
@@ -802,6 +945,7 @@
         "short_display_name": "K-50M"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "L1A1Bullet"
         ],
@@ -816,6 +960,7 @@
         "short_display_name": "L1A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "L1A1Bullet"
         ],
@@ -830,6 +975,7 @@
         "short_display_name": "L1A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "L2A1Bullet",
             "L2A1Bullet"
@@ -845,6 +991,7 @@
         "short_display_name": "L2A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "L2A1Bullet",
             "L2A1Bullet"
@@ -860,6 +1007,7 @@
         "short_display_name": "L2A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1A1Bullet",
             "M1A1Bullet"
@@ -875,6 +1023,7 @@
         "short_display_name": "M1A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1A1Bullet",
             "M1A1Bullet"
@@ -890,6 +1039,7 @@
         "short_display_name": "M1A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1DGarandBullet",
             "M1DGarandBullet"
@@ -905,6 +1055,7 @@
         "short_display_name": "Garand Sniper"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1DGarandBullet",
             "M1DGarandBullet"
@@ -920,6 +1071,7 @@
         "short_display_name": "Garand Sniper"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1GarandBullet"
         ],
@@ -934,6 +1086,7 @@
         "short_display_name": "Garand"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1GarandBullet"
         ],
@@ -948,6 +1101,7 @@
         "short_display_name": "Garand"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1CarbineBullet"
         ],
@@ -962,6 +1116,7 @@
         "short_display_name": "M1 Carbine"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1CarbineBullet"
         ],
@@ -976,6 +1131,7 @@
         "short_display_name": "M1 Carbine"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1CarbineBullet"
         ],
@@ -990,6 +1146,7 @@
         "short_display_name": "M1 Carbine"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M2CarbineBullet",
             "M2CarbineBullet"
@@ -1005,6 +1162,7 @@
         "short_display_name": "M2 Carbine"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M2CarbineBullet",
             "M2CarbineBullet"
@@ -1020,6 +1178,7 @@
         "short_display_name": "M2 Carbine"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M2Bullet",
             "M2Bullet"
@@ -1035,6 +1194,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M2Bullet",
             "M2Bullet"
@@ -1050,6 +1210,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M3A1Bullet"
         ],
@@ -1064,6 +1225,7 @@
         "short_display_name": "M3A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M3A1Bullet"
         ],
@@ -1078,6 +1240,7 @@
         "short_display_name": "M3A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M8SmokeProjectile",
             "M8SmokeProjectile"
@@ -1092,6 +1255,7 @@
         "short_display_name": "M8 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M8SmokeProjectile",
             "M8SmokeProjectile"
@@ -1106,6 +1270,7 @@
         "short_display_name": "M8 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M8SmokeProjectile",
             "M8SmokeProjectile"
@@ -1120,6 +1285,7 @@
         "short_display_name": "M8 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M8SmokeProjectile",
             "M8SmokeProjectile"
@@ -1134,6 +1300,7 @@
         "short_display_name": "M8 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M9FlameProjectile"
         ],
@@ -1147,6 +1314,7 @@
         "short_display_name": "M9A1-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M9FlameProjectile"
         ],
@@ -1160,6 +1328,7 @@
         "short_display_name": "M9A1-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M14Bullet"
         ],
@@ -1174,6 +1343,7 @@
         "short_display_name": "M14"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M14Bullet"
         ],
@@ -1188,6 +1358,7 @@
         "short_display_name": "M14"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M16A1Bullet",
             "M16A1Bullet"
@@ -1203,6 +1374,7 @@
         "short_display_name": "M16A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M16A1Bullet",
             "M16A1Bullet"
@@ -1218,6 +1390,7 @@
         "short_display_name": "M16A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M16A1Bullet",
             "M16A1Bullet"
@@ -1233,6 +1406,7 @@
         "short_display_name": "M16A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M16A1Bullet",
             "M16A1Bullet"
@@ -1248,6 +1422,7 @@
         "short_display_name": "M16A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M16A1Bullet",
             "M16A1Bullet"
@@ -1263,6 +1438,7 @@
         "short_display_name": "M16A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18ClaymoreMine",
             "M18ClaymoreMine"
@@ -1277,6 +1453,7 @@
         "short_display_name": "M18 CLAYMORE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18ClaymoreMine",
             "M18ClaymoreMine"
@@ -1291,6 +1468,7 @@
         "short_display_name": "M18 CLAYMORE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18ClaymoreMine",
             "M18ClaymoreMine"
@@ -1305,6 +1483,7 @@
         "short_display_name": "M18 CLAYMORE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18ClaymoreMine",
             "M18ClaymoreMine"
@@ -1319,6 +1498,7 @@
         "short_display_name": "M18 CLAYMORE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18SmokeProjectilePurple",
             "M18SmokeProjectilePurple"
@@ -1333,6 +1513,7 @@
         "short_display_name": "M18 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M18SmokeProjectilePurple",
             "M18SmokeProjectilePurple"
@@ -1347,6 +1528,7 @@
         "short_display_name": "M18 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M34GrenadeProjectile",
             "M34GrenadeProjectile"
@@ -1361,6 +1543,7 @@
         "short_display_name": "M34 WP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M34GrenadeProjectile",
             "M34GrenadeProjectile"
@@ -1375,6 +1558,18 @@
         "short_display_name": "M34 WP"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    50,
+                    50
+                ]
+            }
+        ],
         "bullets": [
             "Projectile"
         ],
@@ -1389,6 +1584,18 @@
         "short_display_name": "M37"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    60,
+                    60
+                ]
+            }
+        ],
         "bullets": [
             "Projectile"
         ],
@@ -1403,6 +1610,18 @@
         "short_display_name": "M37"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    0,
+                    0
+                ]
+            }
+        ],
         "bullets": [
             "Projectile"
         ],
@@ -1417,6 +1636,18 @@
         "short_display_name": "M37"
     },
     {
+        "alt_ammo_loadouts": [
+            {
+                "bullets": [
+                    null,
+                    null
+                ],
+                "instant_damages": [
+                    60,
+                    60
+                ]
+            }
+        ],
         "bullets": [
             "Projectile"
         ],
@@ -1431,6 +1662,7 @@
         "short_display_name": "M37"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M40Bullet",
             "M40Bullet"
@@ -1446,6 +1678,7 @@
         "short_display_name": "M40"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M40Bullet",
             "M40Bullet"
@@ -1461,6 +1694,7 @@
         "short_display_name": "M40"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M40Bullet",
             "M40Bullet"
@@ -1476,6 +1710,7 @@
         "short_display_name": "M40"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M60Bullet"
         ],
@@ -1490,6 +1725,7 @@
         "short_display_name": "M60"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M60Bullet"
         ],
@@ -1504,6 +1740,7 @@
         "short_display_name": "M60"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M60Bullet"
         ],
@@ -1518,6 +1755,7 @@
         "short_display_name": "M60"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1532,6 +1770,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1546,6 +1785,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1560,6 +1800,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1574,6 +1815,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1588,6 +1830,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1602,6 +1845,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1616,6 +1860,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M61GrenadeProjectile",
             "M61GrenadeProjectile"
@@ -1630,6 +1875,7 @@
         "short_display_name": "M61 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M79GrenadeProjectile"
         ],
@@ -1643,6 +1889,7 @@
         "short_display_name": "M79"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M79GrenadeProjectile"
         ],
@@ -1656,6 +1903,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             null,
             "M79SmokeGrenadeProjectile"
@@ -1671,6 +1919,7 @@
         "short_display_name": "M79"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M79GrenadeProjectile"
         ],
@@ -1684,6 +1933,7 @@
         "short_display_name": "M79"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             null,
             "M79Buckshot"
@@ -1699,6 +1949,7 @@
         "short_display_name": "M79"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             null,
             "M79SmokeGrenadeProjectile"
@@ -1714,6 +1965,7 @@
         "short_display_name": "M79"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1911Bullet"
         ],
@@ -1728,6 +1980,7 @@
         "short_display_name": "M1911A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1911Bullet"
         ],
@@ -1742,6 +1995,7 @@
         "short_display_name": "M1911A1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1917Bullet",
             "M1917Bullet"
@@ -1757,6 +2011,7 @@
         "short_display_name": "M1917"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1917Bullet",
             "M1917Bullet"
@@ -1772,6 +2027,7 @@
         "short_display_name": "M1917"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1918Bullet",
             "M1918Bullet"
@@ -1787,6 +2043,7 @@
         "short_display_name": "M1918A2"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1918Bullet",
             "M1918Bullet"
@@ -1802,6 +2059,7 @@
         "short_display_name": "M1918A2"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1919Bullet"
         ],
@@ -1816,6 +2074,7 @@
         "short_display_name": "M1919A6"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1919Bullet"
         ],
@@ -1830,6 +2089,7 @@
         "short_display_name": "M1919A6"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAS49ScopedBullet"
         ],
@@ -1844,6 +2104,7 @@
         "short_display_name": "MAS-49 Scoped"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAS49ScopedBullet"
         ],
@@ -1858,6 +2119,7 @@
         "short_display_name": "MAS-49 Scoped"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAS49Bullet"
         ],
@@ -1872,6 +2134,7 @@
         "short_display_name": "MAS-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAS49Bullet"
         ],
@@ -1886,6 +2149,7 @@
         "short_display_name": "MAS-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAS49Bullet"
         ],
@@ -1900,6 +2164,7 @@
         "short_display_name": "MAS-49 w/GL"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             null,
             "MAS49GrenadeProjectile"
@@ -1915,6 +2180,7 @@
         "short_display_name": "MAS-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAT49Bullet_9mm"
         ],
@@ -1929,6 +2195,7 @@
         "short_display_name": "MAT-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAT49Bullet_9mm"
         ],
@@ -1943,6 +2210,7 @@
         "short_display_name": "MAT-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAT49Bullet_9mm"
         ],
@@ -1957,6 +2225,7 @@
         "short_display_name": "MAT-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MAT49Bullet_762mm"
         ],
@@ -1971,6 +2240,7 @@
         "short_display_name": "MAT-49"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -1984,6 +2254,7 @@
         "short_display_name": "MD-82 MINE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -1997,6 +2268,7 @@
         "short_display_name": "MD-82 MINE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2010,6 +2282,7 @@
         "short_display_name": "MD-82 MINE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2023,6 +2296,7 @@
         "short_display_name": "MD-82 MINE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1919Bullet",
             "M1919Bullet"
@@ -2038,6 +2312,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "M1919Bullet",
             "M1919Bullet"
@@ -2053,6 +2328,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MN9130ScopedBullet",
             "MN9130ScopedBullet"
@@ -2068,6 +2344,7 @@
         "short_display_name": "MN 91/30 PU"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MN9130ScopedBullet",
             "MN9130ScopedBullet"
@@ -2083,6 +2360,7 @@
         "short_display_name": "MN 91/30 PU"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MN9130Bullet",
             "MN9130Bullet"
@@ -2098,6 +2376,7 @@
         "short_display_name": "MN 91/30"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MN9130Bullet",
             "MN9130Bullet"
@@ -2113,6 +2392,7 @@
         "short_display_name": "MN 91/30"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MP40Bullet"
         ],
@@ -2127,6 +2407,7 @@
         "short_display_name": "MP-40"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MP40Bullet"
         ],
@@ -2141,6 +2422,7 @@
         "short_display_name": "MP-40"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MolotovProjectile",
             "MolotovProjectile"
@@ -2155,6 +2437,7 @@
         "short_display_name": "MOLOTOV"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "MolotovProjectile",
             "MolotovProjectile"
@@ -2169,6 +2452,7 @@
         "short_display_name": "MOLOTOV"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "OwenBullet",
             "OwenBullet"
@@ -2184,6 +2468,7 @@
         "short_display_name": "Owen"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "OwenBullet",
             "OwenBullet"
@@ -2199,6 +2484,7 @@
         "short_display_name": "Owen"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PMBullet"
         ],
@@ -2213,6 +2499,7 @@
         "short_display_name": "PM"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PMBullet"
         ],
@@ -2227,6 +2514,7 @@
         "short_display_name": "PM"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PPSH41Bullet",
             "PPSH41Bullet"
@@ -2242,6 +2530,7 @@
         "short_display_name": "PPSH-41"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PPSH41Bullet",
             "PPSH41Bullet"
@@ -2257,6 +2546,7 @@
         "short_display_name": "PPSH-41"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PPSH41Bullet",
             "PPSH41Bullet"
@@ -2272,6 +2562,7 @@
         "short_display_name": "PPSH-41"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2285,6 +2576,7 @@
         "short_display_name": "PUNJI TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2298,6 +2590,7 @@
         "short_display_name": "PUNJI TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RDG1SmokeProjectile",
             "RDG1SmokeProjectile"
@@ -2312,6 +2605,7 @@
         "short_display_name": "RDG-1 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RDG1SmokeProjectile",
             "RDG1SmokeProjectile"
@@ -2326,6 +2620,7 @@
         "short_display_name": "RDG-1 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RDG1SmokeProjectile",
             "RDG1SmokeProjectile"
@@ -2340,6 +2635,7 @@
         "short_display_name": "RDG-1 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RDG1SmokeProjectile",
             "RDG1SmokeProjectile"
@@ -2354,6 +2650,7 @@
         "short_display_name": "RDG-1 SMOKE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RP46Bullet"
         ],
@@ -2368,6 +2665,7 @@
         "short_display_name": "RP-46"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RP46Bullet"
         ],
@@ -2382,6 +2680,7 @@
         "short_display_name": "RP-46"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RPDBullet"
         ],
@@ -2396,6 +2695,7 @@
         "short_display_name": "RPD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RPDBullet"
         ],
@@ -2410,6 +2710,7 @@
         "short_display_name": "RPD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RPDBullet"
         ],
@@ -2424,6 +2725,7 @@
         "short_display_name": "RPD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RPDBullet"
         ],
@@ -2438,6 +2740,7 @@
         "short_display_name": "RPD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "RPDBullet"
         ],
@@ -2452,6 +2755,7 @@
         "short_display_name": "RPD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PG7VRocket"
         ],
@@ -2465,6 +2769,7 @@
         "short_display_name": "RPG-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PG7VRocket"
         ],
@@ -2478,6 +2783,7 @@
         "short_display_name": "RPG-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PG7VRocket"
         ],
@@ -2491,6 +2797,7 @@
         "short_display_name": "RPG-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "PG7VRocket"
         ],
@@ -2504,6 +2811,7 @@
         "short_display_name": "RPG-7"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "SKSBullet"
         ],
@@ -2518,6 +2826,7 @@
         "short_display_name": "SKS-45"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "SKSBullet"
         ],
@@ -2532,6 +2841,7 @@
         "short_display_name": "SKS-45"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "SVDScopedBullet"
         ],
@@ -2546,6 +2856,7 @@
         "short_display_name": "SVD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "SVDScopedBullet"
         ],
@@ -2560,6 +2871,7 @@
         "short_display_name": "SVD"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "TT33Bullet"
         ],
@@ -2574,6 +2886,7 @@
         "short_display_name": "TT-33"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "TT33Bullet"
         ],
@@ -2588,6 +2901,7 @@
         "short_display_name": "TT-33"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2601,6 +2915,7 @@
         "short_display_name": "TRIPWIRE TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2614,6 +2929,7 @@
         "short_display_name": "TRIPWIRE TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2627,6 +2943,7 @@
         "short_display_name": "TRIPWIRE TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2640,6 +2957,7 @@
         "short_display_name": "TRIPWIRE TRAP"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2654,6 +2972,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2668,6 +2987,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2682,6 +3002,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2696,6 +3017,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2710,6 +3032,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Type67GrenadeProjectile",
             "Type67GrenadeProjectile"
@@ -2724,6 +3047,7 @@
         "short_display_name": "TYPE 67 GRENADE"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "ROSatchelChargeProjectile",
             "ROSatchelChargeProjectile"
@@ -2738,6 +3062,7 @@
         "short_display_name": "3KG SATCHEL"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "ROSatchelChargeProjectile",
             "ROSatchelChargeProjectile"
@@ -2752,6 +3077,7 @@
         "short_display_name": "3KG SATCHEL"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM21ScopedBullet"
         ],
@@ -2766,6 +3092,7 @@
         "short_display_name": "XM21"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM21ScopedBullet"
         ],
@@ -2780,6 +3107,7 @@
         "short_display_name": "XM21"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM21ScopedBullet"
         ],
@@ -2794,6 +3122,7 @@
         "short_display_name": "XM21"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM21SubsonicBullet",
             "XM21SubsonicBullet"
@@ -2809,6 +3138,7 @@
         "short_display_name": "XM21"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM177E1Bullet",
             "XM177E1Bullet"
@@ -2824,6 +3154,7 @@
         "short_display_name": "XM177E1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM177E1Bullet",
             "XM177E1Bullet"
@@ -2839,6 +3170,7 @@
         "short_display_name": "XM177E1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM177E1Bullet",
             "XM177E1Bullet"
@@ -2854,6 +3186,7 @@
         "short_display_name": "XM177E1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM177E1Bullet",
             "XM177E1Bullet"
@@ -2869,6 +3202,7 @@
         "short_display_name": "XM177E1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "XM177E1Bullet",
             "XM177E1Bullet"
@@ -2884,6 +3218,7 @@
         "short_display_name": "XM177E1"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2897,6 +3232,7 @@
         "short_display_name": "NO_SHORT_DISPLAY_NAME"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],
@@ -2910,6 +3246,7 @@
         "short_display_name": "ARTILLERY"
     },
     {
+        "alt_ammo_loadouts": [],
         "bullets": [
             "Projectile"
         ],

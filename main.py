@@ -33,6 +33,7 @@ from rs2simlib.models import Weapon
 from rs2simlib.models import WeaponParseResult
 from rs2simlib.models import WeaponSimulation
 from rs2simlib.models import interp_dmg_falloff
+from rs2simlib.models.models import AltAmmoLoadout
 from werkzeug.datastructures import MultiDict
 
 
@@ -158,12 +159,32 @@ def parse_uscript(src_dir: Path):
         if parent and any(bullets):
             resolved_early += 1
 
+        alt_ammo_loadouts = [None] * (
+                max(weapon_result.alt_ammo_loadouts, default=0) + 1)
+        if weapon_result.alt_ammo_loadouts:
+            for idx, alt_lo in weapon_result.alt_ammo_loadouts.items():
+                lo_bullets: List[Optional[Bullet]] = [None] * (
+                        max(alt_lo.bullet_names, default=0) + 1)
+                lo_damages: List[Optional[int]] = [None] * (
+                        max(alt_lo.instant_damages, default=0) + 1)
+                for d_idx, d in alt_lo.instant_damages.items():
+                    lo_damages[d_idx] = d
+                for b_idx, b in alt_lo.bullet_names.items():
+                    lo_bullets[b_idx] = bullet_classes.get(b)
+                alt_ammo_loadouts[idx] = AltAmmoLoadout(
+                    name=alt_lo.class_name,
+                    parent=None,
+                    bullets=lo_bullets,
+                    instant_damages=lo_damages,
+                )
+
         weapon_classes[class_name] = Weapon(
             name=class_name,
             bullets=bullets,
             parent=parent,
             instant_damages=instant_damages,
             pre_fire_length=weapon_result.pre_fire_length,
+            alt_ammo_loadouts=alt_ammo_loadouts,
         )
 
     print(f"{resolved_early} Weapon classes resolved early")
@@ -241,12 +262,19 @@ def parse_uscript(src_dir: Path):
 
     weapons_data = []
     for weapon in weapon_classes.values():
+        alt_los = [
+            {
+                "bullets": [ab.name if ab else None for ab in a.bullets],
+                "instant_damages": a.instant_damages,
+            } for a in weapon.get_alt_ammo_loadouts()
+        ]
         w_data = {
             "name": weapon.name,
             "parent": weapon.parent.name,
             "bullets": [b.name if b else None for b in weapon.get_bullets()],
             "instant_damages": [i or 0 for i in weapon.get_instant_damages()],
             "pre_fire_length": weapon.get_pre_fire_length(),
+            "alt_ammo_loadouts": alt_los,
         }
         weapons_data.append({
             key: w_data[key]
