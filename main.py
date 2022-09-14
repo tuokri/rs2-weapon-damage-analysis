@@ -10,6 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
+from typing import Any
 from typing import List
 from typing import MutableMapping
 from typing import Optional
@@ -389,18 +390,18 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     trajectory.to_csv(p.absolute())
 
 
-def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
-    bullet = weapon.get_bullet(0)
-
-    drag_func = {
+def run_fast_sim(weapon: Weapon, bullet: Bullet,
+                 aim_dir: np.ndarray, aim_deg: float,
+                 instant_damage: int):
+    drag_func: np.int64 = {
         DragFunction.G1: np.int64(1),
         DragFunction.G7: np.int64(7),
     }[bullet.get_drag_func()]
 
     fo_x, fo_y = interp_dmg_falloff(bullet.get_damage_falloff())
 
-    aim_x = aim_dir[0]
-    aim_y = aim_dir[1]
+    aim_x: np.float64 = aim_dir[0]
+    aim_y: np.float64 = aim_dir[1]
 
     results = fastsim.simulate(
         sim_time=np.float64(5.0),
@@ -412,9 +413,9 @@ def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
         muzzle_velocity=np.float64(bullet.get_speed_uu()),
         falloff_x=fo_x,
         falloff_y=fo_y,
-        bullet_damage=bullet.get_damage(),
-        instant_damage=weapon.get_instant_damage(0),
-        pre_fire_trace_len=weapon.get_pre_fire_length(),
+        bullet_damage=np.int64(bullet.get_damage()),
+        instant_damage=np.int64(instant_damage),
+        pre_fire_trace_len=np.int64(weapon.get_pre_fire_length() * 50),
         start_loc_x=np.float64(0.0),
         start_loc_y=np.float64(0.0),
     )
@@ -422,7 +423,7 @@ def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
     aim_str = f"{aim_deg}_deg".replace(".", "_")
     p = Path(f"./sim_data/") / weapon.name
     p.mkdir(parents=True, exist_ok=True)
-    p = p / f"sim_{aim_str}.csv"
+    p = p / f"sim_{aim_str}_{bullet.name}.csv"
     p.touch(exist_ok=True)
 
     df = pd.DataFrame({
@@ -432,8 +433,43 @@ def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
         "distance": results[3],
         "time_at_flight": results[4],
         "bullet_velocity": results[5],
+        "energy_transfer": results[6],
+        "power_left": results[7],
     })
     df.to_csv(p.absolute())
+
+
+def unique_items(seq: List[Any]) -> List[Any]:
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]
+
+
+def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
+    bullets = unique_items([b for b in weapon.get_bullets() if b])
+    alt_los = [alt for alt in weapon.get_alt_ammo_loadouts() if alt]
+
+    for i, bullet in enumerate(bullets):
+        instant_damage = weapon.get_instant_damage(i)
+        if bullet:
+            run_fast_sim(
+                weapon=weapon,
+                bullet=bullet,
+                aim_dir=aim_dir,
+                aim_deg=aim_deg,
+                instant_damage=instant_damage,
+            )
+
+    for alt_lo in alt_los:
+        for i, bullet in enumerate(
+                unique_items([b for b in alt_lo.bullets if b])):
+            run_fast_sim(
+                weapon=weapon,
+                bullet=bullet,
+                aim_dir=aim_dir,
+                aim_deg=aim_deg,
+                instant_damage=alt_lo.instant_damages[i],
+            )
 
 
 def parse_localization(path: Path):
@@ -583,14 +619,19 @@ def run_simulations(classes_file: Path):
     pprint([s.name for s in sim_classes])
 
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
-        fs = [executor.submit(run_simulation, weapon)
-              for weapon in sim_classes]
+        fs = {executor.submit(run_simulation, weapon): weapon
+              for weapon in sim_classes}
 
     done = 0
     for future in futures.as_completed(fs):
         if future.exception():
+            # weapon = fs[future]
+            print("*" * 80)
+            print(f"ERROR!")
+            pprint(fs[future])
+            print("*" * 80)
             raise future.exception()
-        result = future.result()
+        # result = future.result()
         done += 1
         print("done:", done)
 
