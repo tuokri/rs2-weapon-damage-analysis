@@ -1,19 +1,92 @@
 import os
+from pathlib import Path
+from typing import Optional
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc
+from dash import Input
+from dash import Output
+from dash import State
 from dash import html
-from dash_bootstrap_templates import ThemeSwitchAIO
+from dash_bootstrap_templates import ThemeChangerAIO
 from dash_bootstrap_templates import load_figure_template
 from flask import redirect
 from flask import request
+from werkzeug import Response
+
+gtag_manager_string = """
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N97VFK2');</script>
+<!-- End Google Tag Manager -->
+"""
+
+gtag_manager_noscript_string = """
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N97VFK2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+"""
+
+index_string = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>window['gtag_enable_tcf_support'] = true;</script>
+        {gtag_manager}
+        {metas}
+        <title>{title}</title>
+        {favicon}
+        {css}
+    </head>
+    <body class="site">
+        {gtag_manager_noscript}
+        <main class="site-content">
+            {app_entry}
+        </main>
+        {footer}
+    </body>
+</html>
+"""
+
+footer_string = """
+<footer>
+    {config}
+    {scripts}
+    {renderer}
+    {footer_content}
+</footer>
+"""
+
+
+class CustomDash(dash.Dash):
+    def interpolate_index(self, **kwargs) -> str:
+        footer_content = Path("assets/footer.html").read_text()
+
+        footer = footer_string.format(
+            config=kwargs.pop("config"),
+            scripts=kwargs.pop("scripts"),
+            renderer=kwargs.pop("renderer"),
+            footer_content=footer_content,
+        )
+        return index_string.format(
+            gtag_manager=gtag_manager_string,
+            gtag_manager_noscript=gtag_manager_noscript_string,
+            footer=footer,
+            **kwargs,
+        )
+
 
 load_figure_template("vapor")
 
 external_stylesheets = [
     {
-        "href": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.min.css",
+        "href": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.css",
         "rel": "stylesheet",
         "media": "print",
         "onload": "this.media='all'",
@@ -24,7 +97,7 @@ external_stylesheets = [
 external_scripts = [
     {
         # Load cookie consent plugin in async mode.
-        "async src": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.min.js",
+        "async src": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.js",
     },
     {
         # TODO: main script here that inits cookieconsent and loads others on demand.
@@ -47,89 +120,161 @@ external_scripts = [
     },
 ]
 
-app = dash.Dash(
+app_extra_kwargs = {
+    "serve_locally": False,
+}
+if __name__ == "__main__":
+    app_extra_kwargs["serve_locally"] = True
+    print("using app_extra_kwargs:", app_extra_kwargs)
+
+app = CustomDash(
     __name__,
     external_scripts=external_scripts,
     external_stylesheets=external_stylesheets,
     title="rs2sim",
     use_pages=True,
+    **app_extra_kwargs,
 )
 server = app.server
 
-# app.css.config.serve_locally = False
-# app.scripts.config.serve_locally = False
 
-app.index_string = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <script>window['gtag_enable_tcf_support'] = true;</script>
-        <!-- Google Tag Manager -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-N97VFK2');</script>
-        <!-- End Google Tag Manager -->
-        {%metas%}
-        <title>{%title%}</title>
-        {%favicon%}
-        {%css%}
-    </head>
-    <body>
-        <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N97VFK2"
-        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Google Tag Manager (noscript) -->
-        {%app_entry%}
-        <footer>
-            {%config%}
-            {%scripts%}
-            {%renderer%}
-        </footer>
-    </body>
-</html>
-"""
+def upgrade_to_https(url: str) -> str:
+    # noinspection HttpUrlsUsage
+    return url.replace("http://", "https://", 1)
 
-home_page = dash.page_registry["pages.home"]
 
-navbar = html.Div()
+if "FLY_APP_NAME" in os.environ:
+    @server.before_request
+    def before_request_prod_env(*_) -> Optional[Response]:
+        url = request.url
+        if not request.is_secure:
+            return redirect(
+                location=upgrade_to_https(upgrade_to_https(url)),
+                code=301,
+            )
+else:
+    @server.before_request
+    def before_request_dev_env(*_) -> Optional[Response]:
+        url_parts = urlparse(request.url)
+        if url_parts.path in ("", "/"):
+            url_parts = url_parts._replace(path=charts_page["path"])
+            return redirect(
+                location=urlunparse(url_parts),
+                code=301,
+            )
 
-theme_toggle = ThemeSwitchAIO(
-    aio_id="theme",
-    themes=[dbc.themes.VAPOR, dbc.themes.SIMPLEX],
-    icons={"left": "fa fa-sun", "right": "fa fa-moon"},
+theme_changer = ThemeChangerAIO(
+    aio_id="theme_changer",
+    radio_props={
+        "value": dbc.themes.VAPOR,
+        "label_class_name": "badge",
+        # "persistence": True, TODO: callbacks needed.
+    },
+    button_props={
+        "class_name": "btn-dark my-md-0 my-2",
+        "style": {
+            "text-transform": "uppercase",
+        },
+    },
+    offcanvas_props={
+        "placement": "end",
+        "title": "SELECT THEME",
+    },
 )
 
-app.layout = dbc.Container([
-    navbar,
+charts_page = dash.page_registry["pages.charts"]
+statistics_page = dash.page_registry["pages.statistics"]
 
-    theme_toggle,
-
-    html.H1(
-        # children="Rising Storm 2: Vietnam Weapon Simulator",
-        dcc.Link("Rising Storm 2: Vietnam Weapon Simulator",
-                 href=home_page["relative_path"]),
+nav_items = [
+    dbc.Nav(
+        [
+            dbc.NavItem(dbc.NavLink("Charts", href=charts_page["path"])),
+            dbc.NavItem(dbc.NavLink("Statistics", href=statistics_page["path"])),
+            dbc.NavItem(dbc.NavLink("Simulator", href="#", disabled=True)),
+            dbc.NavItem(dbc.NavLink("Calculator", href="#", disabled=True)),
+            dbc.DropdownMenu(
+                [
+                    dbc.DropdownMenuItem("Discord"),
+                    dbc.DropdownMenuItem("GitHub"),
+                ],
+                label="More",
+                nav=True,
+            ),
+        ],
+        navbar=True,
+        class_name="justify-content-center",
+        style={
+            "text-transform": "uppercase",
+            "width": "66%",
+        },
     ),
+    dbc.Nav(
+        [
+            dbc.NavItem(theme_changer),
+        ],
+        navbar=True,
+        class_name="ml-auto justify-content-end",
+        style={
+            "width": "33%",
+        },
+    ),
+]
 
-    dash.page_container,
-])
+navbar_top = dbc.Navbar(
+    dbc.Container(
+        [
+            dbc.NavbarBrand(
+                "rs2sim (WIP)",
+                # href=charts_page["path"],
+                class_name="d-flex mr-auto",
+                style={
+                    "width": "25%",
+                    "text-transform": "uppercase",
+                },
+            ),
+            dbc.NavbarToggler(
+                id="navbar-toggler",
+                n_clicks=0,
+            ),
+            dbc.Collapse(
+                nav_items,
+                id="navbar-collapse",
+                is_open=False,
+                navbar=True,
+                style={
+                    "width": "75%",
+                }
+            ),
+        ],
+        fluid=True,
+    ),
+    expand="lg",
+)
+
+app.layout = html.Div(
+    [
+        navbar_top,
+        dash.page_container,
+    ]
+)
 
 
-@server.before_request
-def before_request():
-    if "DYNO" in os.environ and not request.is_secure:
-        # noinspection HttpUrlsUsage
-        url = request.url.replace("http://", "https://", 1)
-        return redirect(
-            location=url,
-            code=301,
-        )
+@app.callback(
+    Output("navbar-collapse", "is_open"),
+    [Input("navbar-toggler", "n_clicks")],
+    [State("navbar-collapse", "is_open")],
+)
+def toggle_navbar_collapse(
+        n_clicks: Optional[int],
+        is_open: Optional[bool]) -> Optional[bool]:
+    if n_clicks:
+        return not is_open
+    return is_open
 
 
 if __name__ == "__main__":
     app.run_server(
         debug=True,
         threaded=True,
-        dev_tools_hot_reload=True
+        dev_tools_hot_reload=True,
     )
