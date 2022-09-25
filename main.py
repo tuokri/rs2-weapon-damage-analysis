@@ -18,6 +18,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 from natsort import natsorted
+from orjson import orjson
 from requests.structures import CaseInsensitiveDict
 from rs2simlib.dataio import pdumps_weapon_classes
 from rs2simlib.dataio import ploads_weapon_classes
@@ -35,7 +36,10 @@ from rs2simlib.models import WeaponParseResult
 from rs2simlib.models import WeaponSimulation
 from rs2simlib.models import interp_dmg_falloff
 from rs2simlib.models.models import AltAmmoLoadout
+from sqlalchemy.dialects.postgresql import insert
 from werkzeug.datastructures import MultiDict
+
+import db
 
 
 def parse_uscript(src_dir: Path):
@@ -160,7 +164,7 @@ def parse_uscript(src_dir: Path):
         if parent and any(bullets):
             resolved_early += 1
 
-        alt_ammo_loadouts = [None] * (
+        alt_ammo_loadouts: List[Optional[AltAmmoLoadout]] = [None] * (
                 max(weapon_result.alt_ammo_loadouts, default=0) + 1)
         if weapon_result.alt_ammo_loadouts:
             for idx, alt_lo in weapon_result.alt_ammo_loadouts.items():
@@ -473,7 +477,9 @@ def process_fast_sim(weapon: Weapon, aim_dir: np.ndarray, aim_deg: float):
 
 
 def parse_localization(path: Path):
-    """Read localization file and parse class metadata."""
+    """Read localization file and parse class metadata.
+    TODO: should probably also save this to the pickled data.
+    """
     try:
         with Path("weapons.json").open("r") as f:
             weapons_metadata = json.load(f)
@@ -577,8 +583,7 @@ def run_simulations(classes_file: Path):
     write simulated data to CSV files.
     """
     print(f"reading '{classes_file.absolute()}'")
-    with classes_file.open("rb") as f:
-        weapon_classes = ploads_weapon_classes(f.read())
+    weapon_classes = ploads_weapon_classes(classes_file.read_bytes())
     print(f"loaded {len(weapon_classes)} weapons")
 
     Path("./sim_data/").mkdir(parents=True, exist_ok=True)
@@ -636,6 +641,52 @@ def run_simulations(classes_file: Path):
         print("done:", done)
 
 
+def enter_db_data(metadata_dir: Path):
+    # TODO: optimize these JSON structures for search.
+    weapon_metadata = orjson.loads((metadata_dir / "weapons.json").read_bytes())
+    bullet_metadata = orjson.loads((metadata_dir / "bullets.json").read_bytes())
+
+    weapons = ploads_weapon_classes(
+        (metadata_dir / "weapon_classes.pickle").read_bytes())
+
+    with db.Session() as session:
+        # Special handling for root class.
+        wep_root = weapons.pop("Weapon")
+        w_meta = next(
+            wm for wm in weapon_metadata
+            if wm["name"].lower() == wep_root.name.lower())
+
+        insert_stmt = insert(db.Weapon).values(
+            name=wep_root.name,
+            parent_name=None,
+            display_name=w_meta["display_name"],
+            short_display_name=w_meta["short_display_name"],
+            pre_fire_length=wep_root.get_pre_fire_length() * 50,
+        ).on_conflict_do_nothing(
+            index_elements=["name"],
+        )
+        session.execute(insert_stmt)
+        session.flush()
+
+        for weapon in weapons.values():
+            w_meta = next(
+                wm for wm in weapon_metadata
+                if wm["name"].lower() == weapon.name.lower())
+
+            parent_name = weapon.parent.name
+
+            w = db.Weapon(
+                name=weapon.name,
+                parent_name=parent_name,
+                display_name=w_meta["display_name"],
+                short_display_name=w_meta["short_display_name"],
+                pre_fire_length=weapon.get_pre_fire_length() * 50,
+            )
+            session.add(w)
+
+        session.commit()
+
+
 src_default = (
     r"C:\Program Files (x86)\Steam\steamapps\common\Rising Storm 2\Development")
 loc_default = (
@@ -675,9 +726,19 @@ def parse_args() -> Namespace:
         metavar="CLASS_PICKLE_FILE",
         action="store",
     )
+    group.add_argument(
+        "-e", "--enter-db-data",
+        help="TODO: help",
+        default=None,
+        const=".",
+        nargs="?",
+        metavar="METADATA_DIR",
+        action="store",
+    )
 
     args = ap.parse_args()
-    mutex_args = (args.simulate, args.parse_src, args.parse_localization)
+    mutex_args = (args.simulate, args.parse_src,
+                  args.parse_localization, args.enter_db_data)
     if mutex_args.count(None) != len(mutex_args) - 1:
         ap.error("exactly one mutually exclusive argument is required")
 
@@ -696,6 +757,8 @@ def main():
         parse_localization(Path(args.parse_localization).resolve())
     elif args.simulate:
         run_simulations(Path(args.simulate).resolve())
+    elif args.enter_db_data:
+        enter_db_data(Path(args.enter_db_data).resolve())
     else:
         raise SystemExit("no valid action specified")
 
