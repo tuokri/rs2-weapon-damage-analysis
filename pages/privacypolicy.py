@@ -5,10 +5,12 @@ from dash import html
 
 dash.register_page(__name__, path="/privacypolicy")
 
-layout = dbc.Container([
-    html.H2(children="TODO: PRIVACY POLICY"),
+layout = dbc.Container(
+    [
+        html.H2(children="TODO: PRIVACY POLICY"),
 
-    html.Div(children="""
+        html.Div(children="""
         TODO CONTENT.
     """),
-])
+    ]
+)

@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
@@ -10,11 +9,16 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import html
-from dash_bootstrap_templates import ThemeChangerAIO
 from dash_bootstrap_templates import load_figure_template
+from dotenv import load_dotenv
 from flask import redirect
 from flask import request
 from werkzeug import Response
+
+from components.aio import ThemeChangerAIOCustom
+from utils import read_asset_text
+
+load_dotenv(".env")
 
 gtag_manager_string = """
 <!-- Google Tag Manager -->
@@ -66,8 +70,7 @@ footer_string = """
 
 class CustomDash(dash.Dash):
     def interpolate_index(self, **kwargs) -> str:
-        footer_content = Path("assets/footer.html").read_text()
-
+        footer_content = read_asset_text("footer.html")
         footer = footer_string.format(
             config=kwargs.pop("config"),
             scripts=kwargs.pop("scripts"),
@@ -133,6 +136,7 @@ app = CustomDash(
     external_stylesheets=external_stylesheets,
     title="rs2sim",
     use_pages=True,
+    assets_folder=os.environ.get("ASSETS_FOLDER") or "assets",
     **app_extra_kwargs,
 )
 server = app.server
@@ -163,7 +167,7 @@ else:
                 code=301,
             )
 
-theme_changer = ThemeChangerAIO(
+theme_changer = ThemeChangerAIOCustom(
     aio_id="theme_changer",
     radio_props={
         "value": dbc.themes.VAPOR,
@@ -173,12 +177,17 @@ theme_changer = ThemeChangerAIO(
     button_props={
         "class_name": "btn-dark my-md-0 my-2",
         "style": {
-            "text-transform": "uppercase",
+            "textTransform": "uppercase",
         },
     },
     offcanvas_props={
         "placement": "end",
-        "title": "SELECT THEME",
+        "title": "Select theme",
+        "labelledby": "offcanvas-title-label",
+        "style": {
+            "width": "235px",
+            "textTransform": "uppercase",
+        },
     },
 )
 
@@ -204,7 +213,7 @@ nav_items = [
         navbar=True,
         class_name="justify-content-center",
         style={
-            "text-transform": "uppercase",
+            "textTransform": "uppercase",
             "width": "66%",
         },
     ),
@@ -229,7 +238,7 @@ navbar_top = dbc.Navbar(
                 class_name="d-flex mr-auto",
                 style={
                     "width": "25%",
-                    "text-transform": "uppercase",
+                    "textTransform": "uppercase",
                 },
             ),
             dbc.NavbarToggler(
@@ -261,8 +270,8 @@ app.layout = html.Div(
 
 @app.callback(
     Output("navbar-collapse", "is_open"),
-    [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")],
+    Input("navbar-toggler", "n_clicks"),
+    State("navbar-collapse", "is_open"),
 )
 def toggle_navbar_collapse(
         n_clicks: Optional[int],
