@@ -756,7 +756,7 @@
         "alt_ammo_loadouts": [
             {
                 "bullets": [
-                    null,
+                    "IZH43Slug",
                     null
                 ],
                 "instant_damages": [
@@ -766,8 +766,8 @@
             },
             {
                 "bullets": [
-                    "IZH43Slug",
-                    null
+                    "IZH43Buckshot",
+                    "IZH43Slug"
                 ],
                 "instant_damages": [
                     71,
@@ -792,7 +792,7 @@
         "alt_ammo_loadouts": [
             {
                 "bullets": [
-                    null,
+                    "IZH43Slug",
                     null
                 ],
                 "instant_damages": [
@@ -802,8 +802,8 @@
             },
             {
                 "bullets": [
-                    "IZH43Slug",
-                    null
+                    "IZH43Buckshot",
+                    "IZH43Slug"
                 ],
                 "instant_damages": [
                     71,
