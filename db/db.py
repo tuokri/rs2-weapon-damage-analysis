@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from psycopg_pool import ConnectionPool
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
-from sqlalchemy import Text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
@@ -35,24 +34,39 @@ class Base(DeclarativeBase):
 class DamageFalloff(Base):
     __tablename__ = "damage_falloff"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    bullet_name: Mapped[str] = mapped_column(ForeignKey("bullet.name"))
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+    bullet_name: Mapped[int] = mapped_column(
+        ForeignKey("bullet.id"),
+        onupdate="cascade",
+    )
     index: Mapped[int]
     x: Mapped[int]
     y: Mapped[int]
 
 
-# TODO: Projectile class needed? Integer primary key?
+# TODO: Projectile class needed?
 class Bullet(Base):
     __tablename__ = "bullet"
 
-    name: Mapped[str] = mapped_column(Text, primary_key=True)
-    parent_name: Mapped[Optional[str]] = mapped_column(
-        Text, ForeignKey("bullet.name"))
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+    name: Mapped[str]
+    parent_id: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        ForeignKey("bullet.id"),
+        onupdate="cascade",
+    )
     parent = relationship(
         "Bullet",
-        remote_side=name,
-        post_update=True)
+        remote_side=[id],
+    )
     ballistic_coeff: Mapped[float]
     damage: Mapped[int]
     drag_func: Mapped[int]  # TODO: drag function table?
@@ -63,13 +77,20 @@ class Bullet(Base):
 class Weapon(Base):
     __tablename__ = "weapon"
 
-    name: Mapped[str] = mapped_column(Text, primary_key=True)
-    parent_name: Mapped[Optional[str]] = mapped_column(
-        Text, ForeignKey("weapon.name"))
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True, )
+    name: Mapped[str]
+    parent_id: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        ForeignKey("weapon.id"),
+        onupdate="cascade",
+    )
     parent = relationship(
         "Weapon",
-        remote_side=name,
-        post_update=True)
+        remote_side=[id],
+    )
     display_name: Mapped[Optional[str]]
     short_display_name: Mapped[Optional[str]]
     pre_fire_length: Mapped[int]
@@ -78,9 +99,19 @@ class Weapon(Base):
 class AmmoLoadout(Base):
     __tablename__ = "ammo_loadout"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    weapon_name: Mapped[str] = mapped_column(ForeignKey("weapon.name"))
-    bullet_name: Mapped[str] = mapped_column(ForeignKey("bullet.name"))
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+    weapon_id: Mapped[int] = mapped_column(
+        ForeignKey("weapon.id"),
+        onupdate="cascade",
+    )
+    bullet_id: Mapped[int] = mapped_column(
+        ForeignKey("bullet.id"),
+        onupdate="cascade",
+    )
     instant_damage: Mapped[int]
     # spread: Mapped[float]
     # num_projectiles: Mapped[int]

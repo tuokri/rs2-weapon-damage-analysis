@@ -1,7 +1,7 @@
 import configparser
-import datetime
 import json
 import os
+import time
 from argparse import ArgumentParser
 from argparse import Namespace
 from collections import deque
@@ -11,9 +11,11 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pprint
 from typing import Any
+from typing import Iterable
 from typing import List
 from typing import MutableMapping
 from typing import Optional
+from typing import TypeVar
 
 import numpy as np
 import pandas as pd
@@ -27,6 +29,7 @@ from rs2simlib.dataio import resolve_parent
 from rs2simlib.fast import sim as fastsim
 from rs2simlib.models import Bullet
 from rs2simlib.models import BulletParseResult
+from rs2simlib.models import ClassBase
 from rs2simlib.models import DragFunction
 from rs2simlib.models import PROJECTILE
 from rs2simlib.models import ParseResult
@@ -36,7 +39,7 @@ from rs2simlib.models import WeaponParseResult
 from rs2simlib.models import WeaponSimulation
 from rs2simlib.models import interp_dmg_falloff
 from rs2simlib.models.models import AltAmmoLoadout
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select
 from werkzeug.datastructures import MultiDict
 
 import db
@@ -641,6 +644,70 @@ def run_simulations(classes_file: Path):
         print("done:", done)
 
 
+# TODO: move to rs2simlib.models?
+ClassLike = TypeVar("ClassLike", bound=ClassBase)
+
+
+def get_immediate_children(
+        parent: ClassLike,
+        classes: Iterable[ClassLike]
+) -> Iterable[ClassLike]:
+    return [
+        c for c in classes
+        if c.parent.name == parent.name
+    ]
+
+
+def hierarchy_list(
+        root: ClassLike,
+        classes: Iterable[ClassLike],
+) -> List[ClassLike]:
+    ret = [root]
+
+    children = get_immediate_children(root, (x for x in classes if x != root))
+    for child in children:
+        ret.extend([
+            x for x in hierarchy_list(child, classes)
+        ])
+
+    return ret
+
+
+def insert_weapons(
+        weapon_metadata: dict,
+        weapon_classes: MutableMapping[str, Weapon]):
+    root_wep = weapon_classes["Weapon"]
+    ordered_weapons: List[Weapon] = hierarchy_list(
+        root_wep,
+        weapon_classes.values(),
+    )
+
+    with db.Session() as session, session.begin():
+        w: Optional[db.Weapon] = None
+        parent_id = None
+
+        for weapon in ordered_weapons:
+            w_meta = next(
+                wm for wm in weapon_metadata
+                if wm["name"].lower() == weapon.name.lower())
+
+            if w is not None:
+                parent_id = session.scalar(
+                    select(db.Weapon.id).where(
+                        db.Weapon.name == weapon.parent.name
+                    )
+                )
+
+            w = db.Weapon(
+                name=weapon.name,
+                display_name=w_meta["display_name"],
+                short_display_name=w_meta["short_display_name"],
+                pre_fire_length=weapon.get_pre_fire_length() * 50,
+                parent_id=parent_id
+            )
+            session.add(w)
+
+
 def enter_db_data(metadata_dir: Path):
     # TODO: optimize these JSON structures for search.
     weapon_metadata = orjson.loads((metadata_dir / "weapons.json").read_bytes())
@@ -649,42 +716,7 @@ def enter_db_data(metadata_dir: Path):
     weapons = ploads_weapon_classes(
         (metadata_dir / "weapon_classes.pickle").read_bytes())
 
-    with db.Session() as session:
-        # Special handling for root class.
-        wep_root = weapons.pop("Weapon")
-        w_meta = next(
-            wm for wm in weapon_metadata
-            if wm["name"].lower() == wep_root.name.lower())
-
-        insert_stmt = insert(db.Weapon).values(
-            name=wep_root.name,
-            parent_name=None,
-            display_name=w_meta["display_name"],
-            short_display_name=w_meta["short_display_name"],
-            pre_fire_length=wep_root.get_pre_fire_length() * 50,
-        ).on_conflict_do_nothing(
-            index_elements=["name"],
-        )
-        session.execute(insert_stmt)
-        session.flush()
-
-        for weapon in weapons.values():
-            w_meta = next(
-                wm for wm in weapon_metadata
-                if wm["name"].lower() == weapon.name.lower())
-
-            parent_name = weapon.parent.name
-
-            w = db.Weapon(
-                name=weapon.name,
-                parent_name=parent_name,
-                display_name=w_meta["display_name"],
-                short_display_name=w_meta["short_display_name"],
-                pre_fire_length=weapon.get_pre_fire_length() * 50,
-            )
-            session.add(w)
-
-        session.commit()
+    insert_weapons(weapon_metadata, weapons)
 
 
 src_default = (
@@ -748,8 +780,8 @@ def parse_args() -> Namespace:
 def main():
     args = parse_args()
 
-    begin = datetime.datetime.now()
-    print(f"begin: {begin.isoformat()}")
+    begin = time.perf_counter()
+    print(f"begin: {begin}")
 
     if args.parse_src:
         parse_uscript(Path(args.parse_src).resolve())
@@ -762,9 +794,9 @@ def main():
     else:
         raise SystemExit("no valid action specified")
 
-    end = datetime.datetime.now()
-    print(f"end: {end.isoformat()}")
-    total_secs = round((end - begin).total_seconds(), 2)
+    end = time.perf_counter()
+    print(f"end: {end}")
+    total_secs = end - begin
     print(f"processing took {total_secs} seconds")
 
 
