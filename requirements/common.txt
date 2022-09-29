@@ -14,7 +14,7 @@ dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
 git+https://github.com/sqlalchemy/sqlalchemy@75ab50869b37368f32ec311dfb59777c0c1d1edb#egg=SQLAlchemy
-git+https://github.com/tuokri/rs2simlib@0.4.3#egg=rs2simlib
+git+https://github.com/tuokri/rs2simlib@0.4.4#egg=rs2simlib
 gunicorn==20.1.0
 idna==3.3
 itsdangerous==2.1.2

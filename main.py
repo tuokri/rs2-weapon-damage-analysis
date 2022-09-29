@@ -1,4 +1,5 @@
 import configparser
+import itertools
 import json
 import os
 import time
@@ -15,21 +16,21 @@ from typing import Iterable
 from typing import List
 from typing import MutableMapping
 from typing import Optional
-from typing import TypeVar
+from typing import Tuple
 
 import numpy as np
+import orjson
 import pandas as pd
 from natsort import natsorted
-from orjson import orjson
 from requests.structures import CaseInsensitiveDict
-from rs2simlib.dataio import pdumps_weapon_classes
-from rs2simlib.dataio import ploads_weapon_classes
+from rs2simlib.dataio import pdumps_class_map
+from rs2simlib.dataio import ploads_class_map
 from rs2simlib.dataio import process_file
 from rs2simlib.dataio import resolve_parent
 from rs2simlib.fast import sim as fastsim
 from rs2simlib.models import Bullet
 from rs2simlib.models import BulletParseResult
-from rs2simlib.models import ClassBase
+from rs2simlib.models import ClassLike
 from rs2simlib.models import DragFunction
 from rs2simlib.models import PROJECTILE
 from rs2simlib.models import ParseResult
@@ -299,7 +300,11 @@ def parse_uscript(src_dir: Path):
 
     print("writing weapon_classes.pickle")
     with open("weapon_classes.pickle", "wb") as f:
-        f.write(pdumps_weapon_classes(weapon_classes))
+        f.write(pdumps_class_map(weapon_classes))
+
+    print("writing bullet_classes.pickle")
+    with open("bullet_classes.pickle", "wb") as f:
+        f.write(pdumps_class_map(bullet_classes))
 
 
 def process_sim(sim: WeaponSimulation, sim_time: float):
@@ -586,7 +591,8 @@ def run_simulations(classes_file: Path):
     write simulated data to CSV files.
     """
     print(f"reading '{classes_file.absolute()}'")
-    weapon_classes = ploads_weapon_classes(classes_file.read_bytes())
+    weapon_classes: MutableMapping[str, Weapon] = ploads_class_map(
+        classes_file.read_bytes())
     print(f"loaded {len(weapon_classes)} weapons")
 
     Path("./sim_data/").mkdir(parents=True, exist_ok=True)
@@ -644,16 +650,13 @@ def run_simulations(classes_file: Path):
         print("done:", done)
 
 
-# TODO: move to rs2simlib.models?
-ClassLike = TypeVar("ClassLike", bound=ClassBase)
-
-
 def get_immediate_children(
         parent: ClassLike,
         classes: Iterable[ClassLike]
 ) -> Iterable[ClassLike]:
     return [
         c for c in classes
+        if c != parent
         if c.parent.name == parent.name
     ]
 
@@ -662,31 +665,40 @@ def hierarchy_list(
         root: ClassLike,
         classes: Iterable[ClassLike],
 ) -> List[ClassLike]:
+    # return [
+    #     root,
+    #     *[c for children in [hierarchy_list(child, classes)
+    #                          for child in get_immediate_children(root, classes)]
+    #       for c in children]
+    # ]
+
     ret = [root]
 
-    children = get_immediate_children(root, (x for x in classes if x != root))
+    children = get_immediate_children(root, classes)
     for child in children:
-        ret.extend([
-            x for x in hierarchy_list(child, classes)
-        ])
+        ret.extend(hierarchy_list(child, classes))
 
     return ret
 
 
+def ordered_class_likes(
+        root_name: str,
+        class_map: MutableMapping[str, ClassLike],
+) -> List[ClassLike]:
+    c_root = class_map[root_name]
+    return hierarchy_list(c_root, class_map.values())
+
+
 def insert_weapons(
         weapon_metadata: dict,
-        weapon_classes: MutableMapping[str, Weapon]):
-    root_wep = weapon_classes["Weapon"]
-    ordered_weapons: List[Weapon] = hierarchy_list(
-        root_wep,
-        weapon_classes.values(),
-    )
-
-    with db.Session() as session, session.begin():
+        weapon_classes: List[Weapon],
+):
+    with db.Session(autoflush=False) as session, session.begin():
         w: Optional[db.Weapon] = None
         parent_id = None
+        loadouts = []
 
-        for weapon in ordered_weapons:
+        for weapon in weapon_classes:
             w_meta = next(
                 wm for wm in weapon_metadata
                 if wm["name"].lower() == weapon.name.lower())
@@ -702,21 +714,137 @@ def insert_weapons(
                 name=weapon.name,
                 display_name=w_meta["display_name"],
                 short_display_name=w_meta["short_display_name"],
+                parent_id=parent_id,
                 pre_fire_length=weapon.get_pre_fire_length() * 50,
-                parent_id=parent_id
             )
+
             session.add(w)
+            session.flush()
+            session.refresh(w)
+
+            b_d_values = [
+                (b, d) for b, d in zip(
+                    weapon.get_bullets(), weapon.get_instant_damages()
+                ) if b
+            ]
+            loadouts.extend(make_loadouts(session, w, b_d_values))
+
+            alt_los = [lo for lo in weapon.get_alt_ammo_loadouts() if lo]
+            alt_lo_bullets = itertools.chain.from_iterable(
+                [lo.bullets for lo in alt_los])
+            alt_lo_damages = itertools.chain.from_iterable(
+                [lo.instant_damages for lo in alt_los])
+            lo_b_d_values = [
+                (b, d) for b, d in zip(
+                    alt_lo_bullets,
+                    alt_lo_damages,
+                ) if b
+            ]
+            loadouts.extend(make_loadouts(session, w, lo_b_d_values))
+
+        session.add_all(loadouts)
+
+
+def make_loadouts(
+        session: db.Session,
+        weapon: db.Weapon,
+        b_d_values: Iterable[Tuple[Bullet, int]]
+) -> List[db.AmmoLoadout]:
+    loadouts = []
+    for bullet, instant_damage in b_d_values:
+        loadouts.append(db.AmmoLoadout(
+            weapon_id=weapon.id,
+            bullet_id=session.scalar(
+                select(db.Bullet.id).where(
+                    db.Bullet.name == bullet.name
+                ),
+            ),
+            instant_damage=instant_damage,
+        ))
+    return loadouts
+
+
+def insert_bullets(bullet_classes: List[Bullet]):
+    with db.Session(autoflush=False) as session, session.begin():
+        b: Optional[db.Bullet] = None
+        parent_id = None
+
+        for bullet in bullet_classes:
+            if b is not None:
+                parent_id = session.scalar(
+                    select(db.Bullet.id).where(
+                        db.Bullet.name == bullet.parent.name
+                    )
+                )
+
+            b = db.Bullet(
+                name=bullet.name,
+                parent_id=parent_id,
+                ballistic_coeff=bullet.get_ballistic_coeff(),
+                damage=bullet.get_damage(),
+                drag_func=bullet.get_drag_func_int(),
+                speed=bullet.get_speed_uu(),
+            )
+
+            session.add(b)
+            session.flush()
+            session.refresh(b)
+
+            dmg_fo = interp_dmg_falloff(bullet.get_damage_falloff())
+
+            for i, (x, y) in enumerate(zip(*dmg_fo)):
+                dmg_falloff = db.DamageFalloff(
+                    index=i,
+                    x=x,
+                    y=y,
+                    bullet_id=b.id,
+                )
+                session.add(dmg_falloff)
 
 
 def enter_db_data(metadata_dir: Path):
     # TODO: optimize these JSON structures for search.
-    weapon_metadata = orjson.loads((metadata_dir / "weapons.json").read_bytes())
-    bullet_metadata = orjson.loads((metadata_dir / "bullets.json").read_bytes())
+    weapon_metadata = orjson.loads(
+        (metadata_dir / "weapons.json").read_bytes())
 
-    weapons = ploads_weapon_classes(
+    weapons: MutableMapping[str, Weapon] = ploads_class_map(
         (metadata_dir / "weapon_classes.pickle").read_bytes())
 
-    insert_weapons(weapon_metadata, weapons)
+    bullets: MutableMapping[str, Bullet] = ploads_class_map(
+        (metadata_dir / "bullet_classes.pickle").read_bytes())
+
+    ordered_weapons: List[Weapon] = ordered_class_likes(
+        root_name="Weapon",
+        class_map=weapons,
+    )
+    ordered_bullets: List[Bullet] = ordered_class_likes(
+        root_name="Projectile",
+        class_map=bullets,
+    )
+
+    insert_bullets(ordered_bullets)
+    insert_weapons(weapon_metadata, ordered_weapons)
+
+    # with db.Session() as s:
+    #     stmt = select(db.Bullet)
+    #     print(stmt)
+    #     vals = s.scalars(stmt)
+    #     print(vals)
+    #     for x in vals:
+    #         print(x.damage_falloff_curve)
+
+    # with db.Session() as s:
+    #     stmt = select(db.Weapon)
+    #     print(stmt)
+    #     vals = s.scalars(stmt)
+    #     print(vals)
+    #     for x in vals:
+    #         print(x.ammo_loadouts)
+
+    timescale_sql = Path("db/timescale.sql").read_text()
+    with db.Session() as s, s.begin():
+        c = s.connection().connection.cursor()
+        c.execute(timescale_sql)
 
 
 src_default = (
@@ -802,3 +930,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # import timeit
+    #
+    # print(timeit.timeit(
+    #     "enter_db_data(Path())",
+    #     setup="from __main__ import enter_db_data; from pathlib import Path",
+    #     number=100,
+    # ))
