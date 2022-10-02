@@ -132,7 +132,10 @@ dmypy.json
 .idea/
 
 # Simulation data
-.sim_data/
+sim_data/
 
 # Archives
 *.7z
+
+# Hatch
+rs2simulator/_version.py

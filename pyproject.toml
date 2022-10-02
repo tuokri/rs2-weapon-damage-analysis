@@ -68,7 +68,7 @@ allow-direct-references = true
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "_version.py"
+version-file = "rs2simulator/_version.py"
 
 #[tool.hatch.envs.test]
 #dependencies = [
@@ -80,6 +80,7 @@ version-file = "_version.py"
 [tool.hatch.envs.scripts]
 #test = "pytest"
 #types = "mypy rs2simlib --show-error-codes"
+# TODO: not the intended use case...
 main = "scripts/main.py"
 
 #[tool.hatch.envs.test.overrides]

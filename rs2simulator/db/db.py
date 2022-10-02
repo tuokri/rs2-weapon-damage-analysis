@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 from psycopg_pool import ConnectionPool
 from sqlalchemy import Engine
 from sqlalchemy import create_engine
@@ -9,10 +8,8 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import DropTable
 
-from db.models import AutomapModel
-from db.models import BaseModel
-
-load_dotenv()
+from rs2simulator.db.models import AutomapModel
+from rs2simulator.db.models import BaseModel
 
 _DATABASE_URL = os.environ.get("DATABASE_URL")
 _PROTOCOL_URL = "postgresql+psycopg://"

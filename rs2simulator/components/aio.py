@@ -4,7 +4,7 @@ from dash import Output
 from dash import clientside_callback
 from dash_bootstrap_templates import ThemeChangerAIO
 
-from utils import read_asset_text
+from rs2simulator.utils import read_asset_text
 
 theme_changer_js = read_asset_text("theme-changer.js")
 

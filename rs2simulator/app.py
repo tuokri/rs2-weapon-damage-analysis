@@ -10,15 +10,12 @@ from dash import Output
 from dash import State
 from dash import html
 from dash_bootstrap_templates import load_figure_template
-from dotenv import load_dotenv
 from flask import redirect
 from flask import request
 from werkzeug import Response
 
-from components.aio import ThemeChangerAIOCustom
-from utils import read_asset_text
-
-load_dotenv(".env")
+from rs2simulator.components.aio import ThemeChangerAIOCustom
+from rs2simulator.utils import read_asset_text
 
 gtag_manager_string = """
 <!-- Google Tag Manager -->

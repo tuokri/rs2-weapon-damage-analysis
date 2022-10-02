@@ -1,9 +1,6 @@
 import dash
-from dash import callback
 from dash import dcc
 from dash import html
-from dash.dependencies import Input
-from dash.dependencies import Output
 
 dash.register_page(__name__, path="/statistics")
 
@@ -14,7 +11,6 @@ layout = html.Div([
     html.Div(id='content'),
     html.Div(id='output'),
 ])
-
 
 # @callback(Output('content', 'children'), Input('url', 'pathname'))
 # def display_page(pathname):

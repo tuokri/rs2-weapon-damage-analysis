@@ -45,7 +45,7 @@ from rs2simlib.models.models import AltAmmoLoadout
 from sqlalchemy import select
 from werkzeug.datastructures import MultiDict
 
-import db
+from rs2simulator import db
 
 
 def parse_uscript(src_dir: Path):
@@ -264,11 +264,11 @@ def parse_uscript(src_dir: Path):
         })
 
     print("writing bullets.json")
-    with open("bullets.json", "w") as f:
+    with open("../bullets.json", "w") as f:
         f.write(json.dumps(bullets_data, separators=(",", ":")))
 
     print("writing bullets_readable.json")
-    with open("bullets_readable.json", "w") as f:
+    with open("../bullets_readable.json", "w") as f:
         f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
 
     weapons_data = []
@@ -293,19 +293,19 @@ def parse_uscript(src_dir: Path):
         })
 
     print("writing weapons.json")
-    with open("weapons.json", "w") as f:
+    with open("../weapons.json", "w") as f:
         f.write(json.dumps(weapons_data, separators=(",", ":")))
 
     print("writing weapons_readable.json")
-    with open("weapons_readable.json", "w") as f:
+    with open("../weapons_readable.json", "w") as f:
         f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
 
     print("writing weapon_classes.pickle")
-    with open("weapon_classes.pickle", "wb") as f:
+    with open("../weapon_classes.pickle", "wb") as f:
         f.write(pdumps_class_map(weapon_classes))
 
     print("writing bullet_classes.pickle")
-    with open("bullet_classes.pickle", "wb") as f:
+    with open("../bullet_classes.pickle", "wb") as f:
         f.write(pdumps_class_map(bullet_classes))
 
 
@@ -340,7 +340,7 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
         # print("velocity (m/s)  =", velocity_ms)
         # print("velocity[1] (Z) =", sim.velocity[1])
 
-    p = (Path(f"./sim_data/") / sim.weapon.name)
+    p = (Path(f"../sim_data/") / sim.weapon.name)
     p = p.resolve()
     p.mkdir(parents=True, exist_ok=True)
     p = p / "dummy_name.txt"
@@ -435,7 +435,7 @@ def run_fast_sim(weapon: Weapon, bullet: Bullet,
     )
 
     aim_str = f"{aim_deg}_deg".replace(".", "_")
-    p = Path(f"./sim_data/") / weapon.name
+    p = Path(f"../sim_data/") / weapon.name
     p.mkdir(parents=True, exist_ok=True)
     p = p / f"sim_{aim_str}_{bullet.name}.csv"
     p.touch(exist_ok=True)
@@ -493,7 +493,7 @@ def parse_localization(path: Path):
     TODO: should probably also save this to the pickled data.
     """
     try:
-        with Path("weapons.json").open("r") as f:
+        with Path("../weapons.json").open("r") as f:
             weapons_metadata = json.load(f)
     except Exception as e:
         print(f"error reading weapons_readable.json: {e}")
@@ -559,11 +559,11 @@ def parse_localization(path: Path):
             name)["short_display_name"] or "NO_SHORT_DISPLAY_NAME"
 
     print("writing weapons.json")
-    with Path("weapons.json").open("w") as f:
+    with Path("../weapons.json").open("w") as f:
         f.write(json.dumps(weapons_metadata, separators=(",", ":")))
 
     print("writing weapons_readable.json")
-    with Path("weapons_readable.json").open("w") as f:
+    with Path("../weapons_readable.json").open("w") as f:
         f.write(json.dumps(weapons_metadata, indent=4, sort_keys=True))
 
 
@@ -599,7 +599,7 @@ def run_simulations(classes_file: Path):
         classes_file.read_bytes())
     print(f"loaded {len(weapon_classes)} weapons")
 
-    Path("./sim_data/").mkdir(parents=True, exist_ok=True)
+    Path("../sim_data/").mkdir(parents=True, exist_ok=True)
 
     ro_one_shot = weapon_classes["ROOneShotWeapon"]
 
@@ -855,8 +855,8 @@ def enter_db_data(metadata_dir: Path):
                 # initializer=db.pool_dispose,
                 # initargs=tuple(db.engine),
         ) as executor:
-            script = str(Path("./scripts/enter_sim_data.py").absolute())
-            files = [f.absolute() for f in Path("./sim_data").rglob("*.csv")]
+            script = str(Path("scripts/enter_sim_data.py").absolute())
+            files = [f.absolute() for f in Path("../sim_data").rglob("*.csv")]
             for file in files[0:1]:
                 args = [sys.executable, script, file]
                 fs[executor.submit(
