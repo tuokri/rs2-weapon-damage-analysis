@@ -2,6 +2,8 @@ import configparser
 import itertools
 import json
 import os
+import subprocess
+import sys
 import time
 from argparse import ArgumentParser
 from argparse import Namespace
@@ -439,16 +441,18 @@ def run_fast_sim(weapon: Weapon, bullet: Bullet,
     p.touch(exist_ok=True)
 
     df = pd.DataFrame({
-        "trajectory_x": results[0],
-        "trajectory_y": results[1],
+        # As millisecond integers.
+        "time": np.rint(results[4] * 1000).astype(np.uint32),
+        "location_x": results[0],
+        "location_y": results[1],
         "damage": results[2],
         "distance": results[3],
-        "time_at_flight": results[4],
-        "bullet_velocity": results[5],
+        "velocity": results[5],
         "energy_transfer": results[6],
         "power_left": results[7],
+        "angle": aim_deg,
     })
-    df.to_csv(p.absolute())
+    df.to_csv(p.absolute(), index=False)
 
 
 def unique_items(seq: List[Any]) -> List[Any]:
@@ -632,7 +636,7 @@ def run_simulations(classes_file: Path):
     print(f"simulating with {len(sim_classes)} classes")
     pprint([s.name for s in sim_classes])
 
-    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
+    with ProcessPoolExecutor(max_workers=os.cpu_count() // 2) as executor:
         fs = {executor.submit(run_simulation, weapon): weapon
               for weapon in sim_classes}
 
@@ -694,7 +698,7 @@ def insert_weapons(
         weapon_classes: List[Weapon],
 ):
     with db.Session(autoflush=False) as session, session.begin():
-        w: Optional[db.Weapon] = None
+        w: Optional[db.models.Weapon] = None
         parent_id = None
         loadouts = []
 
@@ -705,12 +709,12 @@ def insert_weapons(
 
             if w is not None:
                 parent_id = session.scalar(
-                    select(db.Weapon.id).where(
-                        db.Weapon.name == weapon.parent.name
+                    select(db.models.Weapon.id).where(
+                        db.models.Weapon.name == weapon.parent.name
                     )
                 )
 
-            w = db.Weapon(
+            w = db.models.Weapon(
                 name=weapon.name,
                 display_name=w_meta["display_name"],
                 short_display_name=w_meta["short_display_name"],
@@ -747,16 +751,16 @@ def insert_weapons(
 
 def make_loadouts(
         session: db.Session,
-        weapon: db.Weapon,
+        weapon: db.models.Weapon,
         b_d_values: Iterable[Tuple[Bullet, int]]
-) -> List[db.AmmoLoadout]:
+) -> List[db.models.AmmoLoadout]:
     loadouts = []
     for bullet, instant_damage in b_d_values:
-        loadouts.append(db.AmmoLoadout(
+        loadouts.append(db.models.AmmoLoadout(
             weapon_id=weapon.id,
             bullet_id=session.scalar(
-                select(db.Bullet.id).where(
-                    db.Bullet.name == bullet.name
+                select(db.models.Bullet.id).where(
+                    db.models.Bullet.name == bullet.name
                 ),
             ),
             instant_damage=instant_damage,
@@ -766,18 +770,18 @@ def make_loadouts(
 
 def insert_bullets(bullet_classes: List[Bullet]):
     with db.Session(autoflush=False) as session, session.begin():
-        b: Optional[db.Bullet] = None
+        b: Optional[db.models.Bullet] = None
         parent_id = None
 
         for bullet in bullet_classes:
             if b is not None:
                 parent_id = session.scalar(
-                    select(db.Bullet.id).where(
-                        db.Bullet.name == bullet.parent.name
+                    select(db.models.Bullet.id).where(
+                        db.models.Bullet.name == bullet.parent.name
                     )
                 )
 
-            b = db.Bullet(
+            b = db.models.Bullet(
                 name=bullet.name,
                 parent_id=parent_id,
                 ballistic_coeff=bullet.get_ballistic_coeff(),
@@ -793,7 +797,7 @@ def insert_bullets(bullet_classes: List[Bullet]):
             dmg_fo = interp_dmg_falloff(bullet.get_damage_falloff())
 
             for i, (x, y) in enumerate(zip(*dmg_fo)):
-                dmg_falloff = db.DamageFalloff(
+                dmg_falloff = db.models.DamageFalloff(
                     index=i,
                     x=x,
                     y=y,
@@ -803,6 +807,8 @@ def insert_bullets(bullet_classes: List[Bullet]):
 
 
 def enter_db_data(metadata_dir: Path):
+    db.drop_create_all(db.engine)
+
     # TODO: optimize these JSON structures for search.
     weapon_metadata = orjson.loads(
         (metadata_dir / "weapons.json").read_bytes())
@@ -826,7 +832,7 @@ def enter_db_data(metadata_dir: Path):
     insert_weapons(weapon_metadata, ordered_weapons)
 
     # with db.Session() as s:
-    #     stmt = select(db.Bullet)
+    #     stmt = select(db.models.Bullet)
     #     print(stmt)
     #     vals = s.scalars(stmt)
     #     print(vals)
@@ -834,17 +840,34 @@ def enter_db_data(metadata_dir: Path):
     #         print(x.damage_falloff_curve)
 
     # with db.Session() as s:
-    #     stmt = select(db.Weapon)
+    #     stmt = select(db.models.Weapon)
     #     print(stmt)
     #     vals = s.scalars(stmt)
     #     print(vals)
     #     for x in vals:
     #         print(x.ammo_loadouts)
 
-    timescale_sql = Path("db/timescale.sql").read_text()
-    with db.Session() as s, s.begin():
-        c = s.connection().connection.cursor()
-        c.execute(timescale_sql)
+    db.pool_dispose(db.engine)
+    fs = {}
+    try:
+        with ProcessPoolExecutor(
+                max_workers=os.cpu_count(),
+                # initializer=db.pool_dispose,
+                # initargs=tuple(db.engine),
+        ) as executor:
+            script = str(Path("./scripts/enter_sim_data.py").absolute())
+            files = [f.absolute() for f in Path("./sim_data").rglob("*.csv")]
+            for file in files[0:1]:
+                args = [sys.executable, script, file]
+                fs[executor.submit(
+                    subprocess.check_call, args)] = file
+
+        for f in futures.as_completed(fs):
+            exc = f.exception()
+            if exc:
+                print(type(exc).__name__, exc)
+    except KeyboardInterrupt:
+        executor.shutdown(wait=False, cancel_futures=True)
 
 
 src_default = (
