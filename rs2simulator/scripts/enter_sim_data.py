@@ -77,6 +77,9 @@ def main(data_dir: Path):
     weapon_name = data_dir.name
 
     with SessionNoPool(autoflush=False) as session, session.begin():
+        # TODO: optimize this further by doing a single select
+        #  in the parent process and pass the needed IDs as
+        #  arguments to each process.
         start_select = time.perf_counter()
         bullet_id = session.scalar(
             select(
