@@ -1,9 +1,10 @@
 import configparser
 import itertools
-import json
 import os
+import signal
 import subprocess
 import sys
+import threading
 import time
 from argparse import ArgumentParser
 from argparse import Namespace
@@ -12,14 +13,16 @@ from concurrent import futures
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from pprint import pprint
+from pprint import pformat
 from typing import Any
+from typing import Deque
 from typing import Iterable
 from typing import List
 from typing import MutableMapping
 from typing import Optional
 from typing import Tuple
 
+import logbook
 import numpy as np
 import orjson
 import pandas as pd
@@ -46,7 +49,20 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from werkzeug.datastructures import MultiDict
 
+import rs2simulator
 from rs2simulator import db
+
+logger = logbook.Logger("main")
+
+# TODO: make these configurable?
+ROOT_DIR = Path(rs2simulator.__path__[0]).parent
+SIM_DATA_DIR = (ROOT_DIR / "sim_data").absolute()
+BULLETS_JSON = ROOT_DIR / "bullets.json"
+BULLETS_READABLE_JSON = ROOT_DIR / "bullets_readable.json"
+WEAPONS_JSON = ROOT_DIR / "weapons.json"
+WEAPONS_READABLE_JSON = ROOT_DIR / "weapons_readable.json"
+WEAPONS_PICKLE = ROOT_DIR / "weapon_classes.pickle"
+BULLETS_PICKLE = ROOT_DIR / "bullet_classes.pickle"
 
 
 def parse_uscript(src_dir: Path):
@@ -70,9 +86,9 @@ def parse_uscript(src_dir: Path):
     bullet_results: MutableMapping[str, BulletParseResult] = CaseInsensitiveDict()
     weapon_results: MutableMapping[str, WeaponParseResult] = CaseInsensitiveDict()
 
-    print(f"reading '{src_dir.absolute()}'")
+    logger.info("reading '{src_dir}'", src_dir=src_dir.absolute())
     src_files = [f for f in Path(src_dir).rglob("*.uc")]
-    print(f"processing {len(src_files)} .uc files")
+    logger.info("processing {num} .uc files", num=len(src_files))
     with ThreadPoolExecutor() as executor:
         fs = [executor.submit(process_file, file) for file in src_files]
     result: Optional[ParseResult]
@@ -95,11 +111,8 @@ def parse_uscript(src_dir: Path):
         for key in natsorted(weapon_results.keys())
     })
 
-    print(f"found {len(bullet_results)} bullet classes")
-    print(f"found {len(weapon_results)} weapon classes")
-
-    # weapon_class = re.sub(
-    #     r"roweap_", "", weapon_class, flags=re.IGNORECASE)
+    logger.info("found {num} bullet classes", num=len(bullet_results))
+    logger.info("found {num} weapon classes", num=len(weapon_results))
 
     resolved_early = 0
     bullet_classes: MutableMapping[str, Bullet] = CaseInsensitiveDict()
@@ -121,8 +134,10 @@ def parse_uscript(src_dir: Path):
             ballistic_coeff=bullet_result.ballistic_coeff,
         )
 
-    print(f"{resolved_early} Bullet classes resolved early")
-    print(f"{len(bullet_results) - resolved_early} still unresolved")
+    logger.info("{num} bullet classes resolved early",
+                num=resolved_early)
+    logger.info("{num} still unresolved",
+                num=len(bullet_results) - resolved_early)
 
     to_del = set()
     for class_name, bullet in bullet_classes.items():
@@ -138,17 +153,17 @@ def parse_uscript(src_dir: Path):
                 break
             obj = obj.parent
 
-    print(f"discarding {len(to_del)} invalid Bullet classes")
+    logger.info("discarding {num} invalid bullet classes", num=len(to_del))
     for td in to_del:
         del bullet_classes[td]
 
     if not all(b.is_child_of(PROJECTILE) for b in bullet_classes.values()):
         for b in bullet_classes.values():
             if not b.is_child_of(PROJECTILE):
-                print(b.name)
-        raise RuntimeError("got invalid Bullet classes")
+                logger.warn(b.name)
+        raise RuntimeError("got invalid bullet classes")
 
-    print(f"{len(bullet_classes)} total Bullet classes")
+    logger.info("{num} total bullet classes", num=len(bullet_classes))
 
     resolved_early = 0
     weapon_classes: MutableMapping[str, Weapon] = CaseInsensitiveDict()
@@ -199,8 +214,10 @@ def parse_uscript(src_dir: Path):
             alt_ammo_loadouts=alt_ammo_loadouts,
         )
 
-    print(f"{resolved_early} Weapon classes resolved early")
-    print(f"{len(weapon_results) - resolved_early} still unresolved")
+    logger.info("{num} weapon classes resolved early",
+                num=resolved_early)
+    logger.info("{num} still unresolved",
+                num=len(weapon_results) - resolved_early)
 
     to_del.clear()
     for class_name, weapon in weapon_classes.items():
@@ -216,23 +233,20 @@ def parse_uscript(src_dir: Path):
                 break
             obj = obj.parent
 
-    print(f"discarding {len(to_del)} invalid Weapon classes")
+    logger.info("discarding {num} invalid weapon classes", num=len(to_del))
     for td in to_del:
         del weapon_classes[td]
 
-    # weapon_classes["ROBipodWeapon"].get_bullets()
-    # pprint(weapon_classes["ROBipodWeapon"].get_bullets())
-
     if not all(w.is_child_of(WEAPON) for w in weapon_classes.values()):
-        raise RuntimeError("got invalid Weapon classes")
+        raise RuntimeError("got invalid weapon classes")
 
     if not all(any(w.get_bullets()) for w in weapon_classes.values()):
         for w in weapon_classes.values():
             if not all(w.get_bullets()):
                 print(w.name, w.get_bullets())
-        raise RuntimeError("got Weapon classes without Bullet")
+        raise RuntimeError("got weapon classes without bullet")
 
-    print(f"{len(weapon_classes)} total Weapon classes")
+    logger.info("{num} total weapon classes", num=len(weapon_classes))
 
     # Second sort may be unnecessary.
     weapon_classes = {
@@ -264,13 +278,16 @@ def parse_uscript(src_dir: Path):
             for key in natsorted(b_data.keys())
         })
 
-    print("writing bullets.json")
-    with open("../bullets.json", "w") as f:
-        f.write(json.dumps(bullets_data, separators=(",", ":")))
+    logger.info("writing '{f}'", f=BULLETS_JSON)
+    BULLETS_JSON.write_bytes(orjson.dumps(bullets_data))
 
-    print("writing bullets_readable.json")
-    with open("../bullets_readable.json", "w") as f:
-        f.write(json.dumps(bullets_data, sort_keys=True, indent=4))
+    logger.info("writing '{f}'", f=BULLETS_READABLE_JSON)
+    BULLETS_READABLE_JSON.write_bytes(
+        orjson.dumps(
+            bullets_data,
+            option=orjson.OPT_INDENT_2,
+        )
+    )
 
     weapons_data = []
     for weapon in weapon_classes.values():
@@ -293,21 +310,22 @@ def parse_uscript(src_dir: Path):
             for key in natsorted(w_data.keys())
         })
 
-    print("writing weapons.json")
-    with open("../weapons.json", "w") as f:
-        f.write(json.dumps(weapons_data, separators=(",", ":")))
+    logger.info("writing '{f}'", f=WEAPONS_JSON)
+    WEAPONS_JSON.write_bytes(orjson.dumps(weapons_data))
 
-    print("writing weapons_readable.json")
-    with open("../weapons_readable.json", "w") as f:
-        f.write(json.dumps(weapons_data, sort_keys=True, indent=4))
+    logger.info("writing '{f}'", f=WEAPONS_READABLE_JSON)
+    WEAPONS_READABLE_JSON.write_bytes(
+        orjson.dumps(
+            weapons_data,
+            option=orjson.OPT_INDENT_2,
+        )
+    )
 
-    print("writing weapon_classes.pickle")
-    with open("../weapon_classes.pickle", "wb") as f:
-        f.write(pdumps_class_map(weapon_classes))
+    logger.info("writing '{f}'", f=WEAPONS_PICKLE)
+    WEAPONS_PICKLE.write_bytes(pdumps_class_map(weapon_classes))
 
-    print("writing bullet_classes.pickle")
-    with open("../bullet_classes.pickle", "wb") as f:
-        f.write(pdumps_class_map(bullet_classes))
+    logger.info("writing '{f}'", f=BULLETS_PICKLE)
+    BULLETS_PICKLE.write_bytes(pdumps_class_map(bullet_classes))
 
 
 def process_sim(sim: WeaponSimulation, sim_time: float):
@@ -335,23 +353,21 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
         l_trajectory_y.append(loc[1])
         l_speed_curve_x_flight_time.append(flight_time)
         l_speed_curve_y_velocity_ms.append(velocity_ms)
-        # print("flight_time (s) =", flight_time)
-        # print("damage          =", dmg)
-        # print("distance (m)    =", sim.distance_traveled_m)
-        # print("velocity (m/s)  =", velocity_ms)
-        # print("velocity[1] (Z) =", sim.velocity[1])
 
-    p = (Path(f"../sim_data/") / sim.weapon.name)
+    p = (SIM_DATA_DIR / sim.weapon.name)
     p = p.resolve()
     p.mkdir(parents=True, exist_ok=True)
     p = p / "dummy_name.txt"
 
-    print(f"simulation did {steps} steps")
-    print("distance traveled from start to end (Euclidean):",
-          np.linalg.norm(sim.location - start_loc) / 50,
-          "meters")
-    print("bullet distance traveled (simulated accumulation)",
-          sim.distance_traveled_m, "meters")
+    logger.info("simulation did {steps} steps", steps=steps)
+    logger.info(
+        "distance traveled from start to end (Euclidean): {x} meters",
+        x=np.linalg.norm(sim.location - start_loc) / 50
+    )
+    logger.info(
+        "bullet distance traveled (simulated accumulation) {x} meters",
+        x=sim.distance_traveled_m,
+    )
 
     trajectory_x = np.array(l_trajectory_x) / 50
     trajectory_y = np.array(l_trajectory_y) / 50
@@ -360,9 +376,6 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     dmg_curve_x_distance = np.array(l_dmg_curve_x_distance)
     speed_curve_x_flight_time = np.array(l_speed_curve_x_flight_time)
     speed_curve_y_velocity_ms = np.array(l_speed_curve_y_velocity_ms)
-
-    # print("vertical delta (bullet drop) (m):",
-    #       trajectory_y[-1] - trajectory_y[0])
 
     pref_length = sim.weapon.get_pre_fire_length()
     instant_dmg = sim.weapon.get_instant_damage(0)
@@ -436,7 +449,7 @@ def run_fast_sim(weapon: Weapon, bullet: Bullet,
     )
 
     aim_str = f"{aim_deg}_deg".replace(".", "_")
-    p = Path(f"../sim_data/") / weapon.name
+    p = SIM_DATA_DIR / weapon.name
     p.mkdir(parents=True, exist_ok=True)
     p = p / f"sim_{aim_str}_{bullet.name}.csv"
     p.touch(exist_ok=True)
@@ -493,11 +506,11 @@ def parse_localization(path: Path):
     TODO: should probably also save this to the pickled data.
     """
     try:
-        with Path("../weapons.json").open("r") as f:
-            weapons_metadata = json.load(f)
+        weapons_metadata = orjson.loads(WEAPONS_JSON.read_bytes())
     except Exception as e:
-        print(f"error reading weapons_readable.json: {e}")
-        print("make sure script sources are parsed")
+        logger.error("error reading weapons_readable.json: {e}", e=e)
+        logger.error("make sure script sources are parsed")
+        raise RuntimeError(e)
 
     cg = configparser.ConfigParser(dict_type=MultiDict, strict=False)
     cg.read(path.absolute())
@@ -558,13 +571,16 @@ def parse_localization(path: Path):
         weapons_metadata[i]["short_display_name"] = wm_map.get(
             name)["short_display_name"] or "NO_SHORT_DISPLAY_NAME"
 
-    print("writing weapons.json")
-    with Path("../weapons.json").open("w") as f:
-        f.write(json.dumps(weapons_metadata, separators=(",", ":")))
+    logger.info("writing '{f}'", f=WEAPONS_JSON)
+    WEAPONS_JSON.write_bytes(orjson.dumps(weapons_metadata))
 
-    print("writing weapons_readable.json")
-    with Path("../weapons_readable.json").open("w") as f:
-        f.write(json.dumps(weapons_metadata, indent=4, sort_keys=True))
+    logger.info("writing '{f}'", f=WEAPONS_READABLE_JSON)
+    WEAPONS_READABLE_JSON.write_bytes(
+        orjson.dumps(
+            weapons_metadata,
+            option=orjson.OPT_INDENT_2,
+        )
+    )
 
 
 def run_simulation(weapon: Weapon):
@@ -582,8 +598,8 @@ def run_simulation(weapon: Weapon):
             # process_sim(sim, sim_time=5)
             process_fast_sim(weapon, aim_dir, aim_deg=aim_deg)
     except Exception as e:
-        print(e)
-        print(weapon.name)
+        logger.error(e)
+        logger.error(weapon.name)
         # pprint(weapon)
         raise
     return None
@@ -594,12 +610,12 @@ def run_simulations(classes_file: Path):
     bullet trajectory, damage, etc. simulations and
     write simulated data to CSV files.
     """
-    print(f"reading '{classes_file.absolute()}'")
+    logger.info("reading '{f}'", f=classes_file.absolute())
     weapon_classes: MutableMapping[str, Weapon] = ploads_class_map(
         classes_file.read_bytes())
-    print(f"loaded {len(weapon_classes)} weapons")
+    logger.info("loaded {num} weapons", num=len(weapon_classes))
 
-    Path("../sim_data/").mkdir(parents=True, exist_ok=True)
+    SIM_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     ro_one_shot = weapon_classes["ROOneShotWeapon"]
 
@@ -608,50 +624,37 @@ def run_simulations(classes_file: Path):
     ballistic_proj = ak47.get_bullet(0).find_parent("ROBallisticProjectile")
     sim_classes = []
 
-    pprint(weapon_classes["ROWeap_IZH43_Shotgun"])
-
-    # test = weapon_classes["ROWeap_M79_GrenadeLauncherSmoke_Content"]
-    # pprint(test)
+    logger.debug(pformat(weapon_classes["ROWeap_IZH43_Shotgun"]))
 
     for weapon in weapon_classes.values():
         try:
-            # print(weapon.name)
-            # print("is roweap  :", weapon.name.lower().startswith("roweap_"))
-            # print("is oneshot :", weapon.is_child_of(ro_one_shot))
-            # print("has bproj  :", weapon.get_bullet().is_child_of(ballistic_proj))
-
             if (weapon.name.lower().startswith("roweap_")
                     and not weapon.is_child_of(ro_one_shot)
                     and weapon.get_bullet(0) is not None
                     and weapon.get_bullet(0).is_child_of(ballistic_proj)):
                 sim_classes.append(weapon)
         except Exception as e:
-            print(e)
-            print(weapon.name)
+            logger.error(e)
+            logger.error(weapon.name)
             raise
 
-    # m1 = weapon_classes["ROWeap_M1_Carbine_30rd"]
-    # print(m1.get_bullet().name)
+    logger.info("simulating with {num} classes", num=len(sim_classes))
+    logger.info(pformat([s.name for s in sim_classes]))
 
-    print(f"simulating with {len(sim_classes)} classes")
-    pprint([s.name for s in sim_classes])
-
-    with ProcessPoolExecutor(max_workers=os.cpu_count() // 2) as executor:
+    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
         fs = {executor.submit(run_simulation, weapon): weapon
               for weapon in sim_classes}
 
     done = 0
     for future in futures.as_completed(fs):
         if future.exception():
-            # weapon = fs[future]
-            print("*" * 80)
-            print(f"ERROR!")
-            pprint(fs[future])
-            print("*" * 80)
+            logger.error("*" * 80)
+            logger.error(f"ERROR!")
+            logger.error(pformat(fs[future]))
+            logger.error("*" * 80)
             raise future.exception()
-        # result = future.result()
         done += 1
-        print("done:", done)
+        logger.info("done:", done)
 
 
 def get_immediate_children(
@@ -831,43 +834,65 @@ def enter_db_data(metadata_dir: Path):
     insert_bullets(ordered_bullets)
     insert_weapons(weapon_metadata, ordered_weapons)
 
-    # with db.Session() as s:
-    #     stmt = select(db.models.Bullet)
-    #     print(stmt)
-    #     vals = s.scalars(stmt)
-    #     print(vals)
-    #     for x in vals:
-    #         print(x.damage_falloff_curve)
-
-    # with db.Session() as s:
-    #     stmt = select(db.models.Weapon)
-    #     print(stmt)
-    #     vals = s.scalars(stmt)
-    #     print(vals)
-    #     for x in vals:
-    #         print(x.ammo_loadouts)
-
     db.pool_dispose(db.engine())
     fs = {}
     try:
         with ThreadPoolExecutor(
                 max_workers=os.cpu_count(),
-                # initializer=db.pool_dispose,
-                # initargs=tuple(db.engine),
         ) as executor:
-            script = str(Path("rs2simulator/scripts/enter_sim_data.py").absolute())
-            files = [f.absolute() for f in Path("../sim_data").rglob("*.csv")]
-            for file in files:
-                args = [sys.executable, script, file]
-                fs[executor.submit(
-                    subprocess.check_call, args)] = file
+            data_dirs = [
+                p.absolute()
+                for p in SIM_DATA_DIR.iterdir()
+                if p.is_dir()
+            ]
+            for data_dir in data_dirs:
+                fs[executor.submit(process_sim_csv, data_dir)] = data_dir
 
         for f in futures.as_completed(fs):
             exc = f.exception()
             if exc:
-                print(type(exc).__name__, exc)
-    except KeyboardInterrupt:
+                raise exc
+    except Exception as e:
+        STOP_EVENT.set()
+        logger.error("{e_type}: {e}", e_type=type(e).__name__, e=e)
+        logger.exception(e)
+        for p in PROCESSES:
+            p.send_signal(signal.CTRL_BREAK_EVENT)
+        for f in fs:
+            f.cancel()
         executor.shutdown(wait=False, cancel_futures=True)
+
+
+PROCESS_CSV_SCRIPT = str(
+    Path("rs2simulator/scripts/enter_sim_data.py").absolute()
+)
+PROCESSES: Deque[subprocess.Popen] = deque()
+STOP_EVENT = threading.Event()
+
+
+def process_sim_csv(data_dir: Path):
+    if STOP_EVENT.is_set():
+        logger.warn("stop event is set, aborting")
+        return
+
+    p_args = [sys.executable, PROCESS_CSV_SCRIPT, str(data_dir)]
+    p_kwargs = {
+        "creationflags": subprocess.CREATE_NEW_PROCESS_GROUP,
+    }
+    p = subprocess.Popen(args=p_args, **p_kwargs)
+    PROCESSES.append(p)
+
+    while p.poll() is None:
+        if STOP_EVENT.is_set():
+            logger.warn("stop event is set, terminating")
+            p.terminate()
+            break
+        time.sleep(0.1)
+
+    r = p.wait()
+    if r != 0:
+        STOP_EVENT.set()
+        raise RuntimeError(f"process failed with exit code: {r}")
 
 
 src_default = (
@@ -929,10 +954,17 @@ def parse_args() -> Namespace:
 
 
 def main():
+    def handler(*_):
+        STOP_EVENT.set()
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGTERM, handler)
+
     args = parse_args()
 
     begin = time.perf_counter()
-    print(f"begin: {begin}")
+    logger.info(f"begin: {begin}")
 
     if args.parse_src:
         parse_uscript(Path(args.parse_src).resolve())
@@ -946,13 +978,20 @@ def main():
         raise SystemExit("no valid action specified")
 
     end = time.perf_counter()
-    print(f"end: {end}")
+    logger.info("end: {end}", end=end)
     total_secs = end - begin
-    print(f"processing took {total_secs} seconds")
+    logger.info("processing took {total} seconds", total=total_secs)
 
 
 if __name__ == "__main__":
-    main()
+    setup = logbook.NestedSetup([
+        logbook.NullHandler(),
+        logbook.RotatingFileHandler("main.log"),
+        logbook.StreamHandler(sys.stdout, bubble=True),
+    ])
+    with setup.applicationbound():
+        main()
+
     # import timeit
     #
     # print(timeit.timeit(
