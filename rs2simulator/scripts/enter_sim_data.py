@@ -1,10 +1,13 @@
 import io
 import os
+import re
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
+from sqlalchemy import NullPool
 from sqlalchemy import URL
 from sqlalchemy import create_engine
 from sqlalchemy import make_url
@@ -26,6 +29,7 @@ engine_no_pool = create_engine(
         database=db_url.database,
         query=db_url.query,
     ),
+    poolclass=NullPool,
 )
 
 SessionNoPool = sessionmaker(bind=engine_no_pool)
@@ -33,13 +37,24 @@ SessionNoPool = sessionmaker(bind=engine_no_pool)
 
 def main():
     path = Path(sys.argv[1])
-    print(f"processing '{path}'")
+    # print(f"processing '{path}'")
     raw_sql = (
         "COPY simulations "
         "FROM STDIN DELIMITER ',' CSV HEADER;"
     )
-    bullet_name = str(path.stem.split("_")[-1])
-    weapon_name = str(path.parent)
+
+    # sim_X_deg_BulletName.csv
+    pat = re.compile(r"sim_(\d)_deg_(.+)\.csv")
+    match = pat.match(path.name)
+    if not match:
+        raise RuntimeError(
+            f"'{path.name}' does not match sim file regex"
+        )
+
+    angle = int(match.group(1))
+    bullet_name = match[2]
+    weapon_name = path.parent.name
+
     with SessionNoPool() as session, session.begin():
         bullet_id = session.scalar(
             select(
@@ -53,14 +68,34 @@ def main():
                 models.Weapon.name == weapon_name
             )
         )
+
+        if not bullet_id or not weapon_id:
+            raise RuntimeError(
+                f"invalid bullet or weapon: "
+                f"bullet_name={bullet_name}, weapon_name={weapon_name}, "
+                f"bullet_id={bullet_id}, weapon_id={weapon_id}"
+            )
+
         # sql = psycopg.sql.SQL(raw_sql).format(path=path)
         c = session.connection().connection.cursor()
-        df = pd.read_csv(path)
+        df = pd.read_csv(
+            filepath_or_buffer=path,
+            dtype={
+                "time": np.int16,
+                "location_x": np.float32,
+                "location_y": np.float32,
+                "damage": np.float32,
+                "distance": np.float32,
+                "velocity": np.float32,
+                "energy_transfer": np.float32,
+                "power_left": np.float32,
+            },
+        )
         df["bullet_id"] = bullet_id
         df["weapon_id"] = weapon_id
-        print(df)
+        df["angle"] = angle
         stream = io.StringIO()
-        df.to_csv(stream)
+        df.to_csv(stream, index=False)
         with c.copy(raw_sql) as copy:
             copy.write(stream.getvalue())
 

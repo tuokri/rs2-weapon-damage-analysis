@@ -43,6 +43,7 @@ from rs2simlib.models import WeaponSimulation
 from rs2simlib.models import interp_dmg_falloff
 from rs2simlib.models.models import AltAmmoLoadout
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 from werkzeug.datastructures import MultiDict
 
 from rs2simulator import db
@@ -450,7 +451,6 @@ def run_fast_sim(weapon: Weapon, bullet: Bullet,
         "velocity": results[5],
         "energy_transfer": results[6],
         "power_left": results[7],
-        "angle": aim_deg,
     })
     df.to_csv(p.absolute(), index=False)
 
@@ -750,7 +750,7 @@ def insert_weapons(
 
 
 def make_loadouts(
-        session: db.Session,
+        session: Session,
         weapon: db.models.Weapon,
         b_d_values: Iterable[Tuple[Bullet, int]]
 ) -> List[db.models.AmmoLoadout]:
@@ -807,7 +807,7 @@ def insert_bullets(bullet_classes: List[Bullet]):
 
 
 def enter_db_data(metadata_dir: Path):
-    db.drop_create_all(db.engine)
+    db.drop_create_all()
 
     # TODO: optimize these JSON structures for search.
     weapon_metadata = orjson.loads(
@@ -847,17 +847,17 @@ def enter_db_data(metadata_dir: Path):
     #     for x in vals:
     #         print(x.ammo_loadouts)
 
-    db.pool_dispose(db.engine)
+    db.pool_dispose(db.engine())
     fs = {}
     try:
-        with ProcessPoolExecutor(
+        with ThreadPoolExecutor(
                 max_workers=os.cpu_count(),
                 # initializer=db.pool_dispose,
                 # initargs=tuple(db.engine),
         ) as executor:
-            script = str(Path("scripts/enter_sim_data.py").absolute())
+            script = str(Path("rs2simulator/scripts/enter_sim_data.py").absolute())
             files = [f.absolute() for f in Path("../sim_data").rglob("*.csv")]
-            for file in files[0:1]:
+            for file in files:
                 args = [sys.executable, script, file]
                 fs[executor.submit(
                     subprocess.check_call, args)] = file
