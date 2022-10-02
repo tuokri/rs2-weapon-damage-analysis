@@ -130,3 +130,9 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Simulation data
+.sim_data/
+
+# Archives
+*.7z
