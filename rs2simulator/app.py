@@ -75,8 +75,9 @@ class CustomDash(dash.Dash):
             footer_content=footer_content,
         )
         return index_string.format(
-            gtag_manager=gtag_manager_string,
-            gtag_manager_noscript=gtag_manager_noscript_string,
+            # TODO: set these up later.
+            gtag_manager="",
+            gtag_manager_noscript="",
             footer=footer,
             **kwargs,
         )
@@ -92,31 +93,32 @@ external_stylesheets = [
         "onload": "this.media='all'",
     },
     dbc.themes.VAPOR,
+    "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css",
 ]
 
 external_scripts = [
     {
         # Load cookie consent plugin in async mode.
-        "async src": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.js",
+        # "async src": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.js",
     },
     {
         # TODO: main script here that inits cookieconsent and loads others on demand.
-        "src": "https://cdn.jsdelivr.net/gh/tuokri/solid-bassoon@master/plenty-leave.js"
+        # "src": "https://cdn.jsdelivr.net/gh/tuokri/solid-bassoon@master/plenty-leave.js"
     },
     {
         # Google Analytics. Can be loaded async, but should be enabled with
         # restricted functionality until consent is given.
-        "type": "text/plain",
-        "async src": "https://www.googletagmanager.com/gtag/js?id=G-3TNF8134RD",
-        "data-cookiecategory": "analytics",
+        # "type": "text/plain",
+        # "async src": "https://www.googletagmanager.com/gtag/js?id=G-3TNF8134RD",
+        # "data-cookiecategory": "analytics",
     },
     {
         # Adsense. Should only be loaded after consent given or immediately, but
         # only with non-personalized ads.
-        "type": "text/plain",
-        "defer src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3291929185204781",
-        "crossorigin": "anonymous",
-        "data-cookiecategory": "analytics",
+        # "type": "text/plain",
+        # "defer src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3291929185204781",
+        # "crossorigin": "anonymous",
+        # "data-cookiecategory": "analytics",
     },
 ]
 
@@ -133,7 +135,8 @@ app = CustomDash(
     external_stylesheets=external_stylesheets,
     title="rs2sim",
     use_pages=True,
-    assets_folder=os.environ.get("ASSETS_FOLDER") or "assets",
+    assets_folder=os.environ.get("ASSETS_FOLDER"),
+    suppress_callback_exceptions=True,
     **app_extra_kwargs,
 )
 server = app.server
@@ -165,7 +168,7 @@ else:
             )
 
 theme_changer = ThemeChangerAIOCustom(
-    aio_id="theme_changer",
+    aio_id="theme-changer",
     radio_props={
         "value": dbc.themes.VAPOR,
         "label_class_name": "badge",
@@ -194,10 +197,25 @@ statistics_page = dash.page_registry["pages.statistics"]
 nav_items = [
     dbc.Nav(
         [
-            dbc.NavItem(dbc.NavLink("Charts", href=charts_page["path"])),
-            dbc.NavItem(dbc.NavLink("Statistics", href=statistics_page["path"])),
-            dbc.NavItem(dbc.NavLink("Simulator", href="#", disabled=True)),
-            dbc.NavItem(dbc.NavLink("Calculator", href="#", disabled=True)),
+            dbc.NavItem(dbc.NavLink(
+                "Charts",
+                href=charts_page["path"],
+            )),
+            dbc.NavItem(dbc.NavLink(
+                "Statistics",
+                href=statistics_page["path"],
+                disabled=True
+            )),
+            dbc.NavItem(dbc.NavLink(
+                "Simulator",
+                href="#",
+                disabled=True,
+            )),
+            dbc.NavItem(dbc.NavLink(
+                "Calculator",
+                href="#",
+                disabled=True,
+            )),
             dbc.DropdownMenu(
                 [
                     dbc.DropdownMenuItem("Discord"),
@@ -205,6 +223,7 @@ nav_items = [
                 ],
                 label="More",
                 nav=True,
+                disabled=True,
             ),
         ],
         navbar=True,

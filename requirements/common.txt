@@ -18,7 +18,7 @@ git+https://github.com/tuokri/rs2simlib@0.4.5#egg=rs2simlib
 gunicorn==20.1.0
 idna==3.3
 itsdangerous==2.1.2
-logbook=1.5.3
+logbook==1.5.3
 natsort==8.1.0
 numpy>=1.22.4
 orjson==3.8.0

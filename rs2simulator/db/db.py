@@ -18,7 +18,7 @@ from rs2simulator.db.models import BaseModel
 _pool: Optional[ConnectionPool] = None
 _engine: Optional[Engine] = None
 
-_S = TypeVar("_S", bound="_ORMSession")
+_Session = TypeVar("_Session", bound="_ORMSession")
 
 
 def engine() -> Engine:
@@ -43,7 +43,7 @@ def engine() -> Engine:
 
 # noinspection PyPep8Naming
 class session_maker(sessionmaker):
-    def __call__(self, **local_kw: Any) -> _S:
+    def __call__(self, **local_kw: Any) -> _Session:
         local_kw["bind"] = engine()
         return super().__call__(**local_kw)
 
@@ -59,7 +59,7 @@ def drop_create_all(db_engine: Optional[Engine] = None):
     if db_engine is None:
         db_engine = engine()
 
-    pool_dispose(db_engine)
+    db_engine.dispose(close=False)
 
     BaseModel.metadata.drop_all(db_engine)
     BaseModel.metadata.create_all(db_engine)
@@ -69,7 +69,3 @@ def drop_create_all(db_engine: Optional[Engine] = None):
         _c = s.connection().connection.cursor()
         _c.execute(_timescale_sql)
     AutomapModel.prepare(db_engine, reflect=True)
-
-
-def pool_dispose(db_engine: Engine):
-    db_engine.dispose(close=False)

@@ -10,8 +10,9 @@ theme_changer_js = read_asset_text("theme-changer.js")
 
 
 class ThemeChangerAIOCustom(ThemeChangerAIO):
-    clientside_callback(
-        theme_changer_js,
-        Output(ThemeChangerAIO.ids.dummy_div(MATCH), "style"),
-        Input(ThemeChangerAIO.ids.button(MATCH), "n_clicks"),
-    )
+    pass
+    # clientside_callback(
+    #     theme_changer_js,
+    #     Output(ThemeChangerAIO.ids.dummy_div(MATCH), "style"),
+    #     Input(ThemeChangerAIO.ids.button(MATCH), "n_clicks"),
+    # )
