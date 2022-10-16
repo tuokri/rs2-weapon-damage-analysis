@@ -1,41 +1,76 @@
+from pprint import pprint
+from typing import Any
+from typing import Dict
+from typing import Iterable
+from typing import List
+from typing import Tuple
+
 import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
+from aio import template_from_url
+from dash import ALL
 from dash import Input
 from dash import Output
 from dash import callback
+from dash import ctx
 from dash import dcc
 from dash import html
+from plotly.graph_objs import Figure
+
+from components.aio import ThemeChangerAIOCustom
+from rs2simulator import db
 
 dash.register_page(
     __name__,
     path="/charts",
 )
 
-fig = px.line(x=[0, 1], y=[1, 2])
 
-fig.update_layout()
+def get_weapon_selector_elements() -> Iterable[Dict]:
+    elements = []
+    weapons = db.api.get_weapons()
 
+    for wep in weapons:
+        wep_name = wep.name
+        short_name = wep.short_display_name
+
+        # TODO: fine tune drop down elements' vertical alignment.
+        elements.append({
+            "label": dbc.Container(
+                [
+                    html.P(
+                        wep_name,
+                        # className="",
+                    ),
+                    html.P(
+                        short_name,
+                        className="d-none d-md-block",
+                        style={
+                            "margin-right": "1.5em",
+                        },
+                    ),
+                ],
+                class_name="d-flex justify-content-between align-items-center",
+                fluid=True,
+            ),
+            "value": wep_name,
+            "search": short_name,
+        })
+    return elements
+
+
+SELECT_WEP_PLACEHOLDER = "Select weapon..."
 weapon_selector = html.Div(
     [
         dcc.Dropdown(
+            get_weapon_selector_elements(),
             id="weapon-selector",
+            placeholder=SELECT_WEP_PLACEHOLDER,
+            clearable=False,
         ),
         dbc.Accordion(
-            [
-                dbc.AccordionItem(
-                    "This is the content of the first section",
-                    title="Item 1",
-                ),
-                dbc.AccordionItem(
-                    "This is the content of the second section",
-                    title="Item 2",
-                ),
-                dbc.AccordionItem(
-                    "This is the content of the third section",
-                    title="Item 3",
-                ),
-            ],
+            [],
             start_collapsed=True,
             always_open=True,
             class_name="my-2",
@@ -49,9 +84,12 @@ layout = dbc.Container(
         weapon_selector,
 
         dcc.Graph(
-            id="test-graph",
-            figure=fig,
-            className="mb-5",
+            id="graph",
+            figure=px.line(
+                # x=[0, 1],
+                # y=[1, 2],
+                template=template_from_url(dbc.themes.VAPOR),
+            ),
         ),
     ],
     class_name="mt-3",
@@ -59,12 +97,95 @@ layout = dbc.Container(
 
 
 @callback(
-    Output("selected-weapons", "children"),
-    Input("weapon-selector", "value"),
+    [
+        Output("selected-weapons", "children"),
+        Output("weapon-selector", "value"),
+    ],
+    [
+        Input("weapon-selector", "value"),
+        Input("selected-weapons", "children"),
+        Input(
+            component_id={
+                "type": "dynamic-weapon-remove-button",
+                "weapon": ALL,
+                "index": ALL,
+            },
+            component_property="n_clicks",
+        ),
+    ]
 )
-def add_weapon() -> dbc.AccordionItem:
-    return dbc.AccordionItem(
-        "test content",
-        title="test title",
-        id="test id",
+def modify_selected_weapons(
+        value: str,
+        children: List[Any],
+        *_,
+) -> Tuple[List[dbc.AccordionItem], str]:
+    ret = children
+    if not value:
+        return ret, SELECT_WEP_PLACEHOLDER
+
+    triggered_id = ctx.triggered_id
+
+    if triggered_id == "weapon-selector":
+        index = len(children)
+        ret = children + [dbc.AccordionItem(
+            [
+                html.Div(
+                    [
+                        html.Div(
+                            html.P(f"this is the content for {value}"),
+                        ),
+                        html.Div(
+                            dbc.Button(
+                                "Remove",
+                                class_name="btn-danger",
+                                id={
+                                    "type": "dynamic-weapon-remove-button",
+                                    "weapon": value,
+                                    "index": index,
+                                },
+                            ),
+                        ),
+                    ],
+                    className="d-flex justify-content-between",
+                ),
+            ],
+            title=value,
+            id={
+                "type": "dynamic-weapon-accordion-item",
+                "weapon": value,
+                "index": index,
+            }
+        )]
+    else:
+        to_del = None
+        try:
+            trig_wep = triggered_id["weapon"]
+            trig_idx = triggered_id["index"]
+            for i, r in enumerate(ret):
+                props = r["props"]
+                r_id = props["id"]
+                r_wep = r_id["weapon"]
+                r_idx = r_id["index"]
+                if r_wep == trig_wep and r_idx == trig_idx:
+                    to_del = i
+        except KeyError as e:
+            print(type(e).__name__, e)
+
+        if to_del is not None:
+            ret.pop(to_del)
+
+    return ret, SELECT_WEP_PLACEHOLDER
+
+
+@callback(
+    Output("graph", "figure"),
+    Input("selected-weapons", "children"),
+    Input(ThemeChangerAIOCustom.ids.radio("theme-changer"), "value"),
+)
+def update_graph_theme(weapons: List[dict], theme: str) -> Figure:
+    pprint(weapons)
+    return px.line(
+        x=[0, 1],
+        y=[1, 2],
+        template=template_from_url(theme),
     )

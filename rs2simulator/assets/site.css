@@ -7,3 +7,15 @@
 .site-content {
     flex: 1;
 }
+
+html, body {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
