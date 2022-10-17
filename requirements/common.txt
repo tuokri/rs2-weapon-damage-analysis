@@ -13,7 +13,7 @@ dash-bootstrap-templates==1.0.6
 dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
-git+https://github.com/sqlalchemy/sqlalchemy@befa8e92675dea992423011b929dfc7ca45de6b6#egg=SQLAlchemy
+git+https://github.com/sqlalchemy/sqlalchemy@93acfe8815a94a3e4169fce586b9248b7682ab6e#egg=SQLAlchemy
 git+https://github.com/tuokri/rs2simlib@0.4.5#egg=rs2simlib
 gunicorn==20.1.0
 idna==3.3
