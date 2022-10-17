@@ -7,6 +7,7 @@ from typing import Tuple
 
 import dash
 import dash_bootstrap_components as dbc
+import numpy as np
 import plotly.express as px
 from aio import template_from_url
 from dash import ALL
@@ -184,8 +185,17 @@ def modify_selected_weapons(
 )
 def update_graph_theme(weapons: List[dict], theme: str) -> Figure:
     pprint(weapons)
+    alo_x = np.array([0, 1])
+    alo_y = np.array([0, 1])
+    for weapon in weapons:
+        name = weapon["props"]["id"]["weapon"]
+        wep = db.api.get_weapon(name)
+        for alo in wep.ammo_loadouts:
+            alo_x, alo_y = alo.bullet.dmg_falloff_np_tuple()
+    print(alo_x)
+    print(alo_y)
     return px.line(
-        x=[0, 1],
-        y=[1, 2],
+        x=alo_x,
+        y=alo_y,
         template=template_from_url(theme),
     )

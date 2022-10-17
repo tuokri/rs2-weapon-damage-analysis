@@ -3,7 +3,10 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Tuple
 
+import numpy as np
+import numpy.typing as npt
 import sqlalchemy
 from sqlalchemy import BigInteger
 from sqlalchemy import Float
@@ -89,17 +92,26 @@ class Bullet(BaseModel):
         ForeignKey("bullet.id"),
         onupdate="cascade",
     )
-    parent = relationship(
-        "Bullet",
-        remote_side=[id],
-    )
+    # parent = relationship(
+    #     "Bullet",
+    #     remote_side=[id],
+    # )
     ballistic_coeff = mapped_column(Float)
     damage: Mapped[int]
     drag_func: Mapped[int]
     speed: Mapped[int]
     damage_falloff_curve: Mapped[List[DamageFalloff]] = relationship(
         back_populates="bullet",
+        order_by="asc(DamageFalloff.index)",
     )
+
+    def dmg_falloff_np_tuple(self) -> Tuple[npt.NDArray, npt.NDArray]:
+        x = []
+        y = []
+        for fo in self.damage_falloff_curve:
+            x.append(fo.x)
+            y.append(fo.y)
+        return np.array(x), np.array(y)
 
     def __repr__(self) -> str:
         r = functools.partial(
@@ -113,10 +125,11 @@ class Bullet(BaseModel):
             damage_falloff_curve=self.damage_falloff_curve,
         )
 
-        if self.parent is not None:
-            return r(parent_name=self.parent.name)
-        else:
-            return r(parent=None)
+        # if self.parent is not None:
+        #     return r(parent_name=self.parent.name)
+        # else:
+        #     return r(parent=None)
+        return r(parent_id=self.parent_id)
 
 
 class Weapon(BaseModel):
@@ -132,10 +145,10 @@ class Weapon(BaseModel):
         ForeignKey("weapon.id"),
         onupdate="cascade",
     )
-    parent = relationship(
-        "Weapon",
-        remote_side=[id],
-    )
+    # parent = relationship(
+    #     "Weapon",
+    #     remote_side=[id],
+    # )
     display_name: Mapped[Optional[str]]
     short_display_name: Mapped[Optional[str]]
     pre_fire_length: Mapped[int]
@@ -149,7 +162,8 @@ class Weapon(BaseModel):
             short_display_name=self.short_display_name,
             pre_fire_length=self.pre_fire_length,
             ammo_loadouts=self.ammo_loadouts,
-            parent_name=self.parent.name,
+            # parent_name=self.parent.name,
+            parent_id=self.parent_id,
         )
 
 
@@ -170,9 +184,20 @@ class AmmoLoadout(BaseModel):
         onupdate="cascade",
     )
     instant_damage: Mapped[int]
+    bullet: Mapped["Bullet"] = relationship()
+
     # spread: Mapped[float]
     # num_projectiles: Mapped[int]
     # damage_type: Mapped[int] = mapped_column(ForeignKey(damage_type.id))
+
+    def __repr__(self) -> str:
+        return self._repr(
+            id=self.id,
+            weapon_id=self.weapon_id,
+            bullet_id=self.bullet_id,
+            instant_damage=self.instant_damage,
+            bullet=self.bullet,
+        )
 
 
 class Simulations(AutomapModel):
