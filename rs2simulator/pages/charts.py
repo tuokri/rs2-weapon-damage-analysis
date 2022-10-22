@@ -1,4 +1,3 @@
-from pprint import pprint
 from typing import Any
 from typing import Dict
 from typing import Iterable
@@ -7,8 +6,8 @@ from typing import Tuple
 
 import dash
 import dash_bootstrap_components as dbc
-import numpy as np
 import plotly.express as px
+import plotly.graph_objs as go
 from aio import template_from_url
 from dash import ALL
 from dash import Input
@@ -17,7 +16,8 @@ from dash import callback
 from dash import ctx
 from dash import dcc
 from dash import html
-from plotly.graph_objs import Figure
+from dash.exceptions import PreventUpdate
+from plotly.subplots import make_subplots
 
 from components.aio import ThemeChangerAIOCustom
 from rs2simulator import db
@@ -77,23 +77,25 @@ weapon_selector = html.Div(
             class_name="my-2",
             id="selected-weapons",
         ),
-    ]
+    ],
+    className="my-4",
 )
 
+placeholder_fig = px.line(
+    # x=[0, 1],
+    # y=[1, 2],
+    template=template_from_url(dbc.themes.VAPOR),
+)
 layout = dbc.Container(
     [
-        weapon_selector,
-
         dcc.Graph(
             id="graph",
-            figure=px.line(
-                # x=[0, 1],
-                # y=[1, 2],
-                template=template_from_url(dbc.themes.VAPOR),
-            ),
+            figure=placeholder_fig,
         ),
+
+        weapon_selector,
     ],
-    class_name="mt-3",
+    class_name="my-3",
 )
 
 
@@ -101,10 +103,12 @@ layout = dbc.Container(
     [
         Output("selected-weapons", "children"),
         Output("weapon-selector", "value"),
+        Output("selected-weapons", "active_item"),
     ],
     [
         Input("weapon-selector", "value"),
         Input("selected-weapons", "children"),
+        Input("selected-weapons", "active_item"),
         Input(
             component_id={
                 "type": "dynamic-weapon-remove-button",
@@ -118,47 +122,56 @@ layout = dbc.Container(
 def modify_selected_weapons(
         value: str,
         children: List[Any],
+        active_items: List[Any],
         *_,
-) -> Tuple[List[dbc.AccordionItem], str]:
+) -> Tuple[List[dbc.AccordionItem], str, Any]:
     ret = children
     if not value:
-        return ret, SELECT_WEP_PLACEHOLDER
+        raise PreventUpdate
+        # return ret, SELECT_WEP_PLACEHOLDER, active_items
 
     triggered_id = ctx.triggered_id
 
     if triggered_id == "weapon-selector":
         index = len(children)
-        ret = children + [dbc.AccordionItem(
-            [
-                html.Div(
-                    [
-                        html.Div(
-                            html.P(f"this is the content for {value}"),
-                        ),
-                        html.Div(
-                            dbc.Button(
-                                "Remove",
-                                class_name="btn-danger",
-                                id={
-                                    "type": "dynamic-weapon-remove-button",
-                                    "weapon": value,
-                                    "index": index,
-                                },
+        ret = children + [
+            dbc.AccordionItem(
+                [
+                    html.Div(
+                        [
+                            html.Div([
+                                html.P(f"this is the content for {value}"),
+                                html.P("asd"),
+                            ]),
+                            html.Div(
+                                dbc.Button(
+                                    "Remove",
+                                    class_name="btn-danger",
+                                    id={
+                                        "type": "dynamic-weapon-remove-button",
+                                        "weapon": value,
+                                        "index": index,
+                                    },
+                                ),
                             ),
-                        ),
-                    ],
-                    className="d-flex justify-content-between",
-                ),
-            ],
-            title=value,
-            id={
-                "type": "dynamic-weapon-accordion-item",
-                "weapon": value,
-                "index": index,
-            }
-        )]
+                        ],
+                        className="d-flex justify-content-between",
+                    ),
+                ],
+                title=value,
+                id={
+                    "type": "dynamic-weapon-accordion-item",
+                    "weapon": value,
+                    "index": index,
+                },
+                item_id=str(index),
+            ),
+        ]
+    elif triggered_id == "selected-weapons":
+        raise PreventUpdate
     else:
         to_del = None
+        del_index = None
         try:
             trig_wep = triggered_id["weapon"]
             trig_idx = triggered_id["index"]
@@ -169,13 +182,16 @@ def modify_selected_weapons(
                 r_idx = r_id["index"]
                 if r_wep == trig_wep and r_idx == trig_idx:
                     to_del = i
+                    del_index = r_idx
+                    break
         except KeyError as e:
             print(type(e).__name__, e)
 
-        if to_del is not None:
+        if (to_del is not None) and (del_index is not None):
             ret.pop(to_del)
+            active_items.remove(str(del_index))
 
-    return ret, SELECT_WEP_PLACEHOLDER
+    return ret, SELECT_WEP_PLACEHOLDER, active_items
 
 
 @callback(
@@ -183,19 +199,39 @@ def modify_selected_weapons(
     Input("selected-weapons", "children"),
     Input(ThemeChangerAIOCustom.ids.radio("theme-changer"), "value"),
 )
-def update_graph_theme(weapons: List[dict], theme: str) -> Figure:
-    pprint(weapons)
-    alo_x = np.array([0, 1])
-    alo_y = np.array([0, 1])
+def update_graph_theme(weapons: List[dict], theme: str) -> go.Figure:
+    if not weapons:
+        return placeholder_fig
+
+    print(ctx.triggered_id)
+
+    fig = make_subplots(rows=1, cols=1)
+    # alo_x = np.array([0, 1])
+    # alo_y = np.array([0, 1])
+    print(len(weapons))
     for weapon in weapons:
         name = weapon["props"]["id"]["weapon"]
         wep = db.api.get_weapon(name)
-        for alo in wep.ammo_loadouts:
-            alo_x, alo_y = alo.bullet.dmg_falloff_np_tuple()
-    print(alo_x)
-    print(alo_y)
-    return px.line(
-        x=alo_x,
-        y=alo_y,
-        template=template_from_url(theme),
-    )
+        # noinspection PyTypeChecker
+        alo: db.models.AmmoLoadout = wep.ammo_loadouts[0]
+        # for alo in wep.ammo_loadouts:
+        print(f"plotting: {name}")
+        x, y = alo.bullet.dmg_falloff_np_tuple()
+
+        sim = db.api.get_weapon_sim(
+            weapon_name=name,
+            bullet_name=alo.bullet.name,
+            angle=0,
+        )
+        print(len(sim))
+
+        fig.add_scatter(
+            x=sim["distance"],
+            y=sim["damage"],
+            name=wep.short_display_name,
+            row=1,
+            col=1,
+        )
+
+    fig.update_layout(template=template_from_url(theme))
+    return fig
