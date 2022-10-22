@@ -1,3 +1,4 @@
+import contextlib
 import os
 from pathlib import Path
 from typing import Any
@@ -8,6 +9,7 @@ from psycopg_pool import ConnectionPool
 from sqlalchemy import Engine
 from sqlalchemy import create_engine
 from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.orm import Session as _ORMSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import DropTable
 
@@ -18,7 +20,7 @@ from rs2simulator.db.models import BaseModel
 _pool: Optional[ConnectionPool] = None
 _engine: Optional[Engine] = None
 
-_Session = TypeVar("_Session", bound="_ORMSession")
+_Session = TypeVar("_Session", bound=_ORMSession)
 
 
 def engine() -> Engine:
@@ -38,17 +40,20 @@ def engine() -> Engine:
             creator=_pool.getconn,
         )
 
+    if not AutomapModel.classes:
+        AutomapModel.prepare(autoload_with=_engine)
+
     return _engine
 
 
 # noinspection PyPep8Naming
 class session_maker(sessionmaker):
-    def __call__(self, **local_kw: Any) -> _Session:
+    def __call__(self, **local_kw: Any) -> _ORMSession:
         local_kw["bind"] = engine()
         return super().__call__(**local_kw)
 
 
-Session = session_maker()
+Session: sessionmaker = session_maker()
 
 
 def drop_create_all(db_engine: Optional[Engine] = None):
@@ -63,9 +68,12 @@ def drop_create_all(db_engine: Optional[Engine] = None):
 
     BaseModel.metadata.drop_all(db_engine)
     BaseModel.metadata.create_all(db_engine)
+
     with Session() as s, s.begin():
         _timescale_sql = (
                 Path(__file__).parent / "timescale.sql").read_text()
         _c = s.connection().connection.cursor()
         _c.execute(_timescale_sql)
-    AutomapModel.prepare(db_engine, reflect=True)
+
+    if not AutomapModel.classes:
+        AutomapModel.prepare(autoload_with=db_engine)
