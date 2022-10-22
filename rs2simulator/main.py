@@ -834,7 +834,7 @@ def enter_db_data(metadata_dir: Path):
     insert_bullets(ordered_bullets)
     insert_weapons(weapon_metadata, ordered_weapons)
 
-    db.pool_dispose(db.engine())
+    db.engine().dispose(close=False)
     fs = {}
     try:
         with ThreadPoolExecutor(
