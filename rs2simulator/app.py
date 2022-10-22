@@ -251,7 +251,7 @@ navbar_top = dbc.Navbar(
             dbc.NavbarBrand(
                 "rs2sim (WIP)",
                 # href=charts_page["path"],
-                class_name="d-flex mr-auto",
+                # class_name="d-flex mr-auto",
                 style={
                     "width": "25%",
                     "textTransform": "uppercase",
