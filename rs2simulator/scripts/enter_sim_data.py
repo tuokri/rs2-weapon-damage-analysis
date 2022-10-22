@@ -72,8 +72,7 @@ def main(data_dir: Path):
             f"'{any_csv.name}' does not match sim file regex"
         )
 
-    angle = int(match.group(1))
-    bullet_name = match[2]
+    bullet_name = match.group(2)
     weapon_name = data_dir.name
 
     with SessionNoPool(autoflush=False) as session, session.begin():
@@ -109,6 +108,8 @@ def main(data_dir: Path):
         with io.BytesIO() as stream:
             stream.write(f"{csv_header}\n".encode())
             for path in csv_paths:
+                match = pat.match(path.name)
+                angle = int(match.group(1))
                 df = pd.read_csv(
                     filepath_or_buffer=path,
                     dtype={
