@@ -14,6 +14,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import SmallInteger
 from sqlalchemy import Text
+from sqlalchemy.ext.automap import AutomapBase
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
@@ -41,7 +42,7 @@ class BaseModel(PrettyReprMixin, DeclarativeBase):
     __abstract__ = True
 
 
-_AutomapBase = automap_base()
+_AutomapBase: AutomapBase = automap_base()
 
 
 class AutomapModel(PrettyReprMixin, _AutomapBase):
@@ -152,7 +153,9 @@ class Weapon(BaseModel):
     display_name: Mapped[Optional[str]]
     short_display_name: Mapped[Optional[str]]
     pre_fire_length: Mapped[int]
-    ammo_loadouts: Mapped[List["AmmoLoadout"]] = relationship()
+    ammo_loadouts: Mapped[List["AmmoLoadout"]] = relationship(
+        "AmmoLoadout",
+    )
 
     def __repr__(self) -> str:
         return self._repr(
