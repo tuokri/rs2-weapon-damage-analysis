@@ -6,7 +6,7 @@ from dash_bootstrap_templates import ThemeChangerAIO
 
 from rs2simulator.utils import read_asset_text
 
-theme_changer_js = read_asset_text("theme-changer.js")
+# theme_changer_js = read_asset_text("theme-changer.js")
 
 
 class ThemeChangerAIOCustom(ThemeChangerAIO):
