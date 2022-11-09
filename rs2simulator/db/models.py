@@ -1,6 +1,5 @@
 import functools
 from typing import Any
-from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -14,8 +13,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import SmallInteger
 from sqlalchemy import Text
+from sqlalchemy import inspect
 from sqlalchemy.ext.automap import AutomapBase
 from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -23,7 +24,7 @@ from sqlalchemy.orm import relationship
 
 
 class PrettyReprMixin:
-    def _repr(self, **fields: Dict[str, Any]) -> str:
+    def _repr(self, **fields: Any) -> str:
         field_strings = []
         at_least_one_attached_attribute = False
         for key, field in fields.items():
@@ -40,6 +41,22 @@ class PrettyReprMixin:
 
 class BaseModel(PrettyReprMixin, DeclarativeBase):
     __abstract__ = True
+
+    def to_dict(self) -> dict:
+        d = {
+            key: getattr(self, key)
+            for key in self.__mapper__.c.keys()
+            if not key.startswith("_")
+
+        }
+        d_hybrid = {
+            key: getattr(self, key)
+            for key, prop in inspect(self.__class__).all_orm_descriptors.items()
+            if isinstance(prop, hybrid_property)
+        }
+
+        d.update(d_hybrid)
+        return d
 
 
 _AutomapBase: AutomapBase = automap_base()

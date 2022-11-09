@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+
 DROP TABLE IF EXISTS "simulations";
 
 CREATE TABLE "simulations"

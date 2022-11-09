@@ -10,6 +10,7 @@ from dash import Output
 from dash import State
 from dash import html
 from dash_bootstrap_templates import load_figure_template
+from flask import Request
 from flask import redirect
 from flask import request
 from werkzeug import Response
@@ -147,25 +148,41 @@ def upgrade_to_https(url: str) -> str:
     return url.replace("http://", "https://", 1)
 
 
-if "FLY_APP_NAME" in os.environ:
-    @server.before_request
-    def before_request_prod_env(*_) -> Optional[Response]:
-        url = request.url
-        if not request.is_secure:
-            return redirect(
-                location=upgrade_to_https(upgrade_to_https(url)),
-                code=301,
-            )
-else:
-    @server.before_request
-    def before_request_dev_env(*_) -> Optional[Response]:
-        url_parts = urlparse(request.url)
-        if url_parts.path in ("", "/"):
-            url_parts = url_parts._replace(path=charts_page["path"])
-            return redirect(
-                location=urlunparse(url_parts),
-                code=301,
-            )
+def redirect_root(
+        req: Request,
+        upgrade_https: bool = False
+) -> Optional[Response]:
+    do_redirect = False
+    url = req.url
+    # if upgrade_https and not req.is_secure:
+    #     url = upgrade_to_https(url)
+    #     do_redirect = True
+
+    url_parts = urlparse(url)
+    if url_parts.path in ("", "/"):
+        url_parts = url_parts._replace(path=charts_page["path"])
+        url = urlunparse(url_parts)
+        do_redirect = True
+
+    if do_redirect:
+        return redirect(
+            location=url,
+            code=301,
+        )
+
+    return None
+
+
+UPGRADE_HTTPS = "FLY_APP_NAME" in os.environ
+
+
+@server.before_request
+def before_request(*_) -> Optional[Response]:
+    return redirect_root(
+        req=request,
+        upgrade_https=UPGRADE_HTTPS,
+    )
+
 
 theme_changer = ThemeChangerAIOCustom(
     aio_id="theme-changer",
@@ -218,12 +235,15 @@ nav_items = [
             )),
             dbc.DropdownMenu(
                 [
-                    dbc.DropdownMenuItem("Discord"),
-                    dbc.DropdownMenuItem("GitHub"),
+                    # dbc.DropdownMenuItem("Discord"),
+                    dbc.DropdownMenuItem(
+                        "GitHub",
+                        href="https://github.com/tuokri/rs2-weapon-damage-analysis"
+                    ),
                 ],
                 label="More",
                 nav=True,
-                disabled=True,
+                disabled=False,
             ),
         ],
         navbar=True,

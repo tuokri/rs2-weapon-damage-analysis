@@ -1,3 +1,4 @@
+from functools import cache
 from functools import lru_cache
 from typing import Iterable
 
@@ -11,19 +12,19 @@ from rs2simulator.db import models
 
 # TODO: lru_caching here is temporary. Use proper caching with Celery etc. later.
 
-@lru_cache
+@cache
 def get_weapons() -> Iterable[models.Weapon]:
     with db.Session() as session:
         return list(session.scalars(select(models.Weapon)))
 
 
-@lru_cache
+@cache
 def get_weapon_names() -> Iterable[str]:
     with db.Session() as session:
         return list(session.scalars(select(models.Weapon.name)))
 
 
-@lru_cache
+@lru_cache(maxsize=8)
 def get_weapon(name: str) -> models.Weapon:
     with db.Session() as session:
         return session.scalar(
@@ -43,7 +44,7 @@ def get_weapon(name: str) -> models.Weapon:
         )
 
 
-@lru_cache
+@lru_cache(maxsize=8)
 def get_weapon_id(name: str) -> int:
     with db.Session() as session:
         return session.scalar(
@@ -53,6 +54,7 @@ def get_weapon_id(name: str) -> int:
         )
 
 
+@lru_cache(maxsize=8)
 def get_bullet_id(name: str) -> int:
     with db.Session() as session:
         return session.scalar(
@@ -62,7 +64,7 @@ def get_bullet_id(name: str) -> int:
         )
 
 
-@lru_cache
+@lru_cache(maxsize=8)
 def get_weapon_sim(
         weapon_name: str,
         bullet_name: str,
