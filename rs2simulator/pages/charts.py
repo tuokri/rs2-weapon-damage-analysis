@@ -19,7 +19,6 @@ from dash import html
 from dash.exceptions import PreventUpdate
 from plotly.subplots import make_subplots
 
-from components.aio import ThemeChangerAIOCustom
 from rs2simulator import db
 
 dash.register_page(
