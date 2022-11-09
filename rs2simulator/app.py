@@ -9,13 +9,14 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import html
+from dash_bootstrap_templates import ThemeChangerAIO
 from dash_bootstrap_templates import load_figure_template
 from flask import Request
 from flask import redirect
 from flask import request
 from werkzeug import Response
 
-from rs2simulator.components.aio import ThemeChangerAIOCustom
+from rs2simulator import ASSETS_DIR
 from rs2simulator.utils import read_asset_text
 
 gtag_manager_string = """
@@ -136,7 +137,7 @@ app = CustomDash(
     external_stylesheets=external_stylesheets,
     title="rs2sim",
     use_pages=True,
-    assets_folder=os.environ.get("ASSETS_FOLDER"),
+    assets_folder=ASSETS_DIR,
     suppress_callback_exceptions=True,
     **app_extra_kwargs,
 )
@@ -184,7 +185,7 @@ def before_request(*_) -> Optional[Response]:
     )
 
 
-theme_changer = ThemeChangerAIOCustom(
+theme_changer = ThemeChangerAIO(
     aio_id="theme-changer",
     radio_props={
         "value": dbc.themes.VAPOR,
