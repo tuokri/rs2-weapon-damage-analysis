@@ -1,1 +1,1 @@
-web: gunicorn rs2simulator.app:server
+web: gunicorn app:server --chdir rs2simulator

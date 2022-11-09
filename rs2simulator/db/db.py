@@ -1,11 +1,12 @@
-import contextlib
 import os
 from pathlib import Path
 from typing import Any
 from typing import Optional
 from typing import TypeVar
 
+import sqlalchemy.exc
 from psycopg_pool import ConnectionPool
+from psycopg_pool import NullConnectionPool
 from sqlalchemy import Engine
 from sqlalchemy import create_engine
 from sqlalchemy.ext.compiler import compiles
@@ -16,7 +17,6 @@ from sqlalchemy.schema import DropTable
 from rs2simulator.db.models import AutomapModel
 from rs2simulator.db.models import BaseModel
 
-# TODO: pgbouncer for prod?
 _pool: Optional[ConnectionPool] = None
 _engine: Optional[Engine] = None
 
@@ -27,21 +27,39 @@ def engine() -> Engine:
     global _pool
     global _engine
 
+    connect_args = {}
+
     if _pool is None:
         db_url = os.environ.get("DATABASE_URL")
-        _pool = ConnectionPool(
-            conninfo=db_url,
-        )
+        if not db_url:
+            raise RuntimeError("no database URL")
+
+        # Handled by PgBouncer.
+        if "FLY_APP_NAME" in os.environ:
+            _pool = NullConnectionPool(
+                conninfo=db_url,
+            )
+            connect_args = {"prepare_threshold": None}
+        else:
+            _pool = ConnectionPool(
+                conninfo=db_url,
+            )
 
     if _engine is None:
         protocol = "postgresql+psycopg://"
         _engine = create_engine(
             url=protocol,
             creator=_pool.getconn,
+            connect_args=connect_args,
         )
 
-    if not AutomapModel.classes:
-        AutomapModel.prepare(autoload_with=_engine)
+    try:
+        if not AutomapModel.classes:
+            AutomapModel.prepare(autoload_with=_engine)
+    except sqlalchemy.exc.NoReferencedTableError:
+        # TODO: happens when entering data to a fresh database.
+        #   Think of a smart way to handle this.
+        pass
 
     return _engine
 

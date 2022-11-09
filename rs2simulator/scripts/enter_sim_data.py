@@ -1,42 +1,32 @@
+import argparse
 import io
 import os
 import re
 import sys
 import time
 from pathlib import Path
+from typing import Dict
 
 import logbook
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from sqlalchemy import NullPool
-from sqlalchemy import URL
+from psycopg_pool import NullConnectionPool
+from sqlalchemy import Engine
 from sqlalchemy import create_engine
-from sqlalchemy import make_url
-from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
-
-from rs2simulator.db import models
 
 load_dotenv()
 
 logger = logbook.Logger("enter_sim_data")
 
-db_url = make_url(os.environ.get("DATABASE_URL"))
-engine_no_pool = create_engine(
-    url=URL.create(
-        drivername="postgresql+psycopg",
-        username=db_url.username,
-        password=db_url.password,
-        host=db_url.host,
-        port=db_url.port,
-        database=db_url.database,
-        query=db_url.query,
-    ),
-    poolclass=NullPool,
-)
+db_url = os.environ.get("DATABASE_URL")
+if not db_url:
+    raise RuntimeError("no database URL")
 
-SessionNoPool = sessionmaker(bind=engine_no_pool)
+pool: NullConnectionPool
+engine_no_pool: Engine
+SessionNoPool: sessionmaker
 
 csv_header = (
     "time,location_x,location_y,damage,distance,"
@@ -44,17 +34,16 @@ csv_header = (
 )
 
 
-def main(data_dir: Path):
+def main(data_dir: Path,
+         weapon_ids: Dict[str, int],
+         bullet_ids: Dict[str, int]):
     start = time.perf_counter()
 
     logger.info("handling '{f}'", f=data_dir)
 
-    start_csv = 0
-    stop_csv = 0
-    start_copy = 0
-    stop_copy = 0
-    start_select = 0
-    stop_select = 0
+    stop_csv = 0.0
+    start_copy = 0.0
+    stop_copy = 0.0
 
     raw_sql = (
         "COPY simulations "
@@ -64,51 +53,23 @@ def main(data_dir: Path):
     csv_paths = list(data_dir.glob("*.csv"))
 
     # sim_X_deg_BulletName.csv
-    any_csv = csv_paths[0]
-    pat = re.compile(r"sim_(\d)_deg_(.+)\.csv")
-    match = pat.match(any_csv.name)
-    if not match:
-        raise RuntimeError(
-            f"'{any_csv.name}' does not match sim file regex"
-        )
-
-    bullet_name = match.group(2)
+    sim_file_pat = re.compile(r"sim_(\d)_deg_(.+)\.csv")
     weapon_name = data_dir.name
+    weapon_id = weapon_ids[weapon_name]
 
     with SessionNoPool(autoflush=False) as session, session.begin():
-        # TODO: optimize this further by doing a single select
-        #  in the parent process and pass the needed IDs as
-        #  arguments to each process.
-        start_select = time.perf_counter()
-        bullet_id = session.scalar(
-            select(
-                models.Bullet.id).where(
-                models.Bullet.name == bullet_name
-            )
-        )
-        weapon_id = session.scalar(
-            select(
-                models.Weapon.id).where(
-                models.Weapon.name == weapon_name
-            )
-        )
-        stop_select = time.perf_counter()
-
-        if not all((bullet_id, weapon_id, bullet_name, weapon_name)):
-            raise RuntimeError(
-                f"invalid bullet or weapon: "
-                f"bullet_name={bullet_name}, weapon_name={weapon_name}, "
-                f"bullet_id={bullet_id}, weapon_id={weapon_id}"
-            )
-
-        # sql = psycopg.sql.SQL(raw_sql).format(path=path)
-        c = session.connection().connection.cursor()
+        cursor = session.connection().connection.cursor()
 
         start_csv = time.perf_counter()
         with io.BytesIO() as stream:
             stream.write(f"{csv_header}\n".encode())
             for path in csv_paths:
-                match = pat.match(path.name)
+                match = sim_file_pat.match(path.name)
+                if not match:
+                    raise RuntimeError(
+                        f"{path.name} failed to match sim file pattern")
+                bullet_name = match.group(2)
+                bullet_id = bullet_ids[bullet_name]
                 angle = int(match.group(1))
                 df = pd.read_csv(
                     filepath_or_buffer=path,
@@ -127,16 +88,17 @@ def main(data_dir: Path):
                 df["bullet_id"] = bullet_id
                 df["weapon_id"] = weapon_id
                 df.to_csv(
-                    stream,
-                    index=False,
+                    path_or_buf=stream,
                     header=False,
+                    index=False,
+                    mode="a",
                     encoding=None,
-                    line_terminator="\n",
+                    lineterminator="\n",
                 )
             stop_csv = time.perf_counter()
 
             start_copy = time.perf_counter()
-            with c.copy(raw_sql) as copy:
+            with cursor.copy(raw_sql) as copy:
                 copy.write(stream.getvalue())
             stop_copy = time.perf_counter()
 
@@ -145,14 +107,24 @@ def main(data_dir: Path):
     total = stop - start
     csv_time = stop_csv - start_csv
     copy_time = stop_copy - start_copy
-    select_time = stop_select - start_select
+    # select_time = stop_select - start_select
 
     logger.info(
         f"total={total}, "
         f"csv={csv_time / total:.2%}, "
         f"copy={copy_time / total:.2%}, "
-        f"select={select_time / total:.2%}"
+        # f"select={select_time / total:.2%}"
     )
+
+
+class KeyValueAction(argparse.Action):
+    def __call__(self, parser, namespace,
+                 values, option_string=None):
+        setattr(namespace, self.dest, {})
+
+        for value in values:
+            key, value = value.split("=")
+            getattr(namespace, self.dest)[key] = int(value)
 
 
 if __name__ == "__main__":
@@ -165,10 +137,59 @@ if __name__ == "__main__":
         logbook.StreamHandler(sys.stdout, format_string=_format_string),
     ])
 
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument(
+        "data_dir",
+        help="weapon data directory containing rs2simlib-generated CSV data",
+    )
+    # noinspection PyTypeChecker
+    _ap.add_argument(
+        "-b",
+        "--bullet-ids",
+        help="bullet name to id key-value pairs in BulletName=DatabaseID format",
+        nargs="*",
+        action=KeyValueAction,
+        metavar="KEY=VALUE",
+        required=True,
+    )
+    # noinspection PyTypeChecker
+    _ap.add_argument(
+        "-w",
+        "--weapon-ids",
+        help="weapon name to id key-value pairs in WeaponName=DatabaseID format",
+        nargs="*",
+        action=KeyValueAction,
+        metavar="KEY=VALUE",
+        required=True,
+    )
+    _ap.add_argument(
+        "--no-prepared-statements",
+        action="store_true",
+        help="disable Psycopg prepared statements",
+    )
+
+    _args = _ap.parse_args()
+    _no_preps = _args.no_prepared_statements
+    _prep_thresh = None if _no_preps else 5
+
+    pool = NullConnectionPool(
+        conninfo=db_url,
+    )
+    engine_no_pool = create_engine(
+        url="postgresql+psycopg://",
+        creator=pool.getconn,
+        connect_args={"prepare_threshold": None},
+    )
+    SessionNoPool = sessionmaker(bind=engine_no_pool)
+
     with _setup.applicationbound():
         try:
-            _data_dir = Path(sys.argv[1])
-            main(_data_dir)
+            _data_dir = Path(_args.data_dir)
+            main(
+                data_dir=_data_dir,
+                weapon_ids=_args.weapon_ids,
+                bullet_ids=_args.bullet_ids,
+            )
         except Exception as e:
             logger.error(
                 "failed for: '{wep}': {e}",

@@ -81,16 +81,27 @@ weapon_selector = html.Div(
     className="my-4",
 )
 
-placeholder_fig = px.line(
+PLACEHOLDER_FIG = px.line(
     # x=[0, 1],
     # y=[1, 2],
     template=template_from_url(dbc.themes.VAPOR),
+)
+PLACEHOLDER_FIG.update_layout(
+    title={
+        "text": "Distance vs. Damage",
+        "xanchor": "center",
+        "yanchor": "top",
+        "x": 0.5,
+        "y": 0.8,
+    },
+    yaxis_title="damage",
+    xaxis_title="distance [m]",
 )
 layout = dbc.Container(
     [
         dcc.Graph(
             id="graph",
-            figure=placeholder_fig,
+            figure=PLACEHOLDER_FIG,
         ),
 
         weapon_selector,
@@ -133,6 +144,7 @@ def modify_selected_weapons(
     triggered_id = ctx.triggered_id
 
     if triggered_id == "weapon-selector":
+        weapon = db.api.get_weapon(value)
         index = len(children)
         ret = children + [
             dbc.AccordionItem(
@@ -140,8 +152,11 @@ def modify_selected_weapons(
                     html.Div(
                         [
                             html.Div([
-                                html.P(f"this is the content for {value}"),
-                                html.P("asd"),
+                                html.P(f"TODO: this is the content for '{value}'."),
+                                html.P(f"weapon: {weapon.to_dict()}"),
+                                html.P(f"ammo_loadouts: {[a.to_dict() for a in weapon.ammo_loadouts]}"),
+                                html.P(f"bullets: {[a.bullet.to_dict() for a in weapon.ammo_loadouts]}"),
+                                # html.P(f"{weapon.to_dict()}"),
                             ]),
                             html.Div(
                                 dbc.Button(
@@ -199,31 +214,31 @@ def modify_selected_weapons(
     Input("selected-weapons", "children"),
     Input(ThemeChangerAIOCustom.ids.radio("theme-changer"), "value"),
 )
-def update_graph_theme(weapons: List[dict], theme: str) -> go.Figure:
+def update_graph(weapons: List[dict], theme: str) -> go.Figure:
     if not weapons:
-        return placeholder_fig
+        return PLACEHOLDER_FIG
 
-    print(ctx.triggered_id)
+    # print(ctx.triggered_id)
 
     fig = make_subplots(rows=1, cols=1)
     # alo_x = np.array([0, 1])
     # alo_y = np.array([0, 1])
-    print(len(weapons))
+    # print(len(weapons))
     for weapon in weapons:
-        name = weapon["props"]["id"]["weapon"]
-        wep = db.api.get_weapon(name)
+        weapon_name = weapon["props"]["id"]["weapon"]
+        wep = db.api.get_weapon(weapon_name)
         # noinspection PyTypeChecker
         alo: db.models.AmmoLoadout = wep.ammo_loadouts[0]
         # for alo in wep.ammo_loadouts:
-        print(f"plotting: {name}")
-        x, y = alo.bullet.dmg_falloff_np_tuple()
+        # print(f"plotting: {weapon_name}")
+        # x, y = alo.bullet.dmg_falloff_np_tuple()
 
         sim = db.api.get_weapon_sim(
-            weapon_name=name,
+            weapon_name=weapon_name,
             bullet_name=alo.bullet.name,
             angle=0,
         )
-        print(len(sim))
+        # print(len(sim))
 
         fig.add_scatter(
             x=sim["distance"],
@@ -233,5 +248,17 @@ def update_graph_theme(weapons: List[dict], theme: str) -> go.Figure:
             col=1,
         )
 
-    fig.update_layout(template=template_from_url(theme))
+    fig.update_layout(
+        template=template_from_url(theme),
+        title={
+            "text": "Distance vs. Damage",
+            "xanchor": "center",
+            "yanchor": "top",
+            "x": 0.5,
+            "y": 0.9,
+        },
+        yaxis_title="damage",
+        xaxis_title="distance [m]",
+    )
+
     return fig

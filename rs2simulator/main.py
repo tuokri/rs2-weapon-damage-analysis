@@ -1,6 +1,7 @@
 import configparser
 import itertools
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -20,6 +21,7 @@ from typing import Iterable
 from typing import List
 from typing import MutableMapping
 from typing import Optional
+from typing import Set
 from typing import Tuple
 
 import logbook
@@ -47,6 +49,7 @@ from rs2simlib.models import interp_dmg_falloff
 from rs2simlib.models.models import AltAmmoLoadout
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import load_only
 from werkzeug.datastructures import MultiDict
 
 import rs2simulator
@@ -469,7 +472,7 @@ def run_fast_sim(weapon: Weapon, bullet: Bullet,
 
 
 def unique_items(seq: List[Any]) -> List[Any]:
-    seen = set()
+    seen: Set[Any] = set()
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]
 
@@ -566,10 +569,14 @@ def parse_localization(path: Path):
 
     for i, wm in enumerate(weapons_metadata):
         name = wm["name"]
-        weapons_metadata[i]["display_name"] = wm_map.get(
-            name)["display_name"] or "NO_DISPLAY_NAME"
-        weapons_metadata[i]["short_display_name"] = wm_map.get(
-            name)["short_display_name"] or "NO_SHORT_DISPLAY_NAME"
+        display_name = "NO_DISPLAY_NAME"
+        short_display_name = "NO_SHORT_DISPLAY_NAME"
+        wm_map_name = wm_map.get(name)
+        if wm_map_name:
+            display_name = wm_map_name["display_name"]
+            short_display_name = wm_map_name["short_display_name"]
+        weapons_metadata[i]["display_name"] = display_name
+        weapons_metadata[i]["short_display_name"] = short_display_name
 
     logger.info("writing '{f}'", f=WEAPONS_JSON)
     WEAPONS_JSON.write_bytes(orjson.dumps(weapons_metadata))
@@ -652,7 +659,7 @@ def run_simulations(classes_file: Path):
             logger.error(f"ERROR!")
             logger.error(pformat(fs[future]))
             logger.error("*" * 80)
-            raise future.exception()
+            raise RuntimeError(future.exception())
         done += 1
         logger.info("done:", done)
 
@@ -831,8 +838,54 @@ def enter_db_data(metadata_dir: Path):
         class_map=bullets,
     )
 
+    # TODO: better filtering?
+    ordered_weapons = [
+        w for w in ordered_weapons
+        if "roweap" in w.name.lower()
+        if "_content" not in w.name.lower()
+        if (
+                "shotgun" in w.name.lower()
+                or
+                "rifle" in w.name.lower()
+                or
+                "pistol" in w.name.lower()
+                or
+                "bar" in w.name.lower()
+                or
+                "lmg" in w.name.lower()
+                or
+                "carbine" in w.name.lower()
+                or
+                "gpmg" in w.name.lower()
+                or
+                "smg" in w.name.lower()
+                or
+                "hmg" in w.name.lower()
+        )
+    ]
+
+    # TODO: could just return bullet and weapon IDs here,
+    #   instead of doing a new select right after for
+    #   simulation data insertion.
     insert_bullets(ordered_bullets)
     insert_weapons(weapon_metadata, ordered_weapons)
+
+    with db.Session() as session:
+        db_weapons = session.scalars(
+            select(db.models.Weapon).options(load_only(
+                db.models.Weapon.name,
+                db.models.Weapon.id,
+            ))
+        ).all()
+        db_bullets = session.scalars(
+            select(db.models.Bullet).options(load_only(
+                db.models.Bullet.name,
+                db.models.Bullet.id,
+            ))
+        ).all()
+
+    weapon_ids = {weapon.name: weapon.id for weapon in db_weapons}
+    bullet_ids = {bullet.name: bullet.id for bullet in db_bullets}
 
     db.engine().dispose(close=False)
     fs = {}
@@ -846,7 +899,14 @@ def enter_db_data(metadata_dir: Path):
                 if p.is_dir()
             ]
             for data_dir in data_dirs:
-                fs[executor.submit(process_sim_csv, data_dir)] = data_dir
+                # TODO: better filtering.
+                if data_dir.name in [w.name for w in ordered_weapons]:
+                    fs[executor.submit(
+                        process_sim_csv,
+                        data_dir=data_dir,
+                        weapon_ids=weapon_ids,
+                        bullet_ids=bullet_ids,
+                    )] = data_dir
 
         for f in futures.as_completed(fs):
             exc = f.exception()
@@ -870,16 +930,44 @@ PROCESSES: Deque[subprocess.Popen] = deque()
 STOP_EVENT = threading.Event()
 
 
-def process_sim_csv(data_dir: Path):
+def process_sim_csv(data_dir: Path, bullet_ids: dict, weapon_ids: dict):
     if STOP_EVENT.is_set():
         logger.warn("stop event is set, aborting")
         return
 
-    p_args = [sys.executable, PROCESS_CSV_SCRIPT, str(data_dir)]
-    p_kwargs = {
-        "creationflags": subprocess.CREATE_NEW_PROCESS_GROUP,
-    }
-    p = subprocess.Popen(args=p_args, **p_kwargs)
+    bullet_names = set()
+
+    # TODO: this is currently calculated twice. Pass the result of this
+    #  calculation to the subprocess to avoid doing it twice.
+    sim_file_pat = re.compile(r"sim_(\d)_deg_(.+)\.csv")
+    csv_paths = list(data_dir.glob("*.csv"))
+    for csv_path in csv_paths:
+        match = sim_file_pat.match(csv_path.name)
+        if match:
+            bullet_names.add(match.group(2))
+
+    sub_weapon_ids = {data_dir.name: weapon_ids[data_dir.name]}
+    sub_bullet_ids = {bullet_name: bullet_ids[bullet_name]
+                      for bullet_name in bullet_names}
+
+    weapon_id_args = [f"{name}={ident}"
+                      for name, ident in sub_weapon_ids.items()]
+    bullet_id_args = [f"{name}={ident}"
+                      for name, ident in sub_bullet_ids.items()]
+
+    p_args = [
+        sys.executable,
+        PROCESS_CSV_SCRIPT,
+        str(data_dir),
+        "--weapon-ids",
+        *weapon_id_args,
+        "--bullet-ids",
+        *bullet_id_args,
+    ]
+    p = subprocess.Popen(
+        args=p_args,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
+    )
     PROCESSES.append(p)
 
     while p.poll() is None:

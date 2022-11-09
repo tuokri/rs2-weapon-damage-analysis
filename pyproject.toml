@@ -23,26 +23,23 @@ dependencies = [
     "Flask==2.2.2",
     "Jinja2==3.1.2",
     "MarkupSafe==2.1.1",
-    "SQLAlchemy @ git+https://github.com/sqlalchemy/sqlalchemy@befa8e92675dea992423011b929dfc7ca45de6b6",
+    "SQLAlchemy[mypy]==2.0.0b3",
     "Werkzeug==2.2.2",
     "certifi==2022.6.15",
     "charset-normalizer==2.1.0",
     "click==8.1.3",
     "colorama==0.4.5",
     "dash-bootstrap-components==1.2.1",
-    "dash-bootstrap-templates==1.0.6",
-    "dash-core-components==2.0.0",
-    "dash-html-components==2.0.0",
-    "dash-table==5.0.0",
+    "dash-bootstrap-templates==1.0.7",
     "gunicorn==20.1.0",
     "idna==3.3",
     "itsdangerous==2.1.2",
-    "logbook=1.5.3",
-    "natsort==8.1.0",
+    "logbook==1.5.3",
+    "natsort==8.2.0",
     "numpy>=1.22.4",
-    "orjson==3.8.0",
-    "pandas==1.4.3",
-    "plotly==5.10.0",
+    "orjson==3.8.1",
+    "pandas==1.5.1",
+    "plotly==5.11.0",
     "python-dateutil==2.8.2",
     "python-dotenv==0.21.0",
     "pytz==2022.2.1",
@@ -51,12 +48,14 @@ dependencies = [
     "six==1.16.0",
     "tenacity==8.0.1",
     "urllib3==1.26.11",
+    "dash[celery]==2.7.0",
+    "psycopg[binary,pool]==3.1.4",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "psycopg[binary,pool]==3.1.2",
-    "dash[diskcache]==2.6.1",
+    "psycopg[binary,pool]==3.1.4",
+    "dash[diskcache]==2.6.2",
 ]
 
 [tool.hatch.metadata]
@@ -71,12 +70,12 @@ source = "vcs"
 [tool.hatch.build.hooks.vcs]
 version-file = "rs2simulator/_version.py"
 
-#[tool.hatch.envs.test]
-#dependencies = [
-#    "pytest",
-#    "mypy",
-#    "flake8",
-#]
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest",
+    "mypy",
+    "flake8",
+]
 
 [tool.hatch.envs.scripts]
 #test = "pytest"
@@ -97,24 +96,41 @@ main = "scripts/main.py"
 #[tool.hatch.envs.plots.scripts]
 #draw = "python scripts/draw_plots.py"
 
-#[tool.mypy]
-#plugins = [
-#    "numpy.typing.mypy_plugin"
-#]
+[tool.mypy]
+plugins = [
+    "numpy.typing.mypy_plugin",
+    "sqlalchemy.ext.mypy.plugin",
+]
 ## TODO: fix models typing.
 #exclude = [
 #    "scripts/",
 #    "rs2simlib/models/",
 #]
 
-#[[tool.mypy.overrides]]
-#module = "numba"
-#ignore_missing_imports = true
-#
-#[[tool.mypy.overrides]]
-#module = "numba.core.types"
-#ignore_missing_imports = true
-#
+[[tool.mypy.overrides]]
+module = "numba"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "numba.core.types"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash_bootstrap_components"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash_bootstrap_templates"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "matplotlib"
+ignore_missing_imports = true
+
 #[tool.pytest.ini_options]
 #filterwarnings = [
 #    "ignore::numba.NumbaExperimentalFeatureWarning",
