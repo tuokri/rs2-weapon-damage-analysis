@@ -85,8 +85,8 @@ class CustomDash(dash.Dash):
         og_desc = soup.find("meta", property="og:description")
         tw_desc = soup.find("meta", property="twitter:description")
 
-        og_title["content"] = f"{og_title['content']} {meta_title}"
-        tw_title["content"] = f"{tw_title['content']} {meta_title}"
+        og_title["content"] = f"{meta_title} {og_title['content']}"
+        tw_title["content"] = f"{meta_title} {tw_title['content']}"
         og_desc["content"] = meta_description
         tw_desc["content"] = meta_description
 
@@ -160,7 +160,7 @@ app = CustomDash(
     __name__,
     external_scripts=external_scripts,
     external_stylesheets=external_stylesheets,
-    title="rs2sim",
+    title="rs2simulator",
     use_pages=True,
     assets_folder=ASSETS_DIR,
     suppress_callback_exceptions=True,
@@ -284,7 +284,7 @@ navbar_top = dbc.Navbar(
     dbc.Container(
         [
             dbc.NavbarBrand(
-                "rs2sim (WIP)",
+                "rs2simulator (WIP)",
                 # href=charts_page["path"],
                 # class_name="d-flex mr-auto",
                 style={
