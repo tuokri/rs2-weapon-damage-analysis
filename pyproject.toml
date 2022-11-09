@@ -50,6 +50,7 @@ dependencies = [
     "urllib3==1.26.11",
     "dash[celery]==2.7.0",
     "psycopg[binary,pool]==3.1.4",
+    "beautifulsoup4==4.11.1",
 ]
 
 [project.optional-dependencies]
