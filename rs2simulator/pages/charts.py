@@ -81,12 +81,9 @@ weapon_selector = html.Div(
     className="my-4",
 )
 
-PLACEHOLDER_FIG = px.line(
-    # x=[0, 1],
-    # y=[1, 2],
-    template=template_from_url(dbc.themes.VAPOR),
-)
+PLACEHOLDER_FIG = px.line()
 PLACEHOLDER_FIG.update_layout(
+    template=template_from_url(dbc.themes.VAPOR),
     title={
         "text": "Distance vs. Damage",
         "xanchor": "center",
@@ -96,6 +93,7 @@ PLACEHOLDER_FIG.update_layout(
     },
     yaxis_title="damage",
     xaxis_title="distance [m]",
+
 )
 layout = dbc.Container(
     [
@@ -216,6 +214,9 @@ def modify_selected_weapons(
 )
 def update_graph(weapons: List[dict], theme: str) -> go.Figure:
     if not weapons:
+        PLACEHOLDER_FIG.update_layout(
+            template=template_from_url(theme),
+        )
         return PLACEHOLDER_FIG
 
     # print(ctx.triggered_id)
