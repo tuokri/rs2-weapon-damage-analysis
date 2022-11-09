@@ -1,8 +1,8 @@
-import os
 from typing import Optional
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
 
+import bs4
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input
@@ -66,9 +66,34 @@ footer_string = """
 </footer>
 """
 
+meta_title = "rs2simulator"
+meta_description = """
+Data visualization app for the Rising Storm 2: Vietnam video game.
+Features accurate simulation of in-engine physics projectiles in the browser,
+weapon statistics comparison tools and data visualization based on automatically
+collected data from the game's source files.
+"""
+
 
 class CustomDash(dash.Dash):
+    @staticmethod
+    def format_metas(metas: str) -> str:
+        soup = bs4.BeautifulSoup(metas, "html.parser")
+
+        og_title = soup.find("meta", property="og:title")
+        tw_title = soup.find("meta", property="twitter:title")
+        og_desc = soup.find("meta", property="og:description")
+        tw_desc = soup.find("meta", property="twitter:description")
+
+        og_title["content"] = f"{og_title['content']} {meta_title}"
+        tw_title["content"] = f"{tw_title['content']} {meta_title}"
+        og_desc["content"] = meta_description
+        tw_desc["content"] = meta_description
+
+        return str(soup)
+
     def interpolate_index(self, **kwargs) -> str:
+        kwargs["metas"] = self.format_metas(kwargs["metas"])
         footer_content = read_asset_text("footer.html")
         footer = footer_string.format(
             config=kwargs.pop("config"),
@@ -145,19 +170,14 @@ server = app.server
 
 
 def upgrade_to_https(url: str) -> str:
+    # TODO: this is not needed anymore since Fly.io proxy handles it.
     # noinspection HttpUrlsUsage
     return url.replace("http://", "https://", 1)
 
 
-def redirect_root(
-        req: Request,
-        upgrade_https: bool = False
-) -> Optional[Response]:
+def redirect_root(req: Request) -> Optional[Response]:
     do_redirect = False
     url = req.url
-    # if upgrade_https and not req.is_secure:
-    #     url = upgrade_to_https(url)
-    #     do_redirect = True
 
     url_parts = urlparse(url)
     if url_parts.path in ("", "/"):
@@ -174,15 +194,9 @@ def redirect_root(
     return None
 
 
-UPGRADE_HTTPS = "FLY_APP_NAME" in os.environ
-
-
 @server.before_request
 def before_request(*_) -> Optional[Response]:
-    return redirect_root(
-        req=request,
-        upgrade_https=UPGRADE_HTTPS,
-    )
+    return redirect_root(req=request)
 
 
 theme_changer = ThemeChangerAIO(

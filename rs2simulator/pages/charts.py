@@ -8,7 +8,6 @@ import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objs as go
-from aio import template_from_url
 from dash import ALL
 from dash import Input
 from dash import Output
@@ -17,6 +16,8 @@ from dash import ctx
 from dash import dcc
 from dash import html
 from dash.exceptions import PreventUpdate
+from dash_bootstrap_templates import ThemeChangerAIO
+from dash_bootstrap_templates import template_from_url
 from plotly.subplots import make_subplots
 
 from rs2simulator import db
@@ -211,7 +212,7 @@ def modify_selected_weapons(
 @callback(
     Output("graph", "figure"),
     Input("selected-weapons", "children"),
-    Input(ThemeChangerAIOCustom.ids.radio("theme-changer"), "value"),
+    Input(ThemeChangerAIO.ids.radio("theme-changer"), "value"),
 )
 def update_graph(weapons: List[dict], theme: str) -> go.Figure:
     if not weapons:
