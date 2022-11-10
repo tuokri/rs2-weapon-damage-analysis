@@ -29,7 +29,11 @@ collected data from the game's source files.
 
 [Psycopg 3](https://www.psycopg.org/psycopg3/)
 
-### Database backend
+### PostgreSQL database backend
 
 Fly.io Postgres cluster with custom modifications:
 [rs2sim-postgres-ha](https://github.com/tuokri/rs2sim-postgres-ha)
+
+[TimescaleDB extension](https://docs.timescale.com/timescaledb/latest/)
+
+[PGBouncer connection pooler](http://www.pgbouncer.org/)
