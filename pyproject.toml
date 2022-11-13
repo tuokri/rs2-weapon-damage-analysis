@@ -53,11 +53,11 @@ dependencies = [
     "beautifulsoup4==4.11.1",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "psycopg[binary,pool]==3.1.4",
-    "dash[diskcache]==2.7.0",
-]
+#[project.optional-dependencies]
+#dev = [
+#    "psycopg[binary,pool]==3.1.4",
+#    "dash[diskcache]==2.7.0",
+#]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -78,7 +78,7 @@ dependencies = [
     # "flake8",
 ]
 
-[tool.hatch.envs.scripts]
+[tool.hatch.envs.test.scripts]
 test = "pytest"
 #types = "mypy rs2simlib --show-error-codes"
 # TODO: not the intended use case...
@@ -132,11 +132,11 @@ ignore_missing_imports = true
 module = "matplotlib"
 ignore_missing_imports = true
 
-#[tool.pytest.ini_options]
-#filterwarnings = [
-#    "ignore::numba.NumbaExperimentalFeatureWarning",
-#]
-#
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::numba.NumbaExperimentalFeatureWarning",
+]
+
 #[tool.flake8]
 #per-file-ignores = [
 #    "rs2simlib/fast/drag/fastdrag.py:C901",
