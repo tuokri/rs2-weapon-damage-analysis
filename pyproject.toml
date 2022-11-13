@@ -56,7 +56,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "psycopg[binary,pool]==3.1.4",
-    "dash[diskcache]==2.6.2",
+    "dash[diskcache]==2.7.0",
 ]
 
 [tool.hatch.metadata]
