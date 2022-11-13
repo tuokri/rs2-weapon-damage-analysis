@@ -31,3 +31,6 @@ jobs:
       - name: Test with pytest
         run: |
           hatch run test:test
+      - name: Build with Hatch
+        run: |
+          hatch build
