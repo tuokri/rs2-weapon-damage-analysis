@@ -28,5 +28,5 @@ rs2simlib@ git+https://github.com/tuokri/rs2simlib@0.4.5
 six==1.16.0
 sqlalchemy[mypy]==2.0.0b3
 tenacity==8.1.0
-urllib3==1.26.11
+urllib3==1.26.12
 werkzeug==2.2.2

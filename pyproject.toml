@@ -47,7 +47,7 @@ dependencies = [
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.5",
     "six==1.16.0",
     "tenacity==8.1.0",
-    "urllib3==1.26.11",
+    "urllib3==1.26.12",
     "dash[celery]==2.7.0",
     "psycopg[binary,pool]==3.1.4",
     "beautifulsoup4==4.11.1",
