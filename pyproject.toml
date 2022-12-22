@@ -10,7 +10,8 @@ authors = [
 ]
 description = "Data visualization app for Rising Storm 2: Vietnam."
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "AGPL-3.0-or-later"
+license-files = { paths = ["LICENSE"] }
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -44,7 +45,7 @@ dependencies = [
     "python-dotenv==0.21.0",
     "pytz==2022.6",
     "requests @ git+https://github.com/psf/requests@1e62a3ec18e19f85ddae03b4cbbdf0b4c62834c0",
-    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.5",
+    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.8",
     "six==1.16.0",
     "tenacity==8.1.0",
     "urllib3==1.26.12",
@@ -74,13 +75,16 @@ version-file = "rs2simulator/_version.py"
 [tool.hatch.envs.test]
 dependencies = [
     "pytest",
-    # "mypy",
+    "mypy",
+    "pandas-stubs",
+    "types-beautifulsoup4",
+    "types-requests",
     # "flake8",
 ]
 
 [tool.hatch.envs.test.scripts]
 test = "pytest"
-#types = "mypy rs2simlib --show-error-codes"
+types = "mypy rs2simulator --show-error-codes"
 # TODO: not the intended use case...
 main = "scripts/main.py"
 
@@ -118,6 +122,26 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "dash"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash.exceptions"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.express"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.subplots"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.graph_objs"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
