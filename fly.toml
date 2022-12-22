@@ -5,6 +5,13 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
+[build.env]
+  BP_CPYTHON_VERSION = "3.10.*"
+
+[build]
+  builder = "paketobuildpacks/builder:full"
+  buildpacks  = ["gcr.io/paketo-buildpacks/python"]
+
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
