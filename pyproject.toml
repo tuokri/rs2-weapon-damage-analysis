@@ -48,7 +48,7 @@ dependencies = [
     "six==1.16.0",
     "tenacity==8.1.0",
     "urllib3==1.26.13",
-    "dash[celery]==2.7.0",
+    "dash[celery]==2.7.1",
     "psycopg[binary,pool]==3.1.6",
     "beautifulsoup4==4.11.1",
 ]
