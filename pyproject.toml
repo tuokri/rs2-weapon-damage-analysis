@@ -49,13 +49,13 @@ dependencies = [
     "tenacity==8.1.0",
     "urllib3==1.26.13",
     "dash[celery]==2.7.1",
-    "psycopg[binary,pool]==3.1.6",
+    "psycopg[binary,pool]==3.1.7",
     "beautifulsoup4==4.11.1",
 ]
 
 #[project.optional-dependencies]
 #dev = [
-#    "psycopg[binary,pool]==3.1.6",
+#    "psycopg[binary,pool]==3.1.7",
 #    "dash[diskcache]==2.7.0",
 #]
 
