@@ -168,3 +168,6 @@ venv_unix/
 
 rebase.py
 fixdates.py
+
+.github/
+tests
