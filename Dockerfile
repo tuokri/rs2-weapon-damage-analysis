@@ -3,6 +3,7 @@ FROM python:3.10-slim-bullseye
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y \
+    git \
     libsqlite3-dev  \
     && rm -rf /var/lib/apt/lists/*
 
@@ -15,5 +16,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "app:server", "--chdir",
+CMD ["gunicorn", "app:server", "--chdir", \
      "rs2simulator", "--workers", "3", "--threads", "2", "--preload"]
