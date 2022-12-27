@@ -13,6 +13,7 @@ from dash import Input
 from dash import Output
 from dash import callback
 from dash import ctx
+from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.exceptions import PreventUpdate
@@ -93,18 +94,22 @@ PLACEHOLDER_FIG.update_layout(
     },
     yaxis_title="damage",
     xaxis_title="distance [m]",
-
 )
+
 layout = dbc.Container(
     [
         dcc.Graph(
             id="graph",
             figure=PLACEHOLDER_FIG,
+            style={
+                "height": "50vh",
+            },
         ),
 
         weapon_selector,
     ],
     class_name="my-3",
+    fluid=True,
 )
 
 
@@ -143,6 +148,12 @@ def modify_selected_weapons(
 
     if triggered_id == "weapon-selector":
         weapon = db.api.get_weapon(value)
+        wep_dict = weapon.to_dict()
+        columns = [{"name": c, "id": c} for c in wep_dict]
+        print(wep_dict)
+        print(columns)
+
+        # TODO: just use DataTable for selecting weapons, not accordions...
         index = len(children)
         ret = children + [
             dbc.AccordionItem(
@@ -151,9 +162,13 @@ def modify_selected_weapons(
                         [
                             html.Div([
                                 html.P(f"TODO: this is the content for '{value}'."),
-                                html.P(f"weapon: {weapon.to_dict()}"),
-                                html.P(f"ammo_loadouts: {[a.to_dict() for a in weapon.ammo_loadouts]}"),
-                                html.P(f"bullets: {[a.bullet.to_dict() for a in weapon.ammo_loadouts]}"),
+                                dash_table.DataTable(
+                                    data=[wep_dict],
+                                    columns=columns,
+                                ),
+                                # html.P(f"weapon: {weapon.to_dict()}"),
+                                # html.P(f"ammo_loadouts: {[a.to_dict() for a in weapon.ammo_loadouts]}"),
+                                # html.P(f"bullets: {[a.bullet.to_dict() for a in weapon.ammo_loadouts]}"),
                                 # html.P(f"{weapon.to_dict()}"),
                             ]),
                             html.Div(
@@ -252,7 +267,7 @@ def update_graph(weapons: List[dict], theme: str) -> go.Figure:
     fig.update_layout(
         template=template_from_url(theme),
         title={
-            "text": "Distance vs. Damage",
+            "text": "Damage vs. Distance",
             "xanchor": "center",
             "yanchor": "top",
             "x": 0.5,

@@ -10,7 +10,8 @@ authors = [
 ]
 description = "Data visualization app for Rising Storm 2: Vietnam."
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "AGPL-3.0-or-later"
+license-files = { paths = ["LICENSE"] }
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -25,12 +26,14 @@ dependencies = [
     "MarkupSafe==2.1.1",
     "SQLAlchemy[mypy]==2.0.0b4",
     "Werkzeug==2.2.2",
+    "beautifulsoup4==4.11.1",
     "certifi==2022.12.7",
     "charset-normalizer==3.0.1",
     "click==8.1.3",
     "colorama==0.4.6",
     "dash-bootstrap-components==1.2.1",
     "dash-bootstrap-templates==1.0.7",
+    "dash[celery]==2.7.1",
     "gunicorn==20.1.0",
     "idna==3.4",
     "itsdangerous==2.1.2",
@@ -40,17 +43,14 @@ dependencies = [
     "orjson==3.8.3",
     "pandas==1.5.2",
     "plotly==5.11.0",
+    "psycopg[binary,pool]==3.1.7",
     "python-dateutil==2.8.2",
     "python-dotenv==0.21.0",
     "pytz==2022.7",
-    "requests @ git+https://github.com/psf/requests@1e62a3ec18e19f85ddae03b4cbbdf0b4c62834c0",
-    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.5",
+    "requests @ git+https://github.com/psf/requests@ec553c275fe915ab8c179a530907b564892d2922",
+    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.8",
     "six==1.16.0",
     "tenacity==8.1.0",
-    "urllib3==1.26.13",
-    "dash[celery]==2.7.1",
-    "psycopg[binary,pool]==3.1.7",
-    "beautifulsoup4==4.11.1",
 ]
 
 #[project.optional-dependencies]
@@ -74,13 +74,16 @@ version-file = "rs2simulator/_version.py"
 [tool.hatch.envs.test]
 dependencies = [
     "pytest",
-    # "mypy",
+    "mypy",
+    "pandas-stubs",
+    "types-beautifulsoup4",
+    "types-requests",
     # "flake8",
 ]
 
 [tool.hatch.envs.test.scripts]
 test = "pytest"
-#types = "mypy rs2simlib --show-error-codes"
+types = "mypy rs2simulator --show-error-codes"
 # TODO: not the intended use case...
 main = "scripts/main.py"
 
@@ -118,6 +121,26 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "dash"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash.exceptions"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.express"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.subplots"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.graph_objs"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
