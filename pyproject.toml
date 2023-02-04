@@ -33,7 +33,7 @@ dependencies = [
     "colorama==0.4.6",
     "dash-bootstrap-components==1.3.0",
     "dash-bootstrap-templates==1.0.7",
-    "dash[celery]==2.7.1",
+    "dash[celery]==2.8.1",
     "gunicorn==20.1.0",
     "idna==3.4",
     "itsdangerous==2.1.2",
