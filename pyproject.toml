@@ -45,7 +45,7 @@ dependencies = [
     "plotly==5.13.0",
     "psycopg[binary,pool]==3.1.8",
     "python-dateutil==2.8.2",
-    "python-dotenv==0.21.0",
+    "python-dotenv==0.21.1",
     "pytz==2022.7.1",
     "requests @ git+https://github.com/psf/requests@ec553c275fe915ab8c179a530907b564892d2922",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.8",
