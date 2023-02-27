@@ -50,7 +50,7 @@ dependencies = [
     "requests @ git+https://github.com/psf/requests@ec553c275fe915ab8c179a530907b564892d2922",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.8",
     "six==1.16.0",
-    "tenacity==8.1.0",
+    "tenacity==8.2.1",
 ]
 
 #[project.optional-dependencies]
