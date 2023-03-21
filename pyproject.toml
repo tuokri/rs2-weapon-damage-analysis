@@ -24,7 +24,7 @@ dependencies = [
     "Flask==2.2.3",
     "Jinja2==3.1.2",
     "MarkupSafe==2.1.2",
-    "SQLAlchemy[mypy]==2.0.6",
+    "SQLAlchemy[mypy]==2.0.7",
     "Werkzeug==2.2.3",
     "beautifulsoup4==4.11.2",
     "certifi==2022.12.7",
