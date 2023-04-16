@@ -140,3 +140,6 @@ sim_data/
 
 # Hatch
 rs2simulator/_version.py
+
+# Generated for Docker deployments but not version controller.
+requirements.txt
