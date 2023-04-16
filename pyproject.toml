@@ -12,7 +12,7 @@ description = "Data visualization app for Rising Storm 2: Vietnam."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 license-files = { paths = ["LICENSE"] }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
@@ -47,8 +47,8 @@ dependencies = [
     "python-dateutil==2.8.2",
     "python-dotenv==1.0.0",
     "pytz==2023.3",
-    "requests @ git+https://github.com/psf/requests@ec553c275fe915ab8c179a530907b564892d2922",
-    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.4.8",
+    "requests==2.28.2",
+    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.5.0",
     "six==1.16.0",
     "tenacity==8.2.2",
 ]
