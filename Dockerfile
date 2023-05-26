@@ -17,4 +17,5 @@ COPY . .
 EXPOSE 8000
 
 CMD ["gunicorn", "app:server", "--chdir", \
-     "rs2simulator", "--workers", "3", "--threads", "2", "--preload"]
+     "rs2simulator", "--workers", "3", "--threads", "2", "--preload",
+     "--max-requests", "1000", "--max-requests-jitter", "250"]
