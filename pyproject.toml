@@ -43,7 +43,7 @@ dependencies = [
     "orjson==3.9.1",
     "pandas==2.0.2",
     "plotly==5.15.0",
-    "psycopg[binary,pool]==3.1.8",
+    "psycopg[binary,pool]==3.1.9",
     "python-dateutil==2.8.2",
     "python-dotenv==1.0.0",
     "pytz==2023.3",
@@ -55,7 +55,7 @@ dependencies = [
 
 #[project.optional-dependencies]
 #dev = [
-#    "psycopg[binary,pool]==3.1.8",
+#    "psycopg[binary,pool]==3.1.9",
 #    "dash[diskcache]==2.7.0",
 #]
 
