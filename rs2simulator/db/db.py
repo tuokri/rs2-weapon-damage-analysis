@@ -51,6 +51,7 @@ def engine() -> Engine:
             url=protocol,
             creator=_pool.getconn,
             connect_args=connect_args,
+            pool_pre_ping=True,
         )
 
     try:
