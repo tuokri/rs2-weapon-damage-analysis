@@ -35,8 +35,7 @@ def engine() -> Engine:
             raise RuntimeError("no database URL")
 
         # Handled by PgBouncer.
-        # if "FLY_APP_NAME" in os.environ:
-        if False:
+        if "FLY_APP_NAME" in os.environ:
             _pool = NullConnectionPool(
                 conninfo=db_url,
             )
