@@ -140,3 +140,5 @@ sim_data/
 
 # Hatch
 rs2simulator/_version.py
+
+*.diff

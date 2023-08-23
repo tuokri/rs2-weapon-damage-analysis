@@ -173,3 +173,5 @@ fixdates.py
 tests
 
 deploy.sh
+
+*.diff
