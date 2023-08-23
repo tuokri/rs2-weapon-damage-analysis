@@ -175,3 +175,5 @@ tests
 deploy.sh
 
 *.diff
+
+requirements.txt

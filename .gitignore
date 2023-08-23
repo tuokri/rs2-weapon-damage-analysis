@@ -142,3 +142,5 @@ sim_data/
 rs2simulator/_version.py
 
 *.diff
+
+requirements.txt
