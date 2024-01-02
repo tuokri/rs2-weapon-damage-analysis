@@ -31,9 +31,7 @@ collected data from the game's source files.
 
 ### PostgreSQL database backend
 
-Fly.io Postgres cluster with custom modifications:
-[rs2sim-postgres-ha](https://github.com/tuokri/rs2sim-postgres-ha)
-
-[TimescaleDB extension](https://docs.timescale.com/timescaledb/latest/)
+Fly.io Postgres cluster with TimescaleDB extension
+- [TimescaleDB extension](https://docs.timescale.com/timescaledb/latest/)
 
 [PGBouncer connection pooler](http://www.pgbouncer.org/)
