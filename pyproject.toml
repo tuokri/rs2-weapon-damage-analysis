@@ -46,7 +46,7 @@ dependencies = [
     "psycopg[binary,pool]==3.1.10",
     "python-dateutil==2.8.2",
     "python-dotenv==1.0.0",
-    "pytz==2023.3",
+    "pytz==2023.3.post1",
     "requests==2.31.0",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.5.0",
     "six==1.16.0",
