@@ -35,7 +35,7 @@ dependencies = [
     "dash-bootstrap-templates==1.1.1",
     "dash[celery]==2.13.0",
     "gunicorn==21.2.0",
-    "idna==3.4",
+    "idna==3.6",
     "itsdangerous==2.1.2",
     "logbook==1.6.0",
     "natsort==8.4.0",
