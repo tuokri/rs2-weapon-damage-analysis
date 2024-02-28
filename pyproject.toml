@@ -26,7 +26,7 @@ dependencies = [
     "MarkupSafe==2.1.4",
     "SQLAlchemy[mypy]==2.0.25",
     "Werkzeug==2.2.3",
-    "beautifulsoup4==4.12.2",
+    "beautifulsoup4==4.12.3",
     "certifi==2023.7.22",
     "charset-normalizer==3.3.2",
     "click==8.1.7",
