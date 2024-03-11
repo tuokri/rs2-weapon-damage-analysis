@@ -36,7 +36,7 @@ dependencies = [
     "gunicorn==21.2.0",
     "idna==3.6",
     "itsdangerous==2.1.2",
-    "logbook==1.6.0",
+    "logbook==1.7.0.post0",
     "natsort==8.4.0",
     "numpy>=1.22.4",
     "orjson==3.9.15",
