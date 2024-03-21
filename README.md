@@ -32,6 +32,12 @@ collected data from the game's source files.
 ### PostgreSQL database backend
 
 Fly.io Postgres cluster with TimescaleDB extension
+
 - [TimescaleDB extension](https://docs.timescale.com/timescaledb/latest/)
 
 [PGBouncer connection pooler](http://www.pgbouncer.org/)
+
+### TODO
+
+- New Dash version causes `dash.exceptions.DependencyException` on
+  first page load after deployment. Possibly caused by custom redirect.
