@@ -98,15 +98,23 @@ PLACEHOLDER_FIG.update_layout(
 
 layout = dbc.Container(
     [
-        dcc.Graph(
-            id="graph",
-            figure=PLACEHOLDER_FIG,
-            style={
-                "height": "50vh",
-            },
+        dcc.Loading(
+            id="graph-loading",
+            children=[
+                dcc.Graph(
+                    id="graph",
+                    figure=PLACEHOLDER_FIG,
+                    style={
+                        "height": "50vh",
+                    },
+                )
+            ]
         ),
 
-        weapon_selector,
+        dcc.Loading(
+            id="weapon-selector-loading",
+            children=[weapon_selector],
+        ),
     ],
     class_name="my-3",
     fluid=True,
