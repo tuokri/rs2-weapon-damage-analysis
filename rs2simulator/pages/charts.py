@@ -111,10 +111,13 @@ layout = dbc.Container(
             ]
         ),
 
-        dcc.Loading(
-            id="weapon-selector-loading",
-            children=[weapon_selector],
-        ),
+        weapon_selector,
+
+        # TODO: ONLY DO THIS ON FIRST PAGE LOAD?
+        # dcc.Loading(
+        #     id="weapon-selector-loading",
+        #     children=[weapon_selector],
+        # ),
     ],
     class_name="my-3",
     fluid=True,
