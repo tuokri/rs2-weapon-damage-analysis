@@ -31,7 +31,7 @@ dependencies = [
     "click==8.1.7",
     "colorama==0.4.6",
     "dash-bootstrap-components==1.5.0",
-    "dash-bootstrap-templates==1.1.1",
+    "dash-bootstrap-templates==1.1.2",
     "dash[celery]==2.16.0",
     "gunicorn==21.2.0",
     "idna==3.6",
