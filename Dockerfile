@@ -3,16 +3,26 @@ FROM python:3.12-slim-bookworm
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y \
+    gcc \
     git \
+    libpq-dev \
     libsqlite3-dev  \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt requirements.txt
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Remove psycopg to install optimized local build later.
+RUN awk '!/psycopg/' requirements.txt > tmpfile && mv tmpfile requirements.txt
 
-COPY . .
+RUN pip install --upgrade pip --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir
+
+# Install psycopg3 optimized local build.
+RUN pip install psycopg[c] --no-cache-dir
+
+COPY rs2simulator/ .
+COPY gunicorn.conf.py .
 
 EXPOSE 8000
 
