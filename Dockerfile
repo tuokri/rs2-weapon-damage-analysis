@@ -21,7 +21,7 @@ RUN pip install -r requirements.txt --no-cache-dir
 # Install psycopg3 optimized local build.
 RUN pip install psycopg[c,pool] --no-cache-dir
 
-COPY rs2simulator/ .
+COPY rs2simulator/ ./rs2simulator/
 COPY gunicorn.conf.py .
 
 EXPOSE 8000
