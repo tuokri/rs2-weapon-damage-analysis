@@ -30,7 +30,7 @@ dependencies = [
     "charset-normalizer==3.3.2",
     "click==8.1.7",
     "colorama==0.4.6",
-    "dash-bootstrap-components==1.5.0",
+    "dash-bootstrap-components==1.6.0",
     "dash-bootstrap-templates==1.1.2",
     "dash[celery]==2.16.1",
     "gunicorn==21.2.0",
