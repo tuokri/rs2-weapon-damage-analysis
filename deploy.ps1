@@ -1,3 +1,3 @@
 hatch build
 hatch dep show requirements >requirements.txt
-flyctl deploy --verbose --push --now
+flyctl deploy --verbose --push --now --regions ams
