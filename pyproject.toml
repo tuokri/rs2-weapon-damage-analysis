@@ -48,7 +48,7 @@ dependencies = [
     "pytz==2025.2",
     "requests==2.32.4",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.6.0",
-    "six==1.16.0",
+    "six==1.17.0",
     "tenacity==8.2.3",
 ]
 
