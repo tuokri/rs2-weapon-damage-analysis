@@ -25,7 +25,7 @@ dependencies = [
     "Jinja2==3.1.6",
     "MarkupSafe==2.1.5",
     "SQLAlchemy[mypy]==2.0.41",
-    "beautifulsoup4==4.13.4",
+    "beautifulsoup4==4.13.5",
     "certifi==2024.8.30",
     "charset-normalizer==3.3.2",
     "click==8.1.8",
