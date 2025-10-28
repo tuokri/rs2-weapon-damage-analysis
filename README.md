@@ -29,7 +29,7 @@ python rs2simulator/main.py -l path/to/localization/file.int
 python rs2simulator/main.py --simulate
 ```
 
-### Step 4: Write the data from previous steps into a PostgreSQL database:
+### Step 4: Write the data from the previous steps into a PostgreSQL database:
 
 ```bash
 python rs2simulator/main.py --enter-sim-data
