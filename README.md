@@ -84,3 +84,6 @@ Fly.io Postgres cluster with TimescaleDB extension
 - Migrate to UV at some point?
 
 - Replace logbook with loguru?
+
+- Is there any point in storing generated .json and .pickle
+  data in the repo?
