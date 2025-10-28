@@ -348,7 +348,7 @@ def toggle_navbar_collapse(
 
 
 if __name__ == "__main__":
-    app.run_server(
+    app.run(
         debug=True,
         threaded=True,
         dev_tools_hot_reload=True,
