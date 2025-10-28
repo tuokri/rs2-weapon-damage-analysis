@@ -1,6 +1,6 @@
 # rs2simulator
 
-# ALPHA VERSION - WORK IN PROGRESS
+# BETA VERSION - WORK IN PROGRESS
 
 Data visualization app for the Rising Storm 2: Vietnam video game.
 Features accurate simulation of in-engine physics projectiles in the browser,
@@ -39,7 +39,6 @@ Fly.io Postgres cluster with TimescaleDB extension
 
 ### TODO
 
-- New Dash version causes `dash.exceptions.DependencyException` on
-  first page load after deployment. Possibly caused by custom redirect.
-
 - Migrate to UV at some point?
+
+- Replace logbook with loguru?
