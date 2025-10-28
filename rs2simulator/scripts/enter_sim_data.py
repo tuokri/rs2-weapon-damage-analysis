@@ -13,6 +13,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""Enter simulation data into a PostgreSQL database.
+NOTE: This script is not meant to be executed manually, but rather
+by rs2simulator/main.py, using the -e argument.
+"""
+
 import argparse
 import atexit
 import io
