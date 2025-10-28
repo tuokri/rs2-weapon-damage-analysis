@@ -1,3 +1,6 @@
+
+
+import atexit
 import os
 from pathlib import Path
 from typing import Any
@@ -44,6 +47,8 @@ def engine() -> Engine:
             _pool = ConnectionPool(
                 conninfo=db_url,
             )
+
+        atexit.register(_pool.close)
 
     if _engine is None:
         protocol = "postgresql+psycopg://"
