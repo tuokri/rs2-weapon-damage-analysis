@@ -41,6 +41,7 @@ from typing import Tuple
 
 import logbook
 import numpy as np
+import numpy.typing as npt
 import orjson
 import pandas as pd
 from natsort import natsorted
@@ -436,9 +437,14 @@ def process_sim(sim: WeaponSimulation, sim_time: float):
     trajectory.to_csv(p.absolute())
 
 
-def run_fast_sim(weapon: Weapon, bullet: Bullet,
-                 aim_dir: np.ndarray, aim_deg: float,
-                 instant_damage: int):
+def run_fast_sim(
+        weapon: Weapon,
+        bullet: Bullet,
+        aim_dir:
+        npt.NDArray[np.float64],
+        aim_deg: float,
+        instant_damage: int,
+):
     drag_func: np.int64 = {
         DragFunction.G1: np.int64(1),
         DragFunction.G7: np.int64(7),
@@ -606,7 +612,7 @@ def parse_localization(path: Path):
 
 
 def run_simulation(weapon: Weapon):
-    # Degrees up from positive x axis.
+    # Degrees up from the positive x-axis.
     aim_angles = [0, 1, 2, 3, 4, 5]
     aim_rads = np.radians(aim_angles)
     aim_dirs = np.array([(1, np.sin(a)) for a in aim_rads])
@@ -671,12 +677,12 @@ def run_simulations(classes_file: Path):
     for future in futures.as_completed(fs):
         if future.exception():
             logger.error("*" * 80)
-            logger.error(f"ERROR!")
+            logger.error("ERROR!")
             logger.error(pformat(fs[future]))
             logger.error("*" * 80)
             raise RuntimeError(future.exception())
         done += 1
-        logger.info("done:", done)
+        logger.info("done: {}", done)
 
 
 def get_immediate_children(
@@ -1039,7 +1045,9 @@ def parse_args() -> Namespace:
     )
     group.add_argument(
         "-e", "--enter-db-data",
-        help="TODO: help",
+        help="write simulation data into a PostgreSQL database, requires"
+             " the results of --parse-src, --parse-localization and --simulate"
+             " to exist in METADATA_DIR",
         default=None,
         const=".",
         nargs="?",
@@ -1057,6 +1065,10 @@ def parse_args() -> Namespace:
 
 
 def main():
+    # TODO: redesign CLI.
+    #   - Use click?
+    #   - For arguments that take in paths, allow specifying multiple ones.
+
     def handler(*_):
         STOP_EVENT.set()
         raise KeyboardInterrupt
