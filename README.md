@@ -87,3 +87,9 @@ Fly.io Postgres cluster with TimescaleDB extension
 
 - Is there any point in storing generated .json and .pickle
   data in the repo?
+
+- Test the CLI tools!
+    - Include test data in the repo as a zip?
+    - Store it somewhere else?
+
+- Simple testing strategy for the Dash app.
