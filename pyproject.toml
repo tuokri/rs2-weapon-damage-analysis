@@ -53,17 +53,18 @@ version-file = "rs2simulator/_version.py"
 
 [tool.hatch.envs.test]
 dependencies = [
-    "pytest",
     "mypy",
     "pandas-stubs",
+    "pytest",
+    "ruff",
     "types-beautifulsoup4",
     "types-requests",
-    # "flake8",
 ]
 
 [tool.hatch.envs.test.scripts]
 test = "pytest"
 types = "mypy rs2simulator --show-error-codes"
+lint = "ruff check ."
 # TODO: not the intended use case...
 main = "scripts/main.py"
 
@@ -82,22 +83,8 @@ main = "scripts/main.py"
 
 [tool.mypy]
 plugins = [
-    "numpy.typing.mypy_plugin",
     "sqlalchemy.ext.mypy.plugin",
 ]
-## TODO: fix models typing.
-#exclude = [
-#    "scripts/",
-#    "rs2simlib/models/",
-#]
-
-[[tool.mypy.overrides]]
-module = "numba"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "numba.core.types"
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "dash"
@@ -135,14 +122,6 @@ ignore_missing_imports = true
 module = "matplotlib"
 ignore_missing_imports = true
 
-[tool.pytest.ini_options]
-filterwarnings = [
-    "ignore::numba.NumbaExperimentalFeatureWarning",
-]
-
-#[tool.flake8]
-#per-file-ignores = [
-#    "rs2simlib/fast/drag/fastdrag.py:C901",
-#    "rs2simlib/drag/drag.py:C901",
-#    "rs2simlib/dataio/dataio.py:C901",
-#]
+[[tool.mypy.overrides]]
+module = "logbook"
+ignore_missing_imports = true
