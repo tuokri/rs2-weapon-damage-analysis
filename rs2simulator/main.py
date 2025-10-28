@@ -74,7 +74,7 @@ def parse_uscript(src_dir: Path):
     to JSON and pickle files. The JSON files contain
     flattened representation of the data, whereas the
     pickle files contain the full class hierarchy trees.
-    
+
     Parsing is done in an ad hoc manner where the
     first pass builds a ParseResult map from
     each UnrealScript file, making its best effort
