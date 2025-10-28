@@ -55,9 +55,11 @@ csv_header = (
 )
 
 
-def main(data_dir: Path,
-         weapon_ids: Dict[str, int],
-         bullet_ids: Dict[str, int]):
+def main(
+        data_dir: Path,
+        weapon_ids: Dict[str, int],
+        bullet_ids: Dict[str, int],
+) -> None:
     start = time.perf_counter()
 
     logger.info("handling '{f}'", f=data_dir)

@@ -14,8 +14,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from typing import Any
-from typing import Dict
-from typing import Iterable
 from typing import List
 from typing import Tuple
 
@@ -31,6 +29,7 @@ from dash import ctx
 from dash import dash_table
 from dash import dcc
 from dash import html
+from dash.dcc.Dropdown import Dropdown
 from dash.exceptions import PreventUpdate
 from dash_bootstrap_templates import ThemeChangerAIO
 from dash_bootstrap_templates import template_from_url
@@ -44,17 +43,17 @@ dash.register_page(
 )
 
 
-def get_weapon_selector_elements() -> Iterable[Dict]:
+def get_weapon_selector_elements() -> List[Dropdown.Options]:
     elements = []
     weapons = db.api.get_weapons()
 
     for wep in weapons:
         wep_name = wep.name
-        short_name = wep.short_display_name
+        short_name = wep.short_display_name or ""
 
         # TODO: fine tune drop down elements' vertical alignment.
-        elements.append({
-            "label": dbc.Container(
+        elements.append(Dropdown.Options(
+            label=dbc.Container(
                 [
                     html.P(
                         wep_name,
@@ -71,9 +70,9 @@ def get_weapon_selector_elements() -> Iterable[Dict]:
                 class_name="d-flex justify-content-between align-items-center",
                 fluid=True,
             ),
-            "value": wep_name,
-            "search": short_name,
-        })
+            value=wep_name,
+            search=short_name,
+        ))
     return elements
 
 
@@ -188,7 +187,7 @@ def modify_selected_weapons(
                         [
                             html.Div([
                                 html.P(f"TODO: this is the content for '{value}'."),
-                                dash_table.DataTable(
+                                dash_table.DataTable(  # type: ignore[attr-defined]
                                     data=[wep_dict],
                                     columns=columns,
                                 ),

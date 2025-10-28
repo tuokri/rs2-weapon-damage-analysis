@@ -77,7 +77,10 @@ class BaseModel(PrettyReprMixin, DeclarativeBase):
 _AutomapBase: AutomapBase = automap_base()
 
 
-class AutomapModel(PrettyReprMixin, _AutomapBase):
+class AutomapModel(
+    PrettyReprMixin,
+    _AutomapBase,  # type: ignore[valid-type, misc]
+):
     __abstract__ = True
 
 
@@ -132,7 +135,7 @@ class Bullet(BaseModel):
     ballistic_coeff = mapped_column(Float)
     damage: Mapped[int]
     drag_func: Mapped[int]
-    speed: Mapped[int]
+    speed: Mapped[float]
     damage_falloff_curve: Mapped[List[DamageFalloff]] = relationship(
         back_populates="bullet",
         order_by="asc(DamageFalloff.index)",

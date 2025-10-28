@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from typing import Dict
+from typing import List
 from typing import Optional
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
@@ -107,7 +109,7 @@ class CustomDash(dash.Dash):
 
         return str(soup)
 
-    def interpolate_index(self, **kwargs) -> str:
+    def interpolate_index(self, *args, **kwargs) -> str:
         kwargs["metas"] = self.format_metas(kwargs["metas"])
         footer_content = read_asset_text("footer.html")
         footer = footer_string.format(
@@ -138,7 +140,7 @@ external_stylesheets = [
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css",
 ]
 
-external_scripts = [
+external_scripts: List[Dict[str, str]] = [
     {
         # Load cookie consent plugin in async mode.
         # "async src": "https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v2.8.5/dist/cookieconsent.js",
@@ -177,9 +179,9 @@ app = CustomDash(
     external_stylesheets=external_stylesheets,
     title="rs2simulator",
     use_pages=True,
-    assets_folder=ASSETS_DIR,
+    assets_folder=str(ASSETS_DIR),
     suppress_callback_exceptions=True,
-    **app_extra_kwargs,
+    kwargs=app_extra_kwargs,
 )
 server = app.server
 

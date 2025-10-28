@@ -140,12 +140,12 @@ def parse_uscript(src_dir: Path):
         if class_name == PROJECTILE.name:
             continue
         # May or may not be available, depending on the order.
-        parent = bullet_classes.get(bullet_result.parent_name)
-        if parent:
+        parent_bullet = bullet_classes.get(bullet_result.parent_name)
+        if parent_bullet:
             resolved_early += 1
         bullet_classes[class_name] = Bullet(
             name=bullet_result.class_name,
-            parent=parent,
+            parent=parent_bullet,
             speed=bullet_result.speed,
             damage=bullet_result.damage,
             damage_falloff=bullet_result.damage_falloff,
@@ -170,16 +170,16 @@ def parse_uscript(src_dir: Path):
             if not valid:
                 to_del.add(class_name)
                 break
-            obj = obj.parent
+            obj = obj.parent  # type: ignore[assignment] # Can't be None after resolve_parent().
 
     logger.info("discarding {num} invalid bullet classes", num=len(to_del))
     for td in to_del:
         del bullet_classes[td]
 
     if not all(b.is_child_of(PROJECTILE) for b in bullet_classes.values()):
-        for b in bullet_classes.values():
-            if not b.is_child_of(PROJECTILE):
-                logger.warn(b.name)
+        for bullet in bullet_classes.values():
+            if not bullet.is_child_of(PROJECTILE):
+                logger.warn(bullet.name)
         raise RuntimeError("got invalid bullet classes")
 
     logger.info("{num} total bullet classes", num=len(bullet_classes))
@@ -191,18 +191,19 @@ def parse_uscript(src_dir: Path):
         if class_name == WEAPON.name:
             continue
 
-        parent = weapon_classes.get(weapon_result.parent_name)
+        parent_weapon = weapon_classes.get(weapon_result.parent_name)
 
-        bullets = [None] * (max(weapon_result.bullet_names, default=0) + 1)
+        bullets: List[Optional[Bullet]] = [None] * (max(weapon_result.bullet_names, default=0) + 1)
         for idx, bullet_name in weapon_result.bullet_names.items():
             bullets[idx] = bullet_classes.get(bullet_name)
 
-        instant_damages: List[Optional[int]] = [None] * (
+        # TODO: should we check no damage is -1 after the fact?
+        instant_damages: List[int] = [-1] * (
                 max(weapon_result.instant_damages, default=0) + 1)
         for i_idx, instant_dmg in weapon_result.instant_damages.items():
             instant_damages[i_idx] = instant_dmg
 
-        if parent and any(bullets):
+        if parent_weapon and any(bullets):
             resolved_early += 1
 
         alt_ammo_loadouts: List[Optional[AltAmmoLoadout]] = [None] * (
@@ -211,12 +212,15 @@ def parse_uscript(src_dir: Path):
             for idx, alt_lo in weapon_result.alt_ammo_loadouts.items():
                 lo_bullets: List[Optional[Bullet]] = [None] * (
                         max(alt_lo.bullet_names, default=0) + 1)
-                lo_damages: List[Optional[int]] = [None] * (
+                lo_damages: List[int] = [-1] * (
                         max(alt_lo.instant_damages, default=0) + 1)
+                # TODO: should we check no damage is -1 after the fact?
+
                 for d_idx, d in alt_lo.instant_damages.items():
                     lo_damages[d_idx] = d
                 for b_idx, b in alt_lo.bullet_names.items():
                     lo_bullets[b_idx] = bullet_classes.get(b)
+
                 alt_ammo_loadouts[idx] = AltAmmoLoadout(
                     name=alt_lo.class_name,
                     parent=None,
@@ -227,7 +231,7 @@ def parse_uscript(src_dir: Path):
         weapon_classes[class_name] = Weapon(
             name=class_name,
             bullets=bullets,
-            parent=parent,
+            parent=parent_weapon,
             instant_damages=instant_damages,
             pre_fire_length=weapon_result.pre_fire_length,
             alt_ammo_loadouts=alt_ammo_loadouts,
@@ -240,17 +244,17 @@ def parse_uscript(src_dir: Path):
 
     to_del.clear()
     for class_name, weapon in weapon_classes.items():
-        obj = weapon
-        while obj.parent != WEAPON:
+        wep_obj = weapon
+        while wep_obj.parent != WEAPON:
             valid = resolve_parent(
-                obj=obj,
+                obj=wep_obj,
                 parse_map=weapon_results,
                 class_map=weapon_classes,
             )
             if not valid:
                 to_del.add(class_name)
                 break
-            obj = obj.parent
+            wep_obj = wep_obj.parent  # type: ignore[assignment] # Can't be None after resolve_parent().
 
     logger.info("discarding {num} invalid weapon classes", num=len(to_del))
     for td in to_del:
@@ -739,6 +743,9 @@ def insert_weapons(
                 if wm["name"].lower() == weapon.name.lower())
 
             if w is not None:
+                if weapon.parent is None:
+                    raise ValueError(f"invalid weapon without parent: {weapon}")
+
                 parent_id = session.scalar(
                     select(db.models.Weapon.id).where(
                         db.models.Weapon.name == weapon.parent.name
@@ -806,6 +813,9 @@ def insert_bullets(bullet_classes: List[Bullet]):
 
         for bullet in bullet_classes:
             if b is not None:
+                if bullet.parent is None:
+                    raise ValueError(f"invalid bullet without parent: {bullet}")
+
                 parent_id = session.scalar(
                     select(db.models.Bullet.id).where(
                         db.models.Bullet.name == bullet.parent.name
@@ -860,6 +870,21 @@ def enter_db_data(metadata_dir: Path):
     )
 
     # TODO: better filtering?
+    # TODO: actually, this is filtering too much. We should enter all weapons,
+    #  and somehow tag the "actual" weapons.
+    # TODO: something like:
+    #  has_bullet()
+    #  and is_ro_projectile_weapon()
+    #  and not is_ro_rocket_weapon()?
+    # TODO: should also filter out content classes!
+    #   -> content class is identical to its parent (for our purposes)
+    #   -> find any such class, and check if its a content class of some
+    #      other class!
+    #   -> content classes also do not have fields such as damage set on them?
+    #   -> content class can have an actual weapon as its child too! (shotgun)
+    # TODO: Purposeful denormalization. The result of above calculations
+    #  should be stored in the database even if it is inferrable
+    #  from the other columns, to avoid doing a semi-expensive calculation again!
     ordered_weapons = [
         w for w in ordered_weapons
         if "roweap" in w.name.lower()
@@ -1091,7 +1116,7 @@ def main():
 
     root_dir = Path(args.root_dir)
     ROOT_DIR = root_dir
-    logger.info("using ROOT_DIR={}", ROOT_DIR)
+    logger.info("using ROOT_DIR='{}'", ROOT_DIR)
 
     begin = time.perf_counter()
     logger.info("begin: {begin}", begin=begin)
