@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "Brotli==1.1.0",
-    "Flask-Compress==1.14",
+    "Flask-Compress==1.20",
     "Flask==3.0.3",
     "Jinja2==3.1.6",
     "MarkupSafe==2.1.5",
