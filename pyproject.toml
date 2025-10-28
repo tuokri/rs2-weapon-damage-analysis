@@ -40,7 +40,7 @@ dependencies = [
     "natsort==8.4.0",
     "numpy>=2.3.4",
     "orjson==3.11.1",
-    "pandas==2.2.2",
+    "pandas==2.3.3",
     "plotly==6.3.0",
     "psycopg[binary,pool]==3.2.9",
     "python-dateutil==2.9.0.post0",
