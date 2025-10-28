@@ -47,7 +47,7 @@ dependencies = [
     "python-dotenv==1.1.0",
     "pytz==2025.2",
     "requests==2.32.4",
-    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.7.0",
+    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.7.1",
     "six==1.17.0",
     "tenacity==8.2.3",
 ]
