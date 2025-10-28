@@ -7,6 +7,48 @@ Features accurate simulation of in-engine physics projectiles in the browser,
 weapon statistics comparison tools and data visualization based on automatically
 collected data from the game's source files.
 
+## Using the CLI tools
+
+**TODO: REMEMBER TO UPDATE THIS GUIDE ONCE THE CLI IS RE-DESIGNED!**
+
+### Step 1: Parse UnrealScript source directories
+
+```bash
+python rs2simulator/main.py -p path/to/script_sources
+```
+
+### Step 2: Parse localization data
+
+```bash
+python rs2simulator/main.py -l path/to/localization/file.int
+```
+
+### Step 3 Run simulations:
+
+```bash
+python rs2simulator/main.py --simulate
+```
+
+### Step 4: Write the data from previous steps into a PostgreSQL database:
+
+```bash
+python rs2simulator/main.py --enter-sim-data
+```
+
+## Running the web app
+
+### Run a development server using PowerShell (option 1):
+
+```powershell
+.\run_app.ps1
+```
+
+### Run Docker development server container (option 2):
+
+```bash
+# TODO: instructions!
+```
+
 ## Built with
 
 ### Main (web) data app
