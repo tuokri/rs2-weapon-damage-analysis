@@ -1,4 +1,5 @@
 import argparse
+import atexit
 import io
 import os
 import re
@@ -175,6 +176,7 @@ if __name__ == "__main__":
     pool = NullConnectionPool(
         conninfo=db_url,
     )
+    atexit.register(pool.close)
     engine_no_pool = create_engine(
         url="postgresql+psycopg://",
         creator=pool.getconn,
