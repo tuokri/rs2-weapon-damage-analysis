@@ -1012,6 +1012,15 @@ loc_default = (
 
 def parse_args() -> Namespace:
     ap = ArgumentParser()
+
+    ap.add_argument(
+        "--root-dir",
+        help="overwrite root working directory where outputs"
+             " are written to and inputs are read from",
+        type=Path,
+        default=str(ROOT_DIR),
+    )
+
     group = ap.add_argument_group("mutually exclusive arguments")
     group.add_argument(
         "-p", "--parse-src",
@@ -1065,6 +1074,8 @@ def parse_args() -> Namespace:
 
 
 def main():
+    global ROOT_DIR
+
     # TODO: redesign CLI.
     #   - Use click?
     #   - For arguments that take in paths, allow specifying multiple ones.
@@ -1078,8 +1089,12 @@ def main():
 
     args = parse_args()
 
+    root_dir = Path(args.root_dir)
+    ROOT_DIR = root_dir
+    logger.info("using ROOT_DIR={}", ROOT_DIR)
+
     begin = time.perf_counter()
-    logger.info(f"begin: {begin}")
+    logger.info("begin: {begin}", begin=begin)
 
     if args.parse_src:
         parse_uscript(Path(args.parse_src).resolve())
