@@ -376,8 +376,8 @@
     "name": "RORocketWeapon",
     "parent": "ROProjectileWeapon",
     "pre_fire_length": 50,
-    "display_name": "NO_DISPLAY_NAME",
-    "short_display_name": "NO_SHORT_DISPLAY_NAME"
+    "display_name": "",
+    "short_display_name": ""
   },
   {
     "alt_ammo_loadouts": [],
@@ -433,8 +433,8 @@
     "name": "ROSniperWeaponAdvanced",
     "parent": "ROSniperWeapon",
     "pre_fire_length": 50,
-    "display_name": "NO_DISPLAY_NAME",
-    "short_display_name": "NO_SHORT_DISPLAY_NAME"
+    "display_name": "",
+    "short_display_name": ""
   },
   {
     "alt_ammo_loadouts": [],
@@ -489,8 +489,8 @@
     "name": "ROVehicleWeapon",
     "parent": "ROWeapon",
     "pre_fire_length": 50,
-    "display_name": "NO_DISPLAY_NAME",
-    "short_display_name": "NO_SHORT_DISPLAY_NAME"
+    "display_name": "",
+    "short_display_name": ""
   },
   {
     "alt_ammo_loadouts": [],
@@ -1900,7 +1900,7 @@
     "parent": "ROWeap_M79_GrenadeLauncher",
     "pre_fire_length": 25,
     "display_name": "M79 with Sidearm",
-    "short_display_name": "NO_SHORT_DISPLAY_NAME"
+    "short_display_name": ""
   },
   {
     "alt_ammo_loadouts": [],
@@ -3228,8 +3228,8 @@
     "name": "ROWeapon",
     "parent": "Weapon",
     "pre_fire_length": 50,
-    "display_name": "NO_DISPLAY_NAME",
-    "short_display_name": "NO_SHORT_DISPLAY_NAME"
+    "display_name": "",
+    "short_display_name": ""
   },
   {
     "alt_ammo_loadouts": [],
