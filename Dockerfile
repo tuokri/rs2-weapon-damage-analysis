@@ -19,6 +19,7 @@ RUN pip install --upgrade pip --no-cache-dir
 RUN pip install -r requirements.txt --no-cache-dir
 
 # Install psycopg3 optimized local build.
+# TODO: should this respect the version in pyproject.toml?
 RUN pip install psycopg[c,pool] --no-cache-dir
 
 COPY rs2simulator/ ./rs2simulator/
@@ -26,6 +27,6 @@ COPY gunicorn.conf.py .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "app:server", "--chdir", \
+CMD ["gunicorn", "--bind=[::]:8000", "app:server", "--chdir", \
      "rs2simulator", "--workers", "3", "--threads", "2", "--preload", \
      "--max-requests", "1000", "--max-requests-jitter", "250"]
