@@ -41,3 +41,5 @@ Fly.io Postgres cluster with TimescaleDB extension
 
 - New Dash version causes `dash.exceptions.DependencyException` on
   first page load after deployment. Possibly caused by custom redirect.
+
+- Migrate to UV at some point?
