@@ -25,7 +25,7 @@ dependencies = [
     "dash-bootstrap-templates==2.1.0",
     "dash[celery]==3.3.0",
     "gunicorn==23.0.0",
-    "logbook==1.9.1",
+    "logbook==1.9.2",
     "natsort==8.4.0",
     "numpy>=2.3.4",
     "orjson==3.11.4",
