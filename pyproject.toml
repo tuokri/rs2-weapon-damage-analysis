@@ -31,7 +31,7 @@ dependencies = [
     "orjson==3.11.4",
     "pandas==2.3.3",
     "plotly==6.5.0",
-    "psycopg[binary,pool]==3.2.13",
+    "psycopg[binary,pool]==3.3.0",
     "python-dotenv==1.2.1",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.7.2",
 ]
