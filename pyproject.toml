@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "SQLAlchemy[mypy]==2.0.44",
-    "beautifulsoup4==4.14.2",
+    "beautifulsoup4==4.14.3",
     "dash-bootstrap-components==2.0.4",
     "dash-bootstrap-templates==2.1.0",
     "dash[celery]==3.3.0",
