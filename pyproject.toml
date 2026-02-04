@@ -29,7 +29,7 @@ dependencies = [
     "natsort==8.4.0",
     "numpy>=2.3.4",
     "orjson==3.11.5",
-    "pandas==2.3.3",
+    "pandas==3.0.0",
     "plotly==6.5.2",
     "psycopg[binary,pool]==3.3.2",
     "python-dotenv==1.2.1",
