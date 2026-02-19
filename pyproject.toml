@@ -28,7 +28,7 @@ dependencies = [
     "logbook==1.9.2",
     "natsort==8.4.0",
     "numpy>=2.3.4",
-    "orjson==3.11.5",
+    "orjson==3.11.7",
     "pandas==2.3.3",
     "plotly==6.5.2",
     "psycopg[binary,pool]==3.3.2",
