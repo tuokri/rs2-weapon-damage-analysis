@@ -32,7 +32,7 @@ dependencies = [
     "pandas==3.0.1",
     "plotly==6.5.2",
     "psycopg[binary,pool]==3.3.2",
-    "python-dotenv==1.2.1",
+    "python-dotenv==1.2.2",
     "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.7.2",
 ]
 
