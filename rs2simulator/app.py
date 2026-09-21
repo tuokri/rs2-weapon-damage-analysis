@@ -181,7 +181,7 @@ app = CustomDash(
     use_pages=True,
     assets_folder=str(ASSETS_DIR),
     suppress_callback_exceptions=True,
-    kwargs=app_extra_kwargs,
+    **app_extra_kwargs,
 )
 server = app.server
 

@@ -43,7 +43,8 @@ dash.register_page(
 )
 
 
-def get_weapon_selector_elements() -> List[Dropdown.Options]:
+# TODO: fix the return type hint here!
+def get_weapon_selector_elements() -> List[Any]:
     elements = []
     weapons = db.api.get_weapons()
 
