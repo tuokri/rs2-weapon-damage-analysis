@@ -16,6 +16,7 @@
 from typing import Any
 from typing import List
 from typing import Tuple
+from typing import TypedDict
 
 import dash
 import dash_bootstrap_components as dbc
@@ -29,7 +30,7 @@ from dash import ctx
 from dash import dash_table
 from dash import dcc
 from dash import html
-from dash.dcc.Dropdown import Dropdown
+from dash.development.base_component import Component
 from dash.exceptions import PreventUpdate
 from dash_bootstrap_templates import ThemeChangerAIO
 from dash_bootstrap_templates import template_from_url
@@ -43,9 +44,14 @@ dash.register_page(
 )
 
 
-# TODO: fix the return type hint here!
-def get_weapon_selector_elements() -> List[Any]:
-    elements = []
+class WeaponSelectorOption(TypedDict):
+    label: Component
+    value: str
+    search: str
+
+
+def get_weapon_selector_elements() -> List[WeaponSelectorOption]:
+    elements: List[WeaponSelectorOption] = []
     weapons = db.api.get_weapons()
 
     for wep in weapons:
@@ -53,8 +59,8 @@ def get_weapon_selector_elements() -> List[Any]:
         short_name = wep.short_display_name or ""
 
         # TODO: fine tune drop down elements' vertical alignment.
-        elements.append(Dropdown.Options(
-            label=dbc.Container(
+        elements.append({
+            "label": dbc.Container(
                 [
                     html.P(
                         wep_name,
@@ -71,9 +77,9 @@ def get_weapon_selector_elements() -> List[Any]:
                 class_name="d-flex justify-content-between align-items-center",
                 fluid=True,
             ),
-            value=wep_name,
-            search=short_name,
-        ))
+            "value": wep_name,
+            "search": short_name,
+        })
     return elements
 
 
