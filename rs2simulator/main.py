@@ -31,6 +31,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from pprint import pformat
 from typing import Any
+from typing import Callable
 from typing import Deque
 from typing import Iterable
 from typing import List
@@ -73,7 +74,7 @@ from rs2simulator import db
 
 logger = logbook.Logger("main")
 
-# TODO: make these configurable?
+# TODO: make all outputs and inputs configurable?
 ROOT_DIR = Path(rs2simulator.__path__[0]).parent
 SIM_DATA_DIR = (ROOT_DIR / "sim_data").absolute()
 BULLETS_JSON = ROOT_DIR / "bullets.json"
@@ -638,7 +639,7 @@ def run_simulation(weapon: Weapon):
 
 
 def run_simulations(classes_file: Path):
-    """Load weapon classes from pickle file and run
+    """Load weapon classes from a pickle file and run
     bullet trajectory, damage, etc. simulations and
     write simulated data to CSV files.
     """
@@ -649,19 +650,61 @@ def run_simulations(classes_file: Path):
 
     SIM_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    ro_one_shot = weapon_classes["ROOneShotWeapon"]
+    # TODO: just have a hard-coded ROOneShotWeapon as a fallback option?
+    ro_one_shot: Weapon | None = weapon_classes.get("ROOneShotWeapon", None)
+    if not ro_one_shot:
+        logger.warn("loaded weapon classes do not contain ROOneShotWeapon")
 
     # TODO: Pretty dumb way of doing this. Fix later.
-    ak47 = weapon_classes["ROWeap_AK47_AssaultRifle"]
-    ballistic_proj = ak47.get_bullet(0).find_parent("ROBallisticProjectile")
+    try:
+        ak47 = weapon_classes["ROWeap_AK47_AssaultRifle"]
+        ballistic_proj = ak47.get_bullet(0).find_parent("ROBallisticProjectile")
+    except KeyError:
+        logger.warn("bad programming, fix this later!")
+        logger.warn("loaded weapon classes do not contain ROWeap_AK47_AssaultRifle")
+        logger.warn("using hard-coded ROBallisticProjectile")
+        ballistic_proj = Bullet(
+            parent=PROJECTILE,
+            name="ROBallisticProjectile",
+            speed=0,
+            damage=0,
+            ballistic_coeff=1.0,
+            damage_falloff=np.array([
+                0.0,
+                0.0,
+            ]),
+            drag_func=DragFunction.G1,
+        )
     sim_classes = []
 
-    logger.debug(pformat(weapon_classes["ROWeap_IZH43_Shotgun"]))
+    if "ROWeap_IZH43_Shotgun" in weapon_classes:
+        logger.debug(pformat(weapon_classes["ROWeap_IZH43_Shotgun"]))
+
+    is_child_of_ro_one_shot: Callable[[Weapon], bool]
+    if ro_one_shot is not None:
+        def _is_child_of_ro_one_shot_impl(_weapon: Weapon) -> bool:
+            # noinspection bad-argument-type
+            return _weapon.is_child_of(ro_one_shot)
+        is_child_of_ro_one_shot = _is_child_of_ro_one_shot_impl
+    else:
+        def _is_child_of_ro_one_shot_impl(_weapon: Weapon) -> bool:
+            # Scan all _weapon parents and match by name.
+            parent: Optional[Weapon] = _weapon.parent
+            while parent is not None:
+                if parent.name == "ROOneShotWeapon":
+                    return True
+                next_parent = parent.parent
+                if next_parent is None or next_parent == parent:
+                    break
+                parent = next_parent
+            return False
+        is_child_of_ro_one_shot = _is_child_of_ro_one_shot_impl
 
     for weapon in weapon_classes.values():
         try:
+            # TODO: need a better way to filter desired simulation weapons!
             if (weapon.name.lower().startswith("roweap_")
-                    and not weapon.is_child_of(ro_one_shot)
+                    and not is_child_of_ro_one_shot(weapon)
                     and weapon.get_bullet(0) is not None
                     and weapon.get_bullet(0).is_child_of(ballistic_proj)):
                 sim_classes.append(weapon)
@@ -1100,6 +1143,13 @@ def parse_args() -> Namespace:
 
 def main():
     global ROOT_DIR
+    global SIM_DATA_DIR
+    global BULLETS_JSON
+    global BULLETS_READABLE_JSON
+    global WEAPONS_JSON
+    global WEAPONS_READABLE_JSON
+    global WEAPONS_PICKLE
+    global BULLETS_PICKLE
 
     # TODO: redesign CLI.
     #   - Use click?
@@ -1114,9 +1164,17 @@ def main():
 
     args = parse_args()
 
-    root_dir = Path(args.root_dir)
+    root_dir = Path(args.root_dir).resolve()
     ROOT_DIR = root_dir
     logger.info("using ROOT_DIR='{}'", ROOT_DIR)
+
+    SIM_DATA_DIR = (ROOT_DIR / "sim_data").absolute()
+    BULLETS_JSON = ROOT_DIR / "bullets.json"
+    BULLETS_READABLE_JSON = ROOT_DIR / "bullets_readable.json"
+    WEAPONS_JSON = ROOT_DIR / "weapons.json"
+    WEAPONS_READABLE_JSON = ROOT_DIR / "weapons_readable.json"
+    WEAPONS_PICKLE = ROOT_DIR / "weapon_classes.pickle"
+    BULLETS_PICKLE = ROOT_DIR / "bullet_classes.pickle"
 
     begin = time.perf_counter()
     logger.info("begin: {begin}", begin=begin)
