@@ -11,8 +11,8 @@ authors = [
 description = "Data visualization app for Rising Storm 2: Vietnam."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
-license-files = { paths = ["LICENSE"] }
-requires-python = ">=3.11"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
@@ -33,14 +33,19 @@ dependencies = [
     "plotly==6.9.0",
     "psycopg[binary,pool]==3.3.6",
     "python-dotenv==1.2.3",
-    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.8.0",
+    "rs2simlib @ git+https://github.com/tuokri/rs2simlib@0.9.0",
 ]
 
-#[project.optional-dependencies]
-#dev = [
-#    "psycopg[binary,pool]==3.1.10",
-#    "dash[diskcache]==2.7.0",
-#]
+[project.optional-dependencies]
+dev = [
+    "mypy",
+    "pandas-stubs",
+    "pytest-dependency",
+    "pytest",
+    "ruff",
+    "types-beautifulsoup4",
+    "types-requests",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -56,6 +61,7 @@ dependencies = [
     "mypy",
     "pandas-stubs",
     "pytest",
+    "pytest-dependency",
     "ruff",
     "types-beautifulsoup4",
     "types-requests",
