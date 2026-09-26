@@ -93,3 +93,5 @@ Fly.io Postgres cluster with TimescaleDB extension
     - Store it somewhere else?
 
 - Simple testing strategy for the Dash app.
+
+- Set up coverage reporting.
