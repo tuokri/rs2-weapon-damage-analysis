@@ -19,7 +19,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "SQLAlchemy[mypy]==2.0.54",
+    "SQLAlchemy[mypy]==2.1.1",
     "beautifulsoup4==4.15.0",
     "dash-bootstrap-components==2.0.4",
     "dash-bootstrap-templates==2.1.0",
