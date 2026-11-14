@@ -504,7 +504,7 @@ wheels = [
 
 [[package]]
 name = "dash-bootstrap-templates"
-version = "2.1.0"
+version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dash" },
@@ -512,9 +512,9 @@ dependencies = [
     { name = "numpy" },
     { name = "plotly" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/2a/5b109ee6aea69deef649a038147dc1696f6d4152de912315a946ee243640/dash_bootstrap_templates-2.1.0.tar.gz", hash = "sha256:ca9da1060ee2b2c74dc1c26119056f37051a838a58ea07b5d325f9df7fde17fe", size = 114447, upload-time = "2025-02-13T13:59:41.967Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/41/8e/b45a0fde643e2a5122a23d070004784686e353409c5a04c8ae6d40874532/dash_bootstrap_templates-3.0.1.tar.gz", hash = "sha256:46c182f724d1e69851e619cf5c686572432a48d78fb475b6fb530c3cbd1977a7", size = 115575, upload-time = "2026-09-30T19:52:08.56Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/32/f7/94fff8c10b57d47311c9d9e9a6b98618f1dcad77ae3fbd7e0659230c04ae/dash_bootstrap_templates-2.1.0-py3-none-any.whl", hash = "sha256:d7a89ce5d1cfec205bff2ec621a8a6382f287eea064917909475477fb32c09d6", size = 100293, upload-time = "2025-02-13T13:59:40.09Z" },
+    { url = "https://files.pythonhosted.org/packages/43/91/0d74e8a7622585ebfb3232d269272eb8148184919e652766868cb2323771/dash_bootstrap_templates-3.0.1-py3-none-any.whl", hash = "sha256:205d27119e96bd7bd082dc3ee8f8f62a798ef1a7fedb3b8f4c4b17bff8c5d33e", size = 99279, upload-time = "2026-09-30T19:52:06.346Z" },
 ]
 
 [[package]]
@@ -1929,7 +1929,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.15.0" },
     { name = "dash", extras = ["celery"], specifier = "==4.4.1" },
     { name = "dash-bootstrap-components", specifier = "==2.0.4" },
-    { name = "dash-bootstrap-templates", specifier = "==2.1.0" },
+    { name = "dash-bootstrap-templates", specifier = "==3.0.1" },
     { name = "gunicorn", specifier = "==26.2.0" },
     { name = "logbook", specifier = "==1.10.1" },
     { name = "mypy", marker = "extra == 'dev'" },
@@ -2067,11 +2067,11 @@ wheels = [
 
 [[package]]
 name = "soupsieve"
-version = "2.10"
+version = "4.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/71/c3/1b817965ac12dc002d7c9cd7dfffdd7d4fbf9b45763ef2ffe7b86ee94670/soupsieve-2.10.tar.gz", hash = "sha256:49e9380d7d2905463583bafe285e818c7366a9ed7b3aee221c1ac79c905d8bc0", size = 124337, upload-time = "2026-09-24T02:36:35.048Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/5e/19b7c5d20bc2f226c44f33a9d9aab9740efed7555b96e656231fd564e514/soupsieve-4.0.tar.gz", hash = "sha256:ccd6470b256394ac44b08b86fd94b30a17d335a5335c8a3d15565f7b03d3c8cf", size = 151929, upload-time = "2026-11-03T14:28:55.388Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/66/87/5ed59e1d0290564e2027ed066c52b059892c4637741337fc0967183c8d4d/soupsieve-2.10-py3-none-any.whl", hash = "sha256:8596eb8967d744174820280fa62b4542a2e955bfaccca73ed8a13c6eb8e9b502", size = 38019, upload-time = "2026-09-24T02:36:33.709Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/18/d24df2f733ee0655c58717d51add4118a70e64692d0e47d403b9aac4cf98/soupsieve-4.0-py3-none-any.whl", hash = "sha256:5e7494bfce90e06676cfb4c5c2cf22243e98e5cf24646bb1ecdda46d318550a0", size = 50158, upload-time = "2026-11-03T14:28:53.988Z" },
 ]
 
 [[package]]
