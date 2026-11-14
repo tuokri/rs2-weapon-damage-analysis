@@ -6,13 +6,13 @@ build-backend = "hatchling.build"
 name = "rs2simulator"
 dynamic = ["version"]
 authors = [
-    { name = "tuokri", email = "tuokri@tuta.io" },
+    { name = "Tuomo Kriikkula", email = "tuokri@tuta.io" },
 ]
 description = "Data visualization app for Rising Storm 2: Vietnam."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 license-files = ["LICENSE"]
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
